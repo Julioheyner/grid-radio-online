@@ -170,7 +170,7 @@ dmca: `
             <li><strong>Design Moderno:</strong> Interface amigável e responsiva.</li>
             <li><strong>Privacidade:</strong> Não coleta dados pessoais.</li>
         </ul>
-        <p>Código fonte disponível no <a href="https://github.com/Julioheyner" target="_blank" class="site-link gradient-link"><i class="fab fa-github"></i> GitHub</a>.</p>
+        <p>Código fonte disponível no <a href="https://github.com/Julioheyner/grid-radio-online" target="_blank" class="site-link gradient-link"><i class="fab fa-github"></i> GitHub</a>.</p>
         <div class="socials">
     <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank" class="social-icon">
         <i class="fab fa-github"></i>
