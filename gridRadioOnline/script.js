@@ -127,40 +127,38 @@ const pageContents = {
         <h3>6. Modificações</h3>
         <p>Reservamo-nos o direito de modificar estes termos a qualquer momento.</p>
     `,
-    // No arquivo script.js, atualize apenas o conteúdo dmca:
-
-dmca: `
-    <h2><i class="fas fa-gavel"></i> Política DMCA</h2>
-    
-    <div class="educational-notice" style="background: var(--player-color); padding: 12px; border-radius: 8px; margin: 15px 0; border-left: 3px solid var(--accent-primary);">
-        <p style="margin: 0; font-size: 0.9rem;">
-            <strong><i class="fas fa-graduation-cap"></i> Nota:</strong> Este projeto tem caráter educacional e utiliza a API pública do Radio Browser para fins de aprendizado em desenvolvimento web.
-        </p>
-    </div>
-    
-    <h3>Notificação de Infração de Direitos Autorais</h3>
-    <p>O Grid Rádio Online respeita os direitos de propriedade intelectual. Se você acredita que seu trabalho foi copiado de forma que constitui violação de direitos autorais, envie uma notificação para:</p>
-    
-    <p><strong>Email:</strong> <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link">juliogonzales.dev@proton.me</a></p>
-    
-    <h3>Informações Requeridas</h3>
-    <p>Sua notificação deve incluir:</p>
-    <ul>
-        <li>Assinatura do proprietário dos direitos autorais</li>
-        <li>Identificação do trabalho protegido</li>
-        <li>Identificação do material alegadamente infringente</li>
-        <li>Suas informações de contato</li>
-        <li>Declaração de boa fé</li>
-    </ul>
-    
-    <h3>Ação</h3>
-    <p>Upon receipt of a valid DMCA notice, we will promptly remove or disable access to the allegedly infringing content.</p>
-    
-    <div style="font-size: 0.8rem; color: color-mix(in srgb, var(--text-color) 60%, transparent); text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid color-mix(in srgb, var(--text-color) 20%, transparent);">
-        <p><strong>Projeto educacional</strong> • Desenvolvido para fins de aprendizado</p>
+    dmca: `
+        <h2><i class="fas fa-gavel"></i> Política DMCA</h2>
         
-    </div>
-`,
+        <div class="educational-notice" style="background: var(--player-color); padding: 12px; border-radius: 8px; margin: 15px 0; border-left: 3px solid var(--accent-primary);">
+            <p style="margin: 0; font-size: 0.9rem;">
+                <strong><i class="fas fa-graduation-cap"></i> Nota:</strong> Este projeto tem caráter educacional e utiliza a API pública do Radio Browser para fins de aprendizado em desenvolvimento web.
+            </p>
+        </div>
+        
+        <h3>Notificação de Infração de Direitos Autorais</h3>
+        <p>O Grid Rádio Online respeita os direitos de propriedade intelectual. Se você acredita que seu trabalho foi copiado de forma que constitui violação de direitos autorais, envie uma notificação para:</p>
+        
+        <p><strong>Email:</strong> <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link">juliogonzales.dev@proton.me</a></p>
+        
+        <h3>Informações Requeridas</h3>
+        <p>Sua notificação deve incluir:</p>
+        <ul>
+            <li>Assinatura do proprietário dos direitos autorais</li>
+            <li>Identificação do trabalho protegido</li>
+            <li>Identificação do material alegadamente infringente</li>
+            <li>Suas informações de contato</li>
+            <li>Declaração de boa fé</li>
+        </ul>
+        
+        <h3>Ação</h3>
+        <p>Upon receipt of a valid DMCA notice, we will promptly remove or disable access to the allegedly infringing content.</p>
+        
+        <div style="font-size: 0.8rem; color: color-mix(in srgb, var(--text-color) 60%, transparent); text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid color-mix(in srgb, var(--text-color) 20%, transparent);">
+            <p><strong>Projeto educacional</strong> • Desenvolvido para fins de aprendizado</p>
+            
+        </div>
+    `,
     about: `
         <h2><i class="fas fa-circle-info"></i> Sobre o Grid Rádio Online</h2>
         <p>O Grid Rádio Online é um projeto de caráter educacional de código aberto, criado com o objetivo de oferecer uma interface simples e moderna para acessar rádios de todo o mundo, utilizando a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a>.</p>
@@ -170,7 +168,7 @@ dmca: `
             <li><strong>Design Moderno:</strong> Interface amigável e responsiva.</li>
             <li><strong>Privacidade:</strong> Não coleta dados pessoais.</li>
         </ul>
-        <p>Código fonte disponível no <a href="https://github.com/Julioheyner/grid-radio-online" target="_blank" class="site-link gradient-link"><i class="fab fa-github"></i> GitHub</a>.</p>
+        <p>Código fonte disponível no <a href="https://github.com/Julioheyner" target="_blank" class="site-link gradient-link"><i class="fab fa-github"></i> GitHub</a>.</p>
         <div class="socials">
     <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank" class="social-icon">
         <i class="fab fa-github"></i>
@@ -204,7 +202,7 @@ function sanitizeHTML(str) {
  */
 function secureLocalStorageSet(key, value) {
     try {
-        // 🔧 CORREÇÃO: Converter arrays para objetos simples antes de salvar
+        
         if (Array.isArray(value)) {
             // Para cada item do array, garantir que seja um objeto serializável
             const serializableValue = value.map(item => {
@@ -261,7 +259,7 @@ function secureLocalStorageGet(key, defaultValue) {
         const parsed = JSON.parse(data);
         
         if (Array.isArray(parsed)) {
-            // 🔧 CORREÇÃO: Aplicar sanitização em cada item do array
+            // Aplicar sanitização em cada item do array
             const sanitizedArray = parsed.map(item => {
                 // Verificar se o item tem a estrutura esperada
                 if (typeof item !== 'object' || item === null) {
@@ -385,7 +383,7 @@ function sanitizeRadioData(radio) {
     // Validar URL de áudio
     const url = radio.url || '';
     
-    // 🔧 CORREÇÃO: Processar favicon de forma mais robusta
+    //Processar favicon de forma mais robusta
     let favicon = DEFAULT_ICON;
     
     if (radio.favicon && typeof radio.favicon === 'string') {
@@ -780,6 +778,17 @@ function playAudio() {
         updateRadioCards();
         nowPlaying.textContent = currentRadio.name;
         
+        // Adicionar botão de fechar se não existir
+        if (!document.getElementById('closePlayerBtn')) {
+            addPlayerCloseButton();
+        }
+        
+        // Esconder botão flutuante quando o player está visível
+        const reopenBtn = document.getElementById('reopenPlayerBtn');
+        if (reopenBtn) {
+            reopenBtn.style.display = 'none';
+        }
+        
         startAudioHealthCheck();
         
     }).catch(error => {
@@ -913,7 +922,7 @@ function playRadio(name, url, favicon, country, tags) {
 // FUNÇÕES PRINCIPAIS
 // ===================
 
-// 🎧 Buscar rádios
+//Buscar rádios
 async function fetchRadios(query="", country="", tag="", append=false) {
     if (loading) return;
     loading = true;
@@ -1202,6 +1211,347 @@ function updateRadioCards() {
 }
 
 // ===============================
+// FUNCIONALIDADE PARA FECHAR O PLAYER
+// ===============================
+
+/**
+ * Adiciona botão para fechar o player
+ */
+function addPlayerCloseButton() {
+    // Verificar se o player existe
+    if (!playerFixedEl) {
+        console.warn('Elemento do player não encontrado');
+        return;
+    }
+    
+    // Verificar se o botão já existe
+    if (document.getElementById('closePlayerBtn')) {
+        return;
+    }
+    
+    // Criar o botão de fechar
+    const closeBtn = document.createElement('button');
+    closeBtn.id = 'closePlayerBtn';
+    closeBtn.className = 'player-close-btn';
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.setAttribute('title', 'Fechar player (o áudio continuará tocando)');
+    closeBtn.setAttribute('aria-label', 'Fechar player');
+    
+    // Adicionar estilos dinamicamente (se já não existirem)
+    if (!document.getElementById('playerCloseStyles')) {
+        const style = document.createElement('style');
+        style.id = 'playerCloseStyles';
+        style.textContent = `
+            .player-close-btn {
+                position: absolute;
+                top: -12px;
+                right: -12px;
+                width: 32px;
+                height: 32px;
+                border-radius: 50%;
+                background: var(--error-color);
+                color: white;
+                border: 3px solid var(--player-color);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 1000;
+                font-size: 14px;
+                opacity: 0.9;
+                transition: all 0.3s ease;
+                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
+            }
+            
+            .player-close-btn:hover {
+                opacity: 1;
+                transform: scale(1.1);
+                background: #ff4757;
+                box-shadow: 0 3px 15px rgba(255, 71, 87, 0.4);
+            }
+            
+            .player-close-btn:active {
+                transform: scale(0.95);
+            }
+            
+            .player-fixed.hidden .player-close-btn {
+                display: none;
+            }
+            
+            /* Para telas pequenas, ajustar posição */
+            @media (max-width: 768px) {
+                .player-close-btn {
+                    top: -8px;
+                    right: -8px;
+                    width: 28px;
+                    height: 28px;
+                    font-size: 12px;
+                }
+            }
+            
+            /* Efeito de pulso quando o áudio está tocando */
+            .player-fixed.playing .player-close-btn {
+                animation: pulse-border 2s infinite;
+            }
+            
+            @keyframes pulse-border {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
+                }
+                70% {
+                    box-shadow: 0 0 0 6px rgba(255, 71, 87, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
+                }
+            }
+        `;
+        
+        document.head.appendChild(style);
+    }
+    
+    // Adicionar evento de clique
+    closeBtn.addEventListener('click', function(e) {
+        e.stopPropagation(); // Prevenir event bubbling
+        
+        // Fechar o player (apenas visualmente)
+        closePlayer();
+    });
+    
+    // Adicionar ao player
+    playerFixedEl.appendChild(closeBtn);
+}
+
+/**
+ * Fecha o player (apenas visualmente)
+ */
+function closePlayer() {
+    // Esconder o player, mas manter o áudio tocando
+    playerFixedEl.classList.add('hidden');
+    
+    // Mostrar notificação informando que o áudio continua tocando
+    showNotification('🎧 Player minimizado. O áudio continua tocando em segundo plano.', 'info');
+    
+    // Adicionar um botão flutuante para reabrir o player
+    addReopenPlayerButton();
+}
+
+/**
+ * Adiciona botão flutuante para reabrir o player
+ */
+function addReopenPlayerButton() {
+    // Remover botão existente, se houver
+    const existingBtn = document.getElementById('reopenPlayerBtn');
+    if (existingBtn) {
+        existingBtn.remove();
+    }
+    
+    // Verificar se já existe um estilo para o botão flutuante
+    if (!document.getElementById('reopenPlayerStyles')) {
+        const style = document.createElement('style');
+        style.id = 'reopenPlayerStyles';
+        style.textContent = `
+            .reopen-player-btn {
+                position: fixed;
+                bottom: 100px;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 70px;
+                height: 70px;
+                border-radius: 50%;
+                background: var(--accent-gradient);
+                color: white;
+                border: 3px solid var(--player-color);
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+                z-index: 9999;
+                font-size: 24px;
+                opacity: 0.95;
+                transition: all 0.3s ease;
+                box-shadow: 0 6px 25px color-mix(in srgb, var(--accent-primary) 50%, transparent);
+                animation: float 3s ease-in-out infinite;
+            }
+            
+            .reopen-player-btn:hover {
+                opacity: 1;
+                transform: translateX(-50%) scale(1.05);
+                box-shadow: 0 8px 30px color-mix(in srgb, var(--accent-primary) 70%, transparent);
+            }
+            
+            .reopen-player-btn:active {
+                transform: translateX(-50%) scale(0.95);
+            }
+            
+            .reopen-player-btn.pulse {
+                animation: pulse 1.5s infinite;
+            }
+            
+            @keyframes float {
+                0%, 100% {
+                    transform: translateX(-50%) translateY(0);
+                }
+                50% {
+                    transform: translateX(-50%) translateY(-8px);
+                }
+            }
+            
+            @keyframes pulse {
+                0% {
+                    box-shadow: 0 0 0 0 rgba(0, 216, 255, 0.7);
+                }
+                70% {
+                    box-shadow: 0 0 0 15px rgba(0, 216, 255, 0);
+                }
+                100% {
+                    box-shadow: 0 0 0 0 rgba(0, 216, 255, 0);
+                }
+            }
+            
+            /* Indicador de que está tocando */
+            .reopen-player-btn::after {
+                content: '';
+                position: absolute;
+                top: -4px;
+                right: -4px;
+                width: 16px;
+                height: 16px;
+                background: #00ff00;
+                border-radius: 50%;
+                border: 2px solid var(--player-color);
+                animation: blink 2s infinite;
+            }
+            
+            @keyframes blink {
+                0%, 50% {
+                    opacity: 1;
+                }
+                51%, 100% {
+                    opacity: 0.3;
+                }
+            }
+            
+            /* Para telas pequenas */
+            @media (max-width: 768px) {
+                .reopen-player-btn {
+                    width: 65px;
+                    height: 65px;
+                    font-size: 22px;
+                    bottom: 90px;
+                }
+            }
+            
+            /* Para orientação horizontal */
+            @media (orientation: landscape) and (max-height: 600px) {
+                .reopen-player-btn {
+                    width: 60px;
+                    height: 60px;
+                    font-size: 20px;
+                    bottom: 70px;
+                }
+            }
+            
+            /* Esconder quando o player estiver visível */
+            .player-fixed:not(.hidden) ~ .reopen-player-btn,
+            body:has(.player-fixed:not(.hidden)) .reopen-player-btn,
+            .player-fixed:not(.hidden) + .reopen-player-btn {
+                display: none !important;
+            }
+            
+            /* Garantir que o botão flutuante não interfira com o player */
+            .player-fixed {
+                z-index: 10000;
+            }
+            
+            .reopen-player-btn {
+                z-index: 9999;
+            }
+        `;
+        
+        document.head.appendChild(style);
+    }
+    
+    // Criar botão flutuante
+    const reopenBtn = document.createElement('button');
+    reopenBtn.id = 'reopenPlayerBtn';
+    reopenBtn.className = 'reopen-player-btn';
+    reopenBtn.innerHTML = '<i class="fas fa-music"></i>';
+    reopenBtn.setAttribute('title', 'Rádio tocando - Clique para mostrar player');
+    reopenBtn.setAttribute('aria-label', 'Mostrar player');
+    
+    // Adicionar evento de clique
+    reopenBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        reopenPlayer();
+    });
+    
+    // Adicionar pulso se estiver tocando
+    if (isPlaying) {
+        reopenBtn.classList.add('pulse');
+    }
+    
+    // Adicionar ao body
+    document.body.appendChild(reopenBtn);
+    
+    // Ajustar posição dinamicamente com base na orientação
+    adjustReopenButtonPosition();
+}
+
+/**
+ * Reabre o player
+ */
+function reopenPlayer() {
+    // Mostrar o player
+    playerFixedEl.classList.remove('hidden');
+    
+    // Remover o botão flutuante
+    const reopenBtn = document.getElementById('reopenPlayerBtn');
+    if (reopenBtn) {
+        reopenBtn.remove();
+    }
+    
+    // Mostrar notificação
+    showNotification('🎧 Player restaurado', 'success');
+}
+
+/**
+ * Ajusta a posição do botão flutuante baseado na orientação
+ */
+function adjustReopenButtonPosition() {
+    const reopenBtn = document.getElementById('reopenPlayerBtn');
+    if (!reopenBtn) return;
+    
+    // Verificar orientação e dimensões
+    const isLandscape = window.innerWidth > window.innerHeight;
+    const isSmallScreen = window.innerWidth < 768 || window.innerHeight < 600;
+    
+    if (isLandscape && isSmallScreen) {
+        // Para landscape em telas pequenas
+        reopenBtn.style.bottom = '60px';
+        reopenBtn.style.width = '60px';
+        reopenBtn.style.height = '60px';
+        reopenBtn.style.fontSize = '20px';
+    } else if (isSmallScreen) {
+        // Para portrait em telas pequenas
+        reopenBtn.style.bottom = '80px';
+        reopenBtn.style.width = '65px';
+        reopenBtn.style.height = '65px';
+        reopenBtn.style.fontSize = '22px';
+    } else {
+        // Para telas maiores
+        reopenBtn.style.bottom = '100px';
+        reopenBtn.style.width = '70px';
+        reopenBtn.style.height = '70px';
+        reopenBtn.style.fontSize = '24px';
+    }
+    
+    // Sempre centralizado horizontalmente
+    reopenBtn.style.left = '50%';
+    reopenBtn.style.transform = 'translateX(-50%)';
+}
+
+// ===============================
 // CONTROLES DE UI E MODAIS
 // ===============================
 
@@ -1269,6 +1619,11 @@ document.addEventListener('keydown', (e) => {
         }
         if (pageModal.style.display === 'flex') {
             pageModal.style.display = "none";
+        }
+        
+        // ESC também fecha o player se estiver visível
+        if (!playerFixedEl.classList.contains('hidden')) {
+            closePlayer();
         }
     }
 });
@@ -1541,7 +1896,7 @@ function showPage(pageName) {
     pageModal.style.display = "flex";
 }
 
-// 🔔 Mostrar notificação
+//Mostrar notificação
 function showNotification(message, type) {
     notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i> ${sanitizeHTML(message)}`;
     notification.className = `notification ${type} show`;
@@ -1550,7 +1905,7 @@ function showNotification(message, type) {
     }, 3000);
 }
 
-// 🔽 Carregar filtros
+// Carregar filtros
 async function loadFilters() {
   try {
     const [countries, tags] = await Promise.all([
@@ -1640,7 +1995,7 @@ function selectGenre(item, tag, display) {
     item.classList.add('selected');
 }
 
-// 🌓 Tema - Versão corrigida
+//Tema 
 themeToggle.addEventListener("click", () => {
     const isLight = document.body.getAttribute("data-theme") === "light";
     const newTheme = isLight ? "dark" : "light";
@@ -1668,7 +2023,7 @@ audioPlayer.addEventListener('volumechange', () => {
 // ===============================
 
 document.addEventListener("DOMContentLoaded", ()=>{
-    // 🔧 CORREÇÃO: Verificar e limpar dados corrompidos no localStorage
+    //Verificar e limpar dados corrompidos no localStorage
     function cleanCorruptedData() {
         const keys = ['favorites', 'history'];
         keys.forEach(key => {
@@ -1686,7 +2041,7 @@ document.addEventListener("DOMContentLoaded", ()=>{
     
     cleanCorruptedData();
     
-    // 🔧 CORREÇÃO: Carregar dados do localStorage APÓS limpeza
+    // Carregar dados do localStorage APÓS limpeza
     favorites = secureLocalStorageGet('favorites', []);
     history = secureLocalStorageGet('history', []);
     
@@ -1715,6 +2070,35 @@ document.addEventListener("DOMContentLoaded", ()=>{
     // INICIALIZAR CONTADORES
     updateButtonCounters();
     
+    // Adicionar botão de fechar após um pequeno delay
+    setTimeout(() => {
+        addPlayerCloseButton();
+    }, 1000);
+    
+    // Adicionar hotkeys
+    document.addEventListener('keydown', function(e) {
+        // Ctrl + Alt + P para alternar visibilidade do player
+        if (e.ctrlKey && e.altKey && e.key === 'p') {
+            e.preventDefault();
+            
+            if (playerFixedEl.classList.contains('hidden')) {
+                reopenPlayer();
+            } else {
+                closePlayer();
+            }
+        }
+    });
+    
+    // Ajustar botão flutuante quando a tela for redimensionada
+    window.addEventListener('resize', function() {
+        adjustReopenButtonPosition();
+    });
+    
+    // Ajustar botão flutuante quando a orientação mudar
+    window.addEventListener('orientationchange', function() {
+        setTimeout(adjustReopenButtonPosition, 100);
+    });
+    
     // Debug após carregar as rádios
     setTimeout(() => {
         debugRadioImages();
@@ -1740,6 +2124,12 @@ window.addEventListener('beforeunload', () => {
     }
     audioPlayer.pause();
     audioPlayer.src = '';
+    
+    // Remover botão flutuante se existir
+    const reopenBtn = document.getElementById('reopenPlayerBtn');
+    if (reopenBtn) {
+        reopenBtn.remove();
+    }
 });
 
 // Proteger contra ataques de timing
