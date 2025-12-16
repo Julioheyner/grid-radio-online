@@ -1,4 +1,16 @@
-//Efeito da Imagem do HERO 
+// ====================================================
+// GRID RÁDIO ONLINE - SCRIPT PRINCIPAL
+// ====================================================
+// Este script controla todas as funcionalidades do Grid Rádio Online:
+// - Reprodução de rádios online
+// - Gerenciamento de favoritos e histórico
+// - Busca e filtragem de estações
+// - Interface do usuário e controles de áudio
+// ====================================================
+
+// ====================================================
+// EFEITO DA IMAGEM DO HERO
+// ====================================================
 document.addEventListener('DOMContentLoaded', function() {
     const heroSection = document.getElementById('hero-section');
     
@@ -15,19 +27,21 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ===============================
+// ====================================================
 // CONFIGURAÇÕES DE SEGURANÇA E UTILS
-// ===============================
+// ====================================================
 const SECURITY_CONFIG = {
     ALLOWED_PROTOCOLS: ['http:', 'https:'],
-    ALLOWED_AUDIO_DOMAINS: ['cast.streamhosting.rs', 's2.voscast.com', 'streaming.radio.co', 'stream.zeno.fm', 'live.hunter.fm', 'icecast-fan.musicradio.com', 'live.stream', 'stream.host', 'stream.serv', 'stream.audio', 'stream.radio'],
+    ALLOWED_AUDIO_DOMAINS: ['cast.streamhosting.rs', 's2.voscast.com', 'streaming.radio.co', 
+                             'stream.zeno.fm', 'live.hunter.fm', 'icecast-fan.musicradio.com', 
+                             'live.stream', 'stream.host', 'stream.serv', 'stream.audio', 'stream.radio'],
     BLOCKED_DOMAINS: ['script', 'virus', 'malware', 'bad', 'evil', 'spam', 'ad', 'tracker', 'analytic', 'miner'],
     SUSPICIOUS_PATTERNS: [/(\.exe|\.js|\.php|\.cgi|\.pl)$/i, /eval\(|Function\(|document\.write/i]
 };
 
-// ==================
+// ====================================================
 // VARIÁVEIS GLOBAIS
-// ==================
+// ====================================================
 const API_BASE = "https://de1.api.radio-browser.info/json";
 const radiosContainer = document.getElementById("radios");
 const favoritesList = document.getElementById("favoritesList");
@@ -64,11 +78,15 @@ const loadMoreBtn = document.getElementById('loadMoreBtn');
 const securityStatusEl = document.getElementById("securityStatus");
 const playerFixedEl = document.querySelector('.player-fixed');
 
-// Variáveis de estado do áudio
+// ====================================================
+// VARIÁVEIS DE ESTADO DO ÁUDIO
+// ====================================================
 let allGenreTags = [];
 let page = 1;
 let loading = false;
-let currentQuery = "", currentCountry = "", currentTag = "";
+let currentQuery = "";
+let currentCountry = "";
+let currentTag = "";
 let currentRadio = null;
 let favorites = [];
 let history = [];
@@ -84,111 +102,23 @@ let retryTimeout = null;
 const audioPlayer = new Audio();
 audioPlayer.volume = 0.8;
 
-// =====================
-// CONTEÚDO DAS PÁGINAS
-// =====================
-const pageContents = {
-    privacy: `
-        <h2><i class="fas fa-user-shield"></i> Política de Privacidade</h2>
-        
-        <h3>1. Dados Coletados</h3>
-        <p>O Grid Rádio Online não coleta dados pessoais identificáveis. Utilizamos apenas o <strong>localStorage</strong> do seu navegador para salvar:</p>
-        <ul>
-            <li>Rádios Favoritas</li>
-            <li>Histórico de Reprodução</li>
-            <li>Tema (Claro/Escuro)</li>
-            <li>Preferências de Volume</li>
-        </ul>
-        <p>Estes dados ficam armazenados exclusivamente no seu dispositivo e nunca são enviados para nossos servidores.</p>
-        <h3>2. Fontes de Rádio</h3>
-        <p>Usamos a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a> para buscar listas de estações.</p>
-        <h3>3. Segurança</h3>
-        <p>Implementamos validações básicas de URL e sanitização de HTML para mitigar riscos de segurança, mas você é responsável por verificar a segurança das estações que decide ouvir. Usamos HTTPS e validamos fontes externas para proteger suas informações contra acesso não autorizado.</p>
-        <h3>6. Contato</h3>
-        <p>Para questões sobre privacidade, entre em contato: <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link email-link">juliogonzales.dev@proton.me</a></p>
-    `,
-    terms: `
-        <h2><i class="fas fa-file-signature"></i> Termos de Uso</h2>
-        <h3>1. Aceitação dos Termos</h3>
-        <p>Ao usar o Grid Rádio Online, você concorda com estes termos de uso.</p>
-        <h3>2. Serviço</h3>
-        <p>O Grid Rádio Online é um agregador de estações de rádio online. Não hospedamos nenhum conteúdo de áudio.</p>
-        <h3>3. Uso Aceitável</h3>
-        <p>Você concorda em usar o serviço apenas para fins legais e de acordo com todas as leis aplicáveis.</p>
-        <h3>4. Direitos Autorais</h3>
-        <p>Todo o conteúdo de áudio transmitido pertence às respectivas estações de rádio. Respeite os direitos autorais.</p>
-        <h3>5. Limitação de Responsabilidade</h3>
-        <p>Não nos responsabilizamos por:</p>
-        <ul>
-            <li>Interrupções no serviço</li>
-            <li>Conteúdo das estações de rádio</li>
-            <li>Problemas técnicos nas transmissões</li>
-            </ul>
-        <h3>6. Modificações</h3>
-        <p>Reservamo-nos o direito de modificar estes termos a qualquer momento.</p>
-    `,
-    dmca: `
-        <h2><i class="fas fa-gavel"></i> Política DMCA</h2>
-        
-        <div class="educational-notice" style="background: var(--player-color); padding: 12px; border-radius: 8px; margin: 15px 0; border-left: 3px solid var(--accent-primary);">
-            <p style="margin: 0; font-size: 0.9rem;">
-                <strong><i class="fas fa-graduation-cap"></i> Nota:</strong> Este projeto tem caráter educacional e utiliza a API pública do Radio Browser para fins de aprendizado em desenvolvimento web.
-            </p>
-        </div>
-        
-        <h3>Notificação de Infração de Direitos Autorais</h3>
-        <p>O Grid Rádio Online respeita os direitos de propriedade intelectual. Se você acredita que seu trabalho foi copiado de forma que constitui violação de direitos autorais, envie uma notificação para:</p>
-        
-        <p><strong>Email:</strong> <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link">juliogonzales.dev@proton.me</a></p>
-        
-        <h3>Informações Requeridas</h3>
-        <p>Sua notificação deve incluir:</p>
-        <ul>
-            <li>Assinatura do proprietário dos direitos autorais</li>
-            <li>Identificação do trabalho protegido</li>
-            <li>Identificação do material alegadamente infringente</li>
-            <li>Suas informações de contato</li>
-            <li>Declaração de boa fé</li>
-        </ul>
-        
-        <h3>Ação</h3>
-        <p>Upon receipt of a valid DMCA notice, we will promptly remove or disable access to the allegedly infringing content.</p>
-        
-        <div style="font-size: 0.8rem; color: color-mix(in srgb, var(--text-color) 60%, transparent); text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid color-mix(in srgb, var(--text-color) 20%, transparent);">
-            <p><strong>Projeto educacional</strong> • Desenvolvido para fins de aprendizado</p>
-            
-        </div>
-    `,
-    about: `
-        <h2><i class="fas fa-circle-info"></i> Sobre o Grid Rádio Online</h2>
-        <p>O Grid Rádio Online é um projeto de caráter educacional de código aberto, criado com o objetivo de oferecer uma interface simples e moderna para acessar rádios de todo o mundo, utilizando a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a>.</p>
-        <p>Este projeto foca em:</p>
-        <ul>
-            <li><strong>Desempenho:</strong> Carregamento rápido e eficiente.</li>
-            <li><strong>Design Moderno:</strong> Interface amigável e responsiva.</li>
-            <li><strong>Privacidade:</strong> Não coleta dados pessoais.</li>
-        </ul>
-        <p>Código fonte disponível no <a href="https://github.com/Julioheyner" target="_blank" class="site-link gradient-link"><i class="fab fa-github"></i> GitHub</a>.</p>
-        <div class="socials">
-    <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank" class="social-icon">
-        <i class="fab fa-github"></i>
-    </a>
-    <a href="https://www.linkedin.com/in/julio-gonzales-31a723379" title="LinkedIn" rel="noopener noreferrer" target="_blank" class="social-icon">
-        <i class="fab fa-linkedin"></i>
-    </a>
-    <a href="mailto:juliogonzales.dev@proton.me" title="Email" class="social-icon">
-        <i class="fas fa-envelope"></i>
-    </a>
-</div>
-    `
-};
+// SVG de notas musicais brancas (fallback)
+const MUSIC_ICON_SVG = 'data:image/svg+xml;base64,' + btoa(`
+    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'>
+        <path d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z'/>
+    </svg>
+`);
 
-// ======================
+const DEFAULT_ICON = 'https://cdn-icons-png.flaticon.com/512/727/727245.png';
+
+// ====================================================
 // FUNÇÕES DE UTILIDADE
-// ======================
+// ====================================================
 
 /**
- * Função para sanitizar HTML
+ * Sanitiza strings HTML para prevenir XSS
+ * @param {string} str - String a ser sanitizada
+ * @returns {string} String sanitizada
  */
 function sanitizeHTML(str) {
     if (!str) return '';
@@ -198,15 +128,14 @@ function sanitizeHTML(str) {
 }
 
 /**
- * Funções de localStorage seguras - VERSÃO CORRIGIDA
+ * Salva dados no localStorage com tratamento de erros
+ * @param {string} key - Chave de armazenamento
+ * @param {any} value - Valor a ser salvo
  */
 function secureLocalStorageSet(key, value) {
     try {
-        
         if (Array.isArray(value)) {
-            // Para cada item do array, garantir que seja um objeto serializável
             const serializableValue = value.map(item => {
-                // Criar um objeto simples com apenas os dados necessários
                 const simpleItem = {
                     name: item.name || '',
                     url: item.url || '',
@@ -215,7 +144,6 @@ function secureLocalStorageSet(key, value) {
                     tags: item.tags || ''
                 };
                 
-                // Incluir a data apenas para histórico
                 if (item.date) {
                     simpleItem.date = item.date;
                 }
@@ -226,10 +154,8 @@ function secureLocalStorageSet(key, value) {
         } else {
             localStorage.setItem(key, JSON.stringify(value));
         }
-        console.log(`✅ Dados salvos em localStorage (${key}):`, value.length || value);
     } catch (error) {
         console.error('❌ Erro ao salvar no localStorage:', error);
-        // Tentar limpar o localStorage se estiver cheio
         try {
             localStorage.clear();
             if (Array.isArray(value)) {
@@ -240,7 +166,7 @@ function secureLocalStorageSet(key, value) {
                     country: item.country || '',
                     tags: item.tags || ''
                 }));
-                localStorage.setItem(key, JSON.stringify(serializableValue.slice(0, 10))); // Salvar apenas os 10 primeiros
+                localStorage.setItem(key, JSON.stringify(serializableValue.slice(0, 10)));
             }
         } catch (e) {
             console.error('Não foi possível limpar o localStorage:', e);
@@ -248,25 +174,27 @@ function secureLocalStorageSet(key, value) {
     }
 }
 
+/**
+ * Recupera dados do localStorage com tratamento de erros
+ * @param {string} key - Chave de armazenamento
+ * @param {any} defaultValue - Valor padrão caso falhe
+ * @returns {any} Dados recuperados
+ */
 function secureLocalStorageGet(key, defaultValue) {
     try {
         const data = localStorage.getItem(key);
         if (!data) {
-            console.log(`📭 Nenhum dado encontrado para ${key}, usando valor padrão`);
             return defaultValue;
         }
         
         const parsed = JSON.parse(data);
         
         if (Array.isArray(parsed)) {
-            // Aplicar sanitização em cada item do array
             const sanitizedArray = parsed.map(item => {
-                // Verificar se o item tem a estrutura esperada
                 if (typeof item !== 'object' || item === null) {
                     return null;
                 }
                 
-                // Garantir que todos os campos necessários existam
                 const sanitizedItem = sanitizeRadioData({
                     name: item.name || '',
                     url: item.url || '',
@@ -275,23 +203,19 @@ function secureLocalStorageGet(key, defaultValue) {
                     tags: item.tags || ''
                 });
                 
-                // Preservar a data para histórico
                 if (item.date) {
                     sanitizedItem.date = item.date;
                 }
                 
                 return sanitizedItem;
-            }).filter(item => item !== null && item.url); // Remover itens inválidos
+            }).filter(item => item !== null && item.url);
             
-            console.log(`✅ Dados recuperados de localStorage (${key}):`, sanitizedArray.length, 'itens');
             return sanitizedArray;
         }
         
-        console.log(`✅ Dado recuperado de localStorage (${key}):`, parsed);
         return parsed;
     } catch (error) {
         console.error('❌ Erro ao recuperar do localStorage:', error);
-        // Tentar limpar dados corrompidos
         try {
             localStorage.removeItem(key);
         } catch (e) {
@@ -302,37 +226,37 @@ function secureLocalStorageGet(key, defaultValue) {
 }
 
 /**
- * Validação de URL
+ * Valida se uma URL é segura
+ * @param {string} url - URL a ser validada
+ * @returns {boolean} True se a URL for válida e segura
  */
 function validateURL(url) {
     try {
         const urlObj = new URL(url);
         if (!SECURITY_CONFIG.ALLOWED_PROTOCOLS.includes(urlObj.protocol)) {
-            console.warn('Protocolo não permitido:', urlObj.protocol);
             return false;
         }
         for (const pattern of SECURITY_CONFIG.SUSPICIOUS_PATTERNS) {
             if (pattern.test(url)) {
-                console.warn('URL contém padrão suspeito:', pattern);
                 return false;
             }
         }
         const domain = urlObj.hostname.toLowerCase();
         for (const blocked of SECURITY_CONFIG.BLOCKED_DOMAINS) {
             if (domain.includes(blocked)) {
-                console.warn('Domínio bloqueado:', domain);
                 return false;
             }
         }
         return true;
     } catch (error) {
-        console.warn('URL inválida:', error);
         return false;
     }
 }
 
 /**
- * Verifica se URL é segura para áudio
+ * Verifica se uma URL é segura para reprodução de áudio
+ * @param {string} url - URL a ser verificada
+ * @returns {boolean} True se for uma URL de áudio segura
  */
 function isSafeAudioURL(url) {
     if (!validateURL(url)) return false;
@@ -349,24 +273,24 @@ function isSafeAudioURL(url) {
         }
         if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
             const path = urlObj.pathname.toLowerCase();
-            if (path.includes('.mp3') || path.includes('.ogg') || path.includes('.wav') || path.includes('.aac') || path.includes('.m3u') || path.includes('.pls') || path.includes('/stream') || path.includes('/live') || path.includes('/radio')) {
+            if (path.includes('.mp3') || path.includes('.ogg') || path.includes('.wav') || 
+                path.includes('.aac') || path.includes('.m3u') || path.includes('.pls') || 
+                path.includes('/stream') || path.includes('/live') || path.includes('/radio')) {
                 return true;
             }
         }
-        console.warn('Domínio de áudio não verificado:', domain);
         return false;
     } catch (error) {
-        console.warn('Erro ao verificar URL de áudio:', error);
         return false;
     }
 }
 
 /**
- * Sanitiza dados da rádio - VERSÃO CORRIGIDA
+ * Sanitiza dados de uma rádio
+ * @param {Object} radio - Dados da rádio
+ * @returns {Object} Dados sanitizados
  */
 function sanitizeRadioData(radio) {
-    const DEFAULT_ICON = 'https://cdn-icons-png.flaticon.com/512/727/727245.png';
-    
     if (!radio || typeof radio !== 'object') {
         return {
             name: 'Rádio Desconhecida',
@@ -377,19 +301,14 @@ function sanitizeRadioData(radio) {
         };
     }
     
-    // Validar e limpar o nome da rádio
     const name = sanitizeHTML(radio.name) || 'Rádio Desconhecida';
-    
-    // Validar URL de áudio
     const url = radio.url || '';
     
-    //Processar favicon de forma mais robusta
     let favicon = DEFAULT_ICON;
     
     if (radio.favicon && typeof radio.favicon === 'string') {
         const faviconStr = radio.favicon.trim();
         
-        // Verificar se é uma URL válida
         if (faviconStr.length > 5 && 
             !faviconStr.includes('undefined') && 
             !faviconStr.includes('null') &&
@@ -397,18 +316,12 @@ function sanitizeRadioData(radio) {
             faviconStr !== 'http://' &&
             faviconStr !== MUSIC_ICON_SVG) {
             
-            // Se começa com //, converter para https:
             if (faviconStr.startsWith('//')) {
                 favicon = 'https:' + faviconStr;
-            }
-            // Se já é uma URL completa
-            else if (faviconStr.startsWith('http')) {
+            } else if (faviconStr.startsWith('http')) {
                 favicon = faviconStr;
-            }
-            // Se é um caminho relativo, tentar criar URL completa
-            else if (faviconStr.startsWith('/')) {
+            } else if (faviconStr.startsWith('/')) {
                 try {
-                    // Tentar obter o domínio da URL de áudio
                     if (radio.url) {
                         const urlObj = new URL(radio.url);
                         const domain = urlObj.protocol + '//' + urlObj.hostname;
@@ -431,24 +344,16 @@ function sanitizeRadioData(radio) {
 }
 
 /**
- * SVG de notas musicais brancas (fallback) - definido como constante global
- */
-const MUSIC_ICON_SVG = 'data:image/svg+xml;base64,' + btoa(`
-    <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'>
-        <path d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z'/>
-    </svg>
-`);
-
-const DEFAULT_ICON = 'https://cdn-icons-png.flaticon.com/512/727/727245.png';
-
-/**
  * Gera HTML para a imagem da rádio com fallback
+ * @param {Object} radioData - Dados da rádio
+ * @param {string} size - Tamanho da imagem (normal, small, player)
+ * @returns {string} HTML da imagem
  */
 function getRadioImageHTML(radioData, size = 'normal') {
     const sizes = {
         'normal': { width: 90, height: 90, padding: '15px' },
         'small': { width: 50, height: 50, padding: '8px' },
-        'player': { width: 60, height: 60, padding: '12px' }
+        'player': { width: 60, height: 60, padding: '0' }
     };
     
     const sizeConfig = sizes[size] || sizes.normal;
@@ -459,8 +364,7 @@ function getRadioImageHTML(radioData, size = 'normal') {
                           radioData.favicon.includes('null') ||
                           radioData.favicon.includes('data:image/svg+xml');
     
-    if (isDefaultIcon) {
-        // Usar ícone musical SVG com fundo gradiente
+    if (isDefaultIcon && size !== 'player') {
         return `
             <img src="${MUSIC_ICON_SVG}" 
                  alt="${radioData.name} logo"
@@ -481,17 +385,38 @@ function getRadioImageHTML(radioData, size = 'normal') {
                  "
                  onerror="this.onerror=null; this.src='${MUSIC_ICON_SVG}'; this.style.background='var(--accent-gradient)'; this.style.objectFit='contain'; this.style.padding='${sizeConfig.padding}';">
         `;
-    } else {
-        // Usar favicon real
+    } else if (isDefaultIcon && size === 'player') {
         return `
-            <img src="${radioData.favicon}" 
+            <img src="${MUSIC_ICON_SVG}" 
                  alt="${radioData.name} logo"
+                 class="player-cover radio-icon-default"
                  width="${sizeConfig.width}"
                  height="${sizeConfig.height}"
                  style="
                     border-radius: 50%;
-                    border: 3px solid var(--accent-primary);
-                    box-shadow: 0 0 20px color-mix(in srgb, var(--accent-primary) 35%, transparent);
+                    border: 2px solid var(--accent-primary);
+                    box-shadow: 0 0 15px color-mix(in srgb, var(--accent-primary) 25%, transparent);
+                    background: var(--accent-gradient) !important;
+                    object-fit: cover !important;
+                    padding: 0 !important;
+                    min-width: ${sizeConfig.width}px !important;
+                    min-height: ${sizeConfig.height}px !important;
+                    display: block;
+                    flex-shrink: 0;
+                 "
+                 onerror="this.onerror=null; this.src='${MUSIC_ICON_SVG}'; this.classList.add('radio-icon-default'); this.style.background='var(--accent-gradient)'; this.style.objectFit='cover'; this.style.padding='0';">
+        `;
+    } else {
+        return `
+            <img src="${radioData.favicon}" 
+                 alt="${radioData.name} logo"
+                 class="${size === 'player' ? 'player-cover' : ''}"
+                 width="${sizeConfig.width}"
+                 height="${sizeConfig.height}"
+                 style="
+                    border-radius: 50%;
+                    border: ${size === 'player' ? '2px' : '3px'} solid var(--accent-primary);
+                    box-shadow: 0 0 ${size === 'player' ? '15px' : '20px'} color-mix(in srgb, var(--accent-primary) ${size === 'player' ? '25%' : '35%'}, transparent);
                     background: transparent;
                     object-fit: cover;
                     padding: 0;
@@ -500,46 +425,50 @@ function getRadioImageHTML(radioData, size = 'normal') {
                     display: block;
                     flex-shrink: 0;
                  "
-                 onerror="this.onerror=null; this.src='${MUSIC_ICON_SVG}'; this.classList.add('radio-icon-default'); this.style.background='var(--accent-gradient)'; this.style.objectFit='contain'; this.style.padding='${sizeConfig.padding}';">
+                 onerror="this.onerror=null; this.src='${MUSIC_ICON_SVG}'; this.classList.add('radio-icon-default'); this.style.background='var(--accent-gradient)'; this.style.objectFit='${size === 'player' ? 'cover' : 'contain'}'; this.style.padding='${size === 'player' ? '0' : sizeConfig.padding}';">
         `;
     }
 }
 
 /**
  * Limpa o nome do gênero para exibição
+ * @param {string} tagName - Nome original da tag
+ * @returns {string} Nome formatado do gênero
  */
 function cleanGenreName(tagName) {
-  if (!tagName) return '';
-  const specialMapping = {
-    'rockpop': 'Rock & Pop',
-    'electronic': 'Música Eletrônica',
-    'dancepop': 'Dance Pop',
-    'classical': 'Música Clássica',
-    'oldies': 'Clássicos (Oldies)',
-    'talk': 'Notícias/Debate',
-    'christian': 'Gospel/Cristã',
-    'top40': 'Top 40/Pop Charts',
-    '90s': 'Anos 90',
-    '80s': 'Anos 80',
-    '70s': 'Anos 70',
-    'vallenato': 'Vallenato (Colômbia)'
-  };
- 
-  const normalizedTagName = tagName.toLowerCase();
-  if (specialMapping[normalizedTagName]) {
-    return specialMapping[normalizedTagName];
-  }
- 
-  let cleaned = tagName.replace(/[-_]/g, ' ');
-  cleaned = cleaned.toLowerCase().split(' ').map((word) => {
-    return word.charAt(0).toUpperCase() + word.slice(1);
-  }).join(' ');
- 
-  return cleaned;
+    if (!tagName) return '';
+    const specialMapping = {
+        'rockpop': 'Rock & Pop',
+        'electronic': 'Música Eletrônica',
+        'dancepop': 'Dance Pop',
+        'classical': 'Música Clássica',
+        'oldies': 'Clássicos (Oldies)',
+        'talk': 'Notícias/Debate',
+        'christian': 'Gospel/Cristã',
+        'top40': 'Top 40/Pop Charts',
+        '90s': 'Anos 90',
+        '80s': 'Anos 80',
+        '70s': 'Anos 70',
+        'vallenato': 'Vallenato (Colômbia)'
+    };
+    
+    const normalizedTagName = tagName.toLowerCase();
+    if (specialMapping[normalizedTagName]) {
+        return specialMapping[normalizedTagName];
+    }
+    
+    let cleaned = tagName.replace(/[-_]/g, ' ');
+    cleaned = cleaned.toLowerCase().split(' ').map((word) => {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }).join(' ');
+    
+    return cleaned;
 }
 
 /**
- * Normaliza o texto removendo acentos
+ * Normaliza texto removendo acentos
+ * @param {string} text - Texto a ser normalizado
+ * @returns {string} Texto normalizado
  */
 function normalizeText(text) {
     if (!text) return '';
@@ -547,86 +476,79 @@ function normalizeText(text) {
 }
 
 /**
- * Função para atualizar contadores dos botões
+ * Atualiza contadores dos botões de favoritos e histórico
  */
 function updateButtonCounters() {
-  try {
-    // Usar as variáveis globais já existentes
-    const favCount = Array.isArray(favorites) ? favorites.length : 0;
-    const histCount = Array.isArray(history) ? history.length : 0;
-    
-    console.log('Atualizando contadores:', { favoritos: favCount, histórico: histCount });
-    
-    // Atualizar botão de favoritos
-    const favBtn = document.getElementById('openFavorites');
-    if (favBtn) {
-      let favBadge = favBtn.querySelector('.badge');
-      
-      if (!favBadge) {
-        favBadge = document.createElement('span');
-        favBadge.className = 'badge';
-        favBadge.id = 'favoritesBadge';
-        favBtn.appendChild(favBadge);
-      }
-      
-      favBadge.textContent = favCount > 99 ? '99+' : favCount.toString();
-      favBadge.setAttribute('data-count', favCount);
-      favBadge.style.display = favCount > 0 ? 'flex' : 'none';
-      
-      // Adicionar título para acessibilidade
-      favBadge.setAttribute('title', `${favCount} rádio${favCount !== 1 ? 's' : ''} favorita${favCount !== 1 ? 's' : ''}`);
+    try {
+        const favCount = Array.isArray(favorites) ? favorites.length : 0;
+        const histCount = Array.isArray(history) ? history.length : 0;
+        
+        // Atualizar botão de favoritos
+        const favBtn = document.getElementById('openFavorites');
+        if (favBtn) {
+            let favBadge = favBtn.querySelector('.badge');
+            
+            if (!favBadge) {
+                favBadge = document.createElement('span');
+                favBadge.className = 'badge';
+                favBadge.id = 'favoritesBadge';
+                favBtn.appendChild(favBadge);
+            }
+            
+            favBadge.textContent = favCount > 99 ? '99+' : favCount.toString();
+            favBadge.setAttribute('data-count', favCount);
+            
+            if (favCount > 0) {
+                favBadge.style.display = 'flex';
+                favBadge.style.visibility = 'visible';
+                favBadge.style.opacity = '1';
+            } else {
+                favBadge.style.display = 'none';
+                favBadge.style.visibility = 'hidden';
+                favBadge.style.opacity = '0';
+            }
+            
+            favBadge.setAttribute('title', `${favCount} rádio${favCount !== 1 ? 's' : ''} favorita${favCount !== 1 ? 's' : ''}`);
+        }
+        
+        // Atualizar botão de histórico
+        const histBtn = document.getElementById('openHistory');
+        if (histBtn) {
+            let histBadge = histBtn.querySelector('.badge');
+            
+            if (!histBadge) {
+                histBadge = document.createElement('span');
+                histBadge.className = 'badge';
+                histBadge.id = 'historyBadge';
+                histBtn.appendChild(histBadge);
+            }
+            
+            histBadge.textContent = histCount > 99 ? '99+' : histCount.toString();
+            histBadge.setAttribute('data-count', histCount);
+            
+            if (histCount > 0) {
+                histBadge.style.display = 'flex';
+                histBadge.style.visibility = 'visible';
+                histBadge.style.opacity = '1';
+            } else {
+                histBadge.style.display = 'none';
+                histBadge.style.visibility = 'hidden';
+                histBadge.style.opacity = '0';
+            }
+            
+            histBadge.setAttribute('title', `${histCount} rádio${histCount !== 1 ? 's' : ''} no histórico`);
+        }
+    } catch (error) {
+        console.error('❌ Erro ao atualizar contadores:', error);
     }
-    
-    // Atualizar botão de histórico
-    const histBtn = document.getElementById('openHistory');
-    if (histBtn) {
-      let histBadge = histBtn.querySelector('.badge');
-      
-      if (!histBadge) {
-        histBadge = document.createElement('span');
-        histBadge.className = 'badge';
-        histBadge.id = 'historyBadge';
-        histBtn.appendChild(histBadge);
-      }
-      
-      histBadge.textContent = histCount > 99 ? '99+' : histCount.toString();
-      histBadge.setAttribute('data-count', histCount);
-      histBadge.style.display = histCount > 0 ? 'flex' : 'none';
-      
-      // Adicionar título para acessibilidade
-      histBadge.setAttribute('title', `${histCount} rádio${histCount !== 1 ? 's' : ''} no histórico`);
-    }
-    
-  } catch (error) {
-    console.error('Erro ao atualizar contadores:', error);
-  }
 }
 
-/**
- * Função para debug das imagens
- */
-function debugRadioImages() {
-    console.log('=== DEBUG RADIO IMAGES ===');
-    const radios = document.querySelectorAll('.radio-card img');
-    
-    radios.forEach((img, index) => {
-        console.log(`Imagem ${index + 1}:`);
-        console.log('- Source:', img.src);
-        console.log('- Current Source:', img.currentSrc);
-        console.log('- Class:', img.className);
-        console.log('- Complete:', img.complete);
-        console.log('- Natural width:', img.naturalWidth);
-        console.log('- Natural height:', img.naturalHeight);
-        console.log('---');
-    });
-}
-
-// ===================
-// CONTROLE DE ÁUDIO 
-// ===================
+// ====================================================
+// CONTROLE DE ÁUDIO
+// ====================================================
 
 /**
- * Configurar event listeners do áudio
+ * Configura event listeners do áudio
  */
 function setupAudioEventListeners() {
     audioPlayer.onerror = null;
@@ -640,7 +562,7 @@ function setupAudioEventListeners() {
 }
 
 /**
- * Iniciar monitoramento de saúde do áudio
+ * Inicia monitoramento de saúde do áudio
  */
 function startAudioHealthCheck() {
     stopAudioHealthCheck();
@@ -677,7 +599,7 @@ function startAudioHealthCheck() {
 }
 
 /**
- * Parar monitoramento de saúde
+ * Para monitoramento de saúde do áudio
  */
 function stopAudioHealthCheck() {
     if (audioPlayer.healthCheckInterval) {
@@ -688,7 +610,7 @@ function stopAudioHealthCheck() {
 }
 
 /**
- * Tentar recuperar o áudio
+ * Tenta recuperar o áudio em caso de falha
  */
 function attemptAudioRecovery() {
     if (!currentRadio || audioErrorCount >= MAX_AUDIO_ERRORS) {
@@ -722,7 +644,8 @@ function attemptAudioRecovery() {
 }
 
 /**
- * Manipular erro de áudio
+ * Manipula erro de áudio
+ * @param {Event} error - Evento de erro
  */
 function handleAudioError(error) {
     console.error("Erro no player de áudio:", error);
@@ -741,6 +664,9 @@ function handleAudioError(error) {
     }
 }
 
+/**
+ * Manipula fim natural do áudio
+ */
 function handleAudioEnded() {
     console.log("Áudio terminou naturalmente");
     if (isPlaying) {
@@ -749,11 +675,17 @@ function handleAudioEnded() {
     }
 }
 
+/**
+ * Manipula evento canplay do áudio
+ */
 function handleAudioCanPlay() {
     console.log("Áudio pronto para reprodução");
     audioErrorCount = 0;
 }
 
+/**
+ * Manipula evento stalled do áudio
+ */
 function handleAudioStalled() {
     console.log("Áudio travado, tentando recuperar...");
     if (isPlaying) {
@@ -762,10 +694,16 @@ function handleAudioStalled() {
     }
 }
 
+/**
+ * Manipula evento waiting do áudio
+ */
 function handleAudioWaiting() {
     console.log("Áudio aguardando dados...");
 }
 
+/**
+ * Inicia reprodução do áudio
+ */
 function playAudio() {
     playerFixedEl.classList.remove('hidden');
     isUserInteraction = true;
@@ -790,7 +728,6 @@ function playAudio() {
         }
         
         startAudioHealthCheck();
-        
     }).catch(error => {
         console.error("Erro ao tentar tocar a rádio:", error);
         
@@ -805,6 +742,9 @@ function playAudio() {
     });
 }
 
+/**
+ * Pausa reprodução do áudio
+ */
 function pauseAudio() {
     audioPlayer.pause();
     isPlaying = false;
@@ -813,12 +753,18 @@ function pauseAudio() {
     stopAudioHealthCheck();
     updateRadioCards();
     
+    // Atualizar botão flutuante se estiver visível
+    updateReopenPlayerButton();
+    
     if (retryTimeout) {
         clearTimeout(retryTimeout);
         retryTimeout = null;
     }
 }
 
+/**
+ * Alterna entre play e pause
+ */
 function togglePlayPause() {
     if (isPlaying) {
         pauseAudio();
@@ -832,7 +778,14 @@ function togglePlayPause() {
     }
 }
 
-// Tocar rádio com verificação de segurança
+/**
+ * Toca uma rádio com verificação de segurança
+ * @param {string} name - Nome da rádio
+ * @param {string} url - URL da rádio
+ * @param {string} favicon - URL do ícone
+ * @param {string} country - País da rádio
+ * @param {string} tags - Tags/gêneros da rádio
+ */
 function playRadio(name, url, favicon, country, tags) {
     if (retryTimeout) {
         clearTimeout(retryTimeout);
@@ -859,29 +812,38 @@ function playRadio(name, url, favicon, country, tags) {
 
     setupAudioEventListeners();
 
+    // Remover duplicados do histórico mantendo apenas o mais recente
     const existingIndex = history.findIndex(item => item.url === url);
     if (existingIndex !== -1) {
         history.splice(existingIndex, 1);
     }
     
+    // Adicionar ao histórico
     const historyItem = {
         ...sanitizedRadio,
         url: url,
         date: new Date().toISOString()
     };
     history.unshift(historyItem);
-    if (history.length > 20) history.pop();
+    
+    // Limitar histórico a 100 itens
+    if (history.length > 100) {
+        history.pop();
+    }
+    
+    // Salvar no localStorage
     secureLocalStorageSet('history', history);
+    
+    // Atualizar UI do histórico
     updateHistoryUI();
     
-    // ATUALIZAR CONTADOR DE HISTÓRICO
+    // Atualizar contador de histórico
     updateButtonCounters();
 
     nowPlaying.textContent = `Carregando: ${sanitizedRadio.name}`;
     playerSubtitle.textContent = `${sanitizedRadio.country} • ${cleanGenreName(sanitizedRadio.tags)}`;
     
     // Forçar a atualização da imagem no player
-    // Remover o elemento existente primeiro
     const playerInfo = document.querySelector('.player-info');
     if (playerInfo) {
         const oldCover = document.getElementById('playerCover');
@@ -918,12 +880,18 @@ function playRadio(name, url, favicon, country, tags) {
     }, 500);
 }
 
-// ===================
+// ====================================================
 // FUNÇÕES PRINCIPAIS
-// ===================
+// ====================================================
 
-//Buscar rádios
-async function fetchRadios(query="", country="", tag="", append=false) {
+/**
+ * Busca rádios da API
+ * @param {string} query - Termo de busca
+ * @param {string} country - País para filtrar
+ * @param {string} tag - Tag/gênero para filtrar
+ * @param {boolean} append - Se deve adicionar aos resultados existentes
+ */
+async function fetchRadios(query = "", country = "", tag = "", append = false) {
     if (loading) return;
     loading = true;
 
@@ -989,7 +957,6 @@ async function fetchRadios(query="", country="", tag="", append=false) {
         }
 
         page++;
-
     } catch (err) {
         console.error("Erro ao buscar rádios:", err);
         if (!append) {
@@ -1004,15 +971,15 @@ async function fetchRadios(query="", country="", tag="", append=false) {
 }
 
 /**
- * Atualizar botão "Ver mais"
+ * Atualiza botão "Ver mais"
  */
 function updateLoadMoreButton() {
     const isAllTabActive = document.querySelector('.tab[data-tab="all"]').classList.contains('active');
 
     if (loading) {
-         loadMoreBtn.disabled = true;
-         loadMoreBtn.innerHTML = '<div class="loader"></div> Carregando...';
-         loadMoreBtn.classList.remove('hidden');
+        loadMoreBtn.disabled = true;
+        loadMoreBtn.innerHTML = '<div class="loader"></div> Carregando...';
+        loadMoreBtn.classList.remove('hidden');
     } else if (hasMoreResults && isAllTabActive) {
         loadMoreBtn.disabled = false;
         loadMoreBtn.innerHTML = '<i class="fas fa-plus"></i> Ver mais rádios';
@@ -1024,7 +991,10 @@ function updateLoadMoreButton() {
     }
 }
 
-// Função para atualizar o status de segurança no player
+/**
+ * Atualiza o status de segurança no player
+ * @param {string} url - URL a ser verificada
+ */
 function updateSecurityStatus(url) {
     const isSafe = isSafeAudioURL(url);
     if (isSafe) {
@@ -1036,7 +1006,13 @@ function updateSecurityStatus(url) {
     }
 }
 
-// ⭐ Gerenciar favoritos
+// ====================================================
+// GERENCIAMENTO DE FAVORITOS
+// ====================================================
+
+/**
+ * Alterna rádio atual nos favoritos
+ */
 function toggleFavoriteRadio() {
     if (!currentRadio) return;
     const index = favorites.findIndex(fav => fav.url === currentRadio.url);
@@ -1053,16 +1029,22 @@ function toggleFavoriteRadio() {
     updateFavoritesUI();
     updateRadioCards();
     
-    // ATUALIZAR CONTADOR
+    // Atualizar contador
     updateButtonCounters();
 }
 
+/**
+ * Atualiza botão de favoritos baseado no estado atual
+ */
 function updateFavoriteButton() {
     if (!currentRadio) return;
     const isFavorite = favorites.some(fav => fav.url === currentRadio.url);
     toggleFavorite.innerHTML = isFavorite ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
 }
 
+/**
+ * Atualiza interface de favoritos
+ */
 function updateFavoritesUI() {
     if (favorites.length === 0) {
         favoritesList.innerHTML = "<p style='text-align:center; padding: 20px;'>⭐ Nenhuma rádio favorita ainda.</p>";
@@ -1097,6 +1079,10 @@ function updateFavoritesUI() {
     favoritesList.innerHTML = header + html;
 }
 
+/**
+ * Remove rádio dos favoritos
+ * @param {string} url - URL da rádio a remover
+ */
 function removeFavorite(url) {
     favorites = favorites.filter(fav => fav.url !== url);
     secureLocalStorageSet('favorites', favorites);
@@ -1105,10 +1091,13 @@ function removeFavorite(url) {
     updateRadioCards();
     showNotification("⭐ Rádio removida dos favoritos", "success");
     
-    // ATUALIZAR CONTADOR
+    // Atualizar contador
     updateButtonCounters();
 }
 
+/**
+ * Limpa todos os favoritos
+ */
 function clearFavoritesAction() {
     favorites = [];
     secureLocalStorageSet('favorites', favorites);
@@ -1117,11 +1106,17 @@ function clearFavoritesAction() {
     updateRadioCards();
     showNotification("⭐ Todos os favoritos removidos", "success");
     
-    // ATUALIZAR CONTADOR
+    // Atualizar contador
     updateButtonCounters();
 }
 
-//  Histórico
+// ====================================================
+// GERENCIAMENTO DE HISTÓRICO
+// ====================================================
+
+/**
+ * Atualiza interface de histórico
+ */
 function updateHistoryUI() {
     if (history.length === 0) {
         historyList.innerHTML = "<p style='text-align:center; padding: 20px;'> Nenhuma rádio no histórico ainda.</p>";
@@ -1155,6 +1150,10 @@ function updateHistoryUI() {
     historyList.innerHTML = header + html;
 }
 
+/**
+ * Remove rádio do histórico
+ * @param {string} url - URL da rádio a remover
+ */
 function removeFromHistory(url) {
     history = history.filter(item => item.url !== url);
     secureLocalStorageSet('history', history);
@@ -1162,10 +1161,13 @@ function removeFromHistory(url) {
     updateRadioCards();
     showNotification(" Rádio removida do histórico", "success");
     
-    // ATUALIZAR CONTADOR
+    // Atualizar contador
     updateButtonCounters();
 }
 
+/**
+ * Limpa todo o histórico
+ */
 function clearAllHistoryAction() {
     history = [];
     secureLocalStorageSet('history', history);
@@ -1173,11 +1175,13 @@ function clearAllHistoryAction() {
     updateRadioCards();
     showNotification(" Histórico de reprodução limpo", "success");
     
-    // ATUALIZAR CONTADOR
+    // Atualizar contador
     updateButtonCounters();
 }
 
-//  Atualizar estado visual de todos os cards
+/**
+ * Atualiza estado visual de todos os cards de rádio
+ */
 function updateRadioCards() {
     const radioCards = document.querySelectorAll('.radio-card');
     radioCards.forEach(card => {
@@ -1210,26 +1214,22 @@ function updateRadioCards() {
     });
 }
 
-// ===============================
+// ====================================================
 // FUNCIONALIDADE PARA FECHAR O PLAYER
-// ===============================
+// ====================================================
 
 /**
  * Adiciona botão para fechar o player
  */
 function addPlayerCloseButton() {
-    // Verificar se o player existe
     if (!playerFixedEl) {
-        console.warn('Elemento do player não encontrado');
         return;
     }
     
-    // Verificar se o botão já existe
     if (document.getElementById('closePlayerBtn')) {
         return;
     }
     
-    // Criar o botão de fechar
     const closeBtn = document.createElement('button');
     closeBtn.id = 'closePlayerBtn';
     closeBtn.className = 'player-close-btn';
@@ -1237,7 +1237,6 @@ function addPlayerCloseButton() {
     closeBtn.setAttribute('title', 'Fechar player (o áudio continuará tocando)');
     closeBtn.setAttribute('aria-label', 'Fechar player');
     
-    // Adicionar estilos dinamicamente (se já não existirem)
     if (!document.getElementById('playerCloseStyles')) {
         const style = document.createElement('style');
         style.id = 'playerCloseStyles';
@@ -1278,7 +1277,6 @@ function addPlayerCloseButton() {
                 display: none;
             }
             
-            /* Para telas pequenas, ajustar posição */
             @media (max-width: 768px) {
                 .player-close-btn {
                     top: -8px;
@@ -1289,7 +1287,6 @@ function addPlayerCloseButton() {
                 }
             }
             
-            /* Efeito de pulso quando o áudio está tocando */
             .player-fixed.playing .player-close-btn {
                 animation: pulse-border 2s infinite;
             }
@@ -1310,43 +1307,23 @@ function addPlayerCloseButton() {
         document.head.appendChild(style);
     }
     
-    // Adicionar evento de clique
     closeBtn.addEventListener('click', function(e) {
-        e.stopPropagation(); // Prevenir event bubbling
-        
-        // Fechar o player (apenas visualmente)
+        e.stopPropagation();
         closePlayer();
     });
     
-    // Adicionar ao player
     playerFixedEl.appendChild(closeBtn);
-}
-
-/**
- * Fecha o player (apenas visualmente)
- */
-function closePlayer() {
-    // Esconder o player, mas manter o áudio tocando
-    playerFixedEl.classList.add('hidden');
-    
-    // Mostrar notificação informando que o áudio continua tocando
-    showNotification('🎧 Player minimizado. O áudio continua tocando em segundo plano.', 'info');
-    
-    // Adicionar um botão flutuante para reabrir o player
-    addReopenPlayerButton();
 }
 
 /**
  * Adiciona botão flutuante para reabrir o player
  */
 function addReopenPlayerButton() {
-    // Remover botão existente, se houver
     const existingBtn = document.getElementById('reopenPlayerBtn');
     if (existingBtn) {
         existingBtn.remove();
     }
     
-    // Verificar se já existe um estilo para o botão flutuante
     if (!document.getElementById('reopenPlayerStyles')) {
         const style = document.createElement('style');
         style.id = 'reopenPlayerStyles';
@@ -1388,6 +1365,36 @@ function addReopenPlayerButton() {
                 animation: pulse 1.5s infinite;
             }
             
+            .reopen-player-btn.playing::after {
+                content: '';
+                position: absolute;
+                top: -4px;
+                right: -4px;
+                width: 16px;
+                height: 16px;
+                background: #2bde73;
+                border-radius: 50%;
+                border: 2px solid var(--player-color);
+                animation: blink 1.5s infinite;
+                box-shadow: 0 0 10px #2bde73, 0 0 20px #2bde73 inset;
+                z-index: 9999;
+            }
+            
+            .reopen-player-btn.paused::after {
+                content: '';
+                position: absolute;
+                top: -4px;
+                right: -4px;
+                width: 16px;
+                height: 16px;
+                background: #ffa500;
+                border-radius: 50%;
+                border: 2px solid var(--player-color);
+                animation: none;
+                box-shadow: 0 0 10px #ffa500, 0 0 20px #ffa500 inset;
+                z-index: 9999;
+            }
+            
             @keyframes float {
                 0%, 100% {
                     transform: translateX(-50%) translateY(0);
@@ -1409,20 +1416,6 @@ function addReopenPlayerButton() {
                 }
             }
             
-            /* Indicador de que está tocando */
-            .reopen-player-btn::after {
-                content: '';
-                position: absolute;
-                top: -4px;
-                right: -4px;
-                width: 16px;
-                height: 16px;
-                background: #00ff00;
-                border-radius: 50%;
-                border: 2px solid var(--player-color);
-                animation: blink 2s infinite;
-            }
-            
             @keyframes blink {
                 0%, 50% {
                     opacity: 1;
@@ -1432,7 +1425,6 @@ function addReopenPlayerButton() {
                 }
             }
             
-            /* Para telas pequenas */
             @media (max-width: 768px) {
                 .reopen-player-btn {
                     width: 65px;
@@ -1442,7 +1434,6 @@ function addReopenPlayerButton() {
                 }
             }
             
-            /* Para orientação horizontal */
             @media (orientation: landscape) and (max-height: 600px) {
                 .reopen-player-btn {
                     width: 60px;
@@ -1452,14 +1443,12 @@ function addReopenPlayerButton() {
                 }
             }
             
-            /* Esconder quando o player estiver visível */
             .player-fixed:not(.hidden) ~ .reopen-player-btn,
             body:has(.player-fixed:not(.hidden)) .reopen-player-btn,
             .player-fixed:not(.hidden) + .reopen-player-btn {
                 display: none !important;
             }
             
-            /* Garantir que o botão flutuante não interfira com o player */
             .player-fixed {
                 z-index: 10000;
             }
@@ -1472,47 +1461,51 @@ function addReopenPlayerButton() {
         document.head.appendChild(style);
     }
     
-    // Criar botão flutuante
     const reopenBtn = document.createElement('button');
     reopenBtn.id = 'reopenPlayerBtn';
     reopenBtn.className = 'reopen-player-btn';
     reopenBtn.innerHTML = '<i class="fas fa-music"></i>';
-    reopenBtn.setAttribute('title', 'Rádio tocando - Clique para mostrar player');
-    reopenBtn.setAttribute('aria-label', 'Mostrar player');
     
-    // Adicionar evento de clique
+    // Adicionar classe baseada no estado de reprodução
+    if (isPlaying) {
+        reopenBtn.classList.add('playing');
+        reopenBtn.classList.remove('paused');
+        reopenBtn.classList.add('pulse');
+        reopenBtn.setAttribute('title', 'Rádio tocando - Clique para mostrar player');
+    } else {
+        reopenBtn.classList.add('paused');
+        reopenBtn.classList.remove('playing');
+        reopenBtn.classList.remove('pulse');
+        reopenBtn.setAttribute('title', 'Rádio pausada - Clique para mostrar player');
+    }
+    
     reopenBtn.addEventListener('click', function(e) {
         e.stopPropagation();
         reopenPlayer();
     });
     
-    // Adicionar pulso se estiver tocando
-    if (isPlaying) {
-        reopenBtn.classList.add('pulse');
-    }
-    
-    // Adicionar ao body
     document.body.appendChild(reopenBtn);
-    
-    // Ajustar posição dinamicamente com base na orientação
     adjustReopenButtonPosition();
 }
 
 /**
- * Reabre o player
+ * Atualiza o estado visual do botão flutuante
  */
-function reopenPlayer() {
-    // Mostrar o player
-    playerFixedEl.classList.remove('hidden');
-    
-    // Remover o botão flutuante
+function updateReopenPlayerButton() {
     const reopenBtn = document.getElementById('reopenPlayerBtn');
-    if (reopenBtn) {
-        reopenBtn.remove();
-    }
+    if (!reopenBtn) return;
     
-    // Mostrar notificação
-    showNotification('🎧 Player restaurado', 'success');
+    if (isPlaying) {
+        reopenBtn.classList.add('playing');
+        reopenBtn.classList.remove('paused');
+        reopenBtn.classList.add('pulse');
+        reopenBtn.setAttribute('title', 'Rádio tocando - Clique para mostrar player');
+    } else {
+        reopenBtn.classList.add('paused');
+        reopenBtn.classList.remove('playing');
+        reopenBtn.classList.remove('pulse');
+        reopenBtn.setAttribute('title', 'Rádio pausada - Clique para mostrar player');
+    }
 }
 
 /**
@@ -1522,38 +1515,58 @@ function adjustReopenButtonPosition() {
     const reopenBtn = document.getElementById('reopenPlayerBtn');
     if (!reopenBtn) return;
     
-    // Verificar orientação e dimensões
     const isLandscape = window.innerWidth > window.innerHeight;
     const isSmallScreen = window.innerWidth < 768 || window.innerHeight < 600;
     
     if (isLandscape && isSmallScreen) {
-        // Para landscape em telas pequenas
         reopenBtn.style.bottom = '60px';
         reopenBtn.style.width = '60px';
         reopenBtn.style.height = '60px';
         reopenBtn.style.fontSize = '20px';
     } else if (isSmallScreen) {
-        // Para portrait em telas pequenas
         reopenBtn.style.bottom = '80px';
         reopenBtn.style.width = '65px';
         reopenBtn.style.height = '65px';
         reopenBtn.style.fontSize = '22px';
     } else {
-        // Para telas maiores
         reopenBtn.style.bottom = '100px';
         reopenBtn.style.width = '70px';
         reopenBtn.style.height = '70px';
         reopenBtn.style.fontSize = '24px';
     }
     
-    // Sempre centralizado horizontalmente
     reopenBtn.style.left = '50%';
     reopenBtn.style.transform = 'translateX(-50%)';
 }
 
-// ===============================
+/**
+ * Fecha o player (apenas visualmente)
+ */
+function closePlayer() {
+    playerFixedEl.classList.add('hidden');
+    showNotification('🎧 Player minimizado. O áudio continua tocando em segundo plano.', 'info');
+    
+    // Adicionar botão flutuante com estado correto
+    addReopenPlayerButton();
+}
+
+/**
+ * Reabre o player
+ */
+function reopenPlayer() {
+    playerFixedEl.classList.remove('hidden');
+    
+    const reopenBtn = document.getElementById('reopenPlayerBtn');
+    if (reopenBtn) {
+        reopenBtn.remove();
+    }
+    
+    showNotification('🎧 Player restaurado', 'success');
+}
+
+// ====================================================
 // CONTROLES DE UI E MODAIS
-// ===============================
+// ====================================================
 
 // Gerenciador de Tabs
 tabs.forEach(tab => {
@@ -1573,13 +1586,14 @@ tabs.forEach(tab => {
     });
 });
 
-// MODAIS
+// Event listeners para modais
 openFilters.addEventListener('click', () => {
     filtersModal.style.display = "flex";
     setTimeout(() => {
         searchInput.focus();
     }, 100);
 });
+
 closeFilters.addEventListener('click', () => filtersModal.style.display = "none");
 openFavorites.addEventListener('click', () => showFavoritesModal());
 closeFavorites.addEventListener('click', () => favoritesModal.style.display = "none");
@@ -1621,14 +1635,15 @@ document.addEventListener('keydown', (e) => {
             pageModal.style.display = "none";
         }
         
-        // ESC também fecha o player se estiver visível
         if (!playerFixedEl.classList.contains('hidden')) {
             closePlayer();
         }
     }
 });
 
-// Funções de exibição de modais de lista
+/**
+ * Exibe modal de favoritos
+ */
 function showFavoritesModal() {
     if (favorites.length === 0) {
         document.getElementById('favoritesModalList').innerHTML = "<p class='modal-empty-message'><i class='fas fa-star'></i><br>Nenhuma rádio favorita ainda.</p>";
@@ -1656,6 +1671,9 @@ function showFavoritesModal() {
     favoritesModal.style.display = "flex";
 }
 
+/**
+ * Exibe modal de histórico
+ */
 function showHistoryModal() {
     if (history.length === 0) {
         document.getElementById('historyModalList').innerHTML = "<p class='modal-empty-message'><i class='fas fa-history'></i><br>Nenhuma rádio no histórico ainda.</p>";
@@ -1686,7 +1704,11 @@ function showHistoryModal() {
     historyModal.style.display = "flex";
 }
 
-// Função auxiliar para formatar tempo relativo
+/**
+ * Formata tempo relativo para exibição
+ * @param {Date} date - Data a ser formatada
+ * @returns {string} Tempo relativo formatado
+ */
 function formatTimeAgo(date) {
     const now = new Date();
     const diffMs = now - date;
@@ -1702,9 +1724,107 @@ function formatTimeAgo(date) {
     return date.toLocaleDateString('pt-BR');
 }
 
-// ===============================
+// ====================================================
+// CONTEÚDO DAS PÁGINAS
+// ====================================================
+const pageContents = {
+    privacy: `
+        <h2><i class="fas fa-user-shield"></i> Política de Privacidade</h2>
+        
+        <h3>1. Dados Coletados</h3>
+        <p>O Grid Rádio Online não coleta dados pessoais identificáveis. Utilizamos apenas o <strong>localStorage</strong> do seu navegador para salvar:</p>
+        <ul>
+            <li>Rádios Favoritas</li>
+            <li>Histórico de Reprodução</li>
+            <li>Tema (Claro/Escuro)</li>
+            <li>Preferências de Volume</li>
+        </ul>
+        <p>Estes dados ficam armazenados exclusivamente no seu dispositivo e nunca são enviados para nossos servidores.</p>
+        <h3>2. Fontes de Rádio</h3>
+        <p>Usamos a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a> para buscar listas de estações.</p>
+        <h3>3. Segurança</h3>
+        <p>Implementamos validações básicas de URL e sanitização de HTML para mitigar riscos de segurança, mas você é responsável por verificar a segurança das estações que decide ouvir. Usamos HTTPS e validamos fontes externas para proteger suas informações contra acesso não autorizado.</p>
+        <h3>6. Contato</h3>
+        <p>Para questões sobre privacidade, entre em contato: <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link email-link">juliogonzales.dev@proton.me</a></p>
+    `,
+    terms: `
+        <h2><i class="fas fa-file-signature"></i> Termos de Uso</h2>
+        <h3>1. Aceitação dos Termos</h3>
+        <p>Ao usar o Grid Rádio Online, você concorda com estes termos de uso.</p>
+        <h3>2. Serviço</h3>
+        <p>O Grid Rádio Online é um agregador de estações de rádio online. Não hospedamos nenhum conteúdo de áudio.</p>
+        <h3>3. Uso Aceitável</h3>
+        <p>Você concorda em usar o serviço apenas para fins legais e de acordo com todas as leis aplicáveis.</p>
+        <h3>4. Direitos Autorais</h3>
+        <p>Todo o conteúdo de áudio transmitido pertence às respectivas estações de rádio. Respeite os direitos autorais.</p>
+        <h3>5. Limitação de Responsabilidade</h3>
+        <p>Não nos responsabilizamos por:</p>
+        <ul>
+            <li>Interrupções no serviço</li>
+            <li>Conteúdo das estações de rádio</li>
+            <li>Problemas técnicos nas transmissões</li>
+        </ul>
+        <h3>6. Modificações</h3>
+        <p>Reservamo-nos o direito de modificar estes termos a qualquer momento.</p>
+    `,
+    dmca: `
+        <h2><i class="fas fa-gavel"></i> Política DMCA</h2>
+        
+        <div class="educational-notice" style="background: var(--player-color); padding: 12px; border-radius: 8px; margin: 15px 0; border-left: 3px solid var(--accent-primary);">
+            <p style="margin: 0; font-size: 0.9rem;">
+                <strong><i class="fas fa-graduation-cap"></i> Nota:</strong> Este projeto tem caráter educacional e utiliza a API pública do Radio Browser para fins de aprendizado em desenvolvimento web.
+            </p>
+        </div>
+        
+        <h3>Notificação de Infração de Direitos Autorais</h3>
+        <p>O Grid Rádio Online respeita os direitos de propriedade intelectual. Se você acredita que seu trabalho foi copiado de forma que constituis violação de direitos autorais, envie uma notificação para:</p>
+        
+        <p><strong>Email:</strong> <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link">juliogonzales.dev@proton.me</a></p>
+        
+        <h3>Informações Requeridas</h3>
+        <p>Sua notificação deve incluir:</p>
+        <ul>
+            <li>Assinatura do proprietário dos direitos autorais</li>
+            <li>Identificação do trabalho protegido</li>
+            <li>Identificação do material alegadamente infringente</li>
+            <li>Suas informações de contato</li>
+            <li>Declaração de boa fé</li>
+        </ul>
+        
+        <h3>Ação</h3>
+        <p>Upon receipt of a valid DMCA notice, we will promptly remove or disable access to the allegedly infringing content.</p>
+        
+        <div style="font-size: 0.8rem; color: color-mix(in srgb, var(--text-color) 60%, transparent); text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid color-mix(in srgb, var(--text-color) 20%, transparent);">
+            <p><strong>Projeto educacional</strong> • Desenvolvido para fins de aprendizado</p>
+        </div>
+    `,
+    about: `
+        <h2><i class="fas fa-circle-info"></i> Sobre o Grid Rádio Online</h2>
+        <p>O Grid Rádio Online é um projeto de caráter educacional de código aberto, criado com o objetivo de oferecer uma interface simples e moderna para acessar rádios de todo o mundo, utilizando a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a>.</p>
+        <p>Este projeto foca em:</p>
+        <ul>
+            <li><strong>Desempenho:</strong> Carregamento rápido e eficiente.</li>
+            <li><strong>Design Moderno:</strong> Interface amigável e responsiva.</li>
+            <li><strong>Privacidade:</strong> Não coleta dados pessoais.</li>
+        </ul>
+        <p>Código fonte disponível no <a href="https://github.com/Julioheyner" target="_blank" class="site-link gradient-link"><i class="fab fa-github"></i> GitHub</a>.</p>
+        <div class="socials">
+            <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank" class="social-icon">
+                <i class="fab fa-github"></i>
+            </a>
+            <a href="https://www.linkedin.com/in/julio-gonzales-31a723379" title="LinkedIn" rel="noopener noreferrer" target="_blank" class="social-icon">
+                <i class="fab fa-linkedin"></i>
+            </a>
+            <a href="mailto:juliogonzales.dev@proton.me" title="Email" class="social-icon">
+                <i class="fas fa-envelope"></i>
+            </a>
+        </div>
+    `
+};
+
+// ====================================================
 // FUNÇÕES DE REMOÇÃO (COM MODAL)
-// ===============================
+// ====================================================
 const confirmationModal = document.createElement('div');
 confirmationModal.id = 'confirmationModal';
 confirmationModal.className = 'modal';
@@ -1837,6 +1957,10 @@ const confirmYes = document.getElementById('confirmYes');
 const confirmNo = document.getElementById('confirmNo');
 confirmNo.onclick = () => confirmationModal.style.display = 'none';
 
+/**
+ * Exibe modal de confirmação para ações destrutivas
+ * @param {string} action - Ação a ser confirmada
+ */
 function showConfirmationModal(action) {
     confirmationModal.style.display = 'flex';
 
@@ -1859,7 +1983,9 @@ function showConfirmationModal(action) {
     }
 }
 
-// Controles do player
+// ====================================================
+// CONTROLES DO PLAYER E EVENT LISTENERS
+// ====================================================
 toggleFavorite.addEventListener('click', toggleFavoriteRadio);
 playPauseBtn.addEventListener('click', togglePlayPause);
 loadMoreBtn.addEventListener('click', () => fetchRadios(currentQuery, currentCountry, currentTag, true));
@@ -1890,13 +2016,20 @@ genreSearchInput.addEventListener('keypress', (e) => {
     }
 });
 
-// Funções utilitárias
+/**
+ * Exibe página de conteúdo no modal
+ * @param {string} pageName - Nome da página a ser exibida
+ */
 function showPage(pageName) {
     pageContent.innerHTML = pageContents[pageName] || '<p style="padding: 20px;">Página não encontrada.</p>';
     pageModal.style.display = "flex";
 }
 
-//Mostrar notificação
+/**
+ * Mostra notificação na tela
+ * @param {string} message - Mensagem a ser exibida
+ * @param {string} type - Tipo da notificação (success, warning, error, info)
+ */
 function showNotification(message, type) {
     notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i> ${sanitizeHTML(message)}`;
     notification.className = `notification ${type} show`;
@@ -1905,58 +2038,66 @@ function showNotification(message, type) {
     }, 3000);
 }
 
-// Carregar filtros
+// ====================================================
+// CARREGAMENTO DE FILTROS
+// ====================================================
+
+/**
+ * Carrega países e gêneros para os filtros
+ */
 async function loadFilters() {
-  try {
-    const [countries, tags] = await Promise.all([
-      fetch(`${API_BASE}/countries`).then(r=>r.json()),
-      fetch(`${API_BASE}/tags`).then(r=>r.json())
-    ]);
+    try {
+        const [countries, tags] = await Promise.all([
+            fetch(`${API_BASE}/countries`).then(r => r.json()),
+            fetch(`${API_BASE}/tags`).then(r => r.json())
+        ]);
 
-    // Carregar países
-    countries.sort((a,b)=>a.name.localeCompare(b.name)).forEach(c=>{
-      const opt = document.createElement("option");
-      opt.value = sanitizeHTML(c.name);
-      opt.textContent = sanitizeHTML(c.name);
-      countrySelect.appendChild(opt);
-    });
+        // Carregar países
+        countries.sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
+            const opt = document.createElement("option");
+            opt.value = sanitizeHTML(c.name);
+            opt.textContent = sanitizeHTML(c.name);
+            countrySelect.appendChild(opt);
+        });
 
-    // Armazenar tags para busca rápida
-    allGenreTags = tags.map(t => ({
-        tag: t.name,
-        display: cleanGenreName(t.name)
-    }));
-   
-    // Adicionar Vallenato se não estiver na lista
-    const vallenatoTag = 'vallenato';
-    if (!allGenreTags.some(t => t.tag.toLowerCase() === vallenatoTag)) {
-        allGenreTags.push({ tag: vallenatoTag, display: 'Vallenato (Colômbia)' });
+        // Armazenar tags para busca rápida
+        allGenreTags = tags.map(t => ({
+            tag: t.name,
+            display: cleanGenreName(t.name)
+        }));
+       
+        // Adicionar Vallenato se não estiver na lista
+        const vallenatoTag = 'vallenato';
+        if (!allGenreTags.some(t => t.tag.toLowerCase() === vallenatoTag)) {
+            allGenreTags.push({ tag: vallenatoTag, display: 'Vallenato (Colômbia)' });
+        }
+       
+        allGenreTags.sort((a, b) => a.display.localeCompare(b.display));
+
+        genreSelect.innerHTML = '<option value="">🎶 Todos os gêneros</option>';
+       
+        allGenreTags.forEach(g => {
+            const opt = document.createElement("option");
+            opt.textContent = g.display;
+            opt.value = g.tag;
+            genreSelect.appendChild(opt);
+        });
+    } catch (error) {
+        console.error('Erro ao carregar filtros:', error);
+        showNotification("Erro ao carregar filtros. Tente novamente mais tarde.", "error");
     }
-   
-    allGenreTags.sort((a, b) => a.display.localeCompare(b.display));
-
-    genreSelect.innerHTML = '<option value="">🎶 Todos os gêneros</option>';
-   
-    allGenreTags.forEach(g => {
-        const opt = document.createElement("option");
-        opt.textContent = g.display;
-        opt.value = g.tag;
-        genreSelect.appendChild(opt);
-    });
-
-  } catch (error) {
-    console.error('Erro ao carregar filtros:', error);
-    showNotification("Erro ao carregar filtros. Tente novamente mais tarde.", "error");
-  }
 }
 
-// ===============================
+// ====================================================
 // LÓGICA DE BUSCA RÁPIDA DE GÊNEROS
-// ===============================
+// ====================================================
 const genreSearchContainer = document.querySelector('#genreSearchContainer');
 
 genreSearchInput.addEventListener('input', filterGenreResults);
 
+/**
+ * Filtra resultados de gêneros baseado na busca
+ */
 function filterGenreResults() {
     const query = normalizeText(genreSearchInput.value).trim();
     genreResultsList.innerHTML = '';
@@ -1987,6 +2128,12 @@ function filterGenreResults() {
     }
 }
 
+/**
+ * Seleciona um gênero da lista de resultados
+ * @param {HTMLElement} item - Elemento HTML do gênero
+ * @param {string} tag - Tag do gênero
+ * @param {string} display - Nome de exibição do gênero
+ */
 function selectGenre(item, tag, display) {
     genreSearchInput.value = display;
     genreSelect.value = tag;
@@ -1995,14 +2142,15 @@ function selectGenre(item, tag, display) {
     item.classList.add('selected');
 }
 
-//Tema 
+// ====================================================
+// GERENCIAMENTO DE TEMA
+// ====================================================
 themeToggle.addEventListener("click", () => {
     const isLight = document.body.getAttribute("data-theme") === "light";
     const newTheme = isLight ? "dark" : "light";
     
     document.body.setAttribute("data-theme", newTheme);
     
-    // Mantém a estrutura do botão, apenas troca o ícone
     const icon = themeToggle.querySelector('i');
     if (newTheme === "light") {
         icon.className = "fas fa-sun";
@@ -2018,22 +2166,22 @@ audioPlayer.addEventListener('volumechange', () => {
     secureLocalStorageSet('volume', audioPlayer.volume);
 });
 
-// ===============================
+// ====================================================
 // INICIALIZAÇÃO SEGURA
-// ===============================
-
-document.addEventListener("DOMContentLoaded", ()=>{
-    //Verificar e limpar dados corrompidos no localStorage
+// ====================================================
+document.addEventListener("DOMContentLoaded", () => {
+    /**
+     * Limpa dados corrompidos do localStorage
+     */
     function cleanCorruptedData() {
         const keys = ['favorites', 'history'];
         keys.forEach(key => {
             try {
                 const data = localStorage.getItem(key);
                 if (data) {
-                    JSON.parse(data); // Testar se é JSON válido
+                    JSON.parse(data);
                 }
             } catch (error) {
-                console.warn(`Removendo dados corrompidos de ${key}`);
                 localStorage.removeItem(key);
             }
         });
@@ -2041,43 +2189,43 @@ document.addEventListener("DOMContentLoaded", ()=>{
     
     cleanCorruptedData();
     
-    // Carregar dados do localStorage APÓS limpeza
+    // Carregar dados
     favorites = secureLocalStorageGet('favorites', []);
     history = secureLocalStorageGet('history', []);
     
-    console.log('Dados iniciais carregados:', {
-        favorites: favorites.length,
-        history: history.length
+    console.log('📊 Dados carregados:', {
+        favoritesCount: favorites.length,
+        historyCount: history.length
     });
     
-    // Configurar tema
     const savedTheme = secureLocalStorageGet("theme", "dark");
     document.body.setAttribute("data-theme", savedTheme);
     themeToggle.innerHTML = savedTheme === "light" ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
    
-    // Configurar volume
     audioPlayer.volume = secureLocalStorageGet("volume", 0.8);
     
-    // Configurar event listeners do áudio
     setupAudioEventListeners();
 
-    // Carregar dados iniciais
     loadFilters();
     fetchRadios();
     updateFavoritesUI();
     updateHistoryUI();
     
-    // INICIALIZAR CONTADORES
+    // Atualizar contadores no carregamento
     updateButtonCounters();
     
-    // Adicionar botão de fechar após um pequeno delay
+    // Verificar novamente após um pequeno delay para garantir
+    setTimeout(() => {
+        updateButtonCounters();
+        console.log('✅ Contadores atualizados após inicialização');
+    }, 500);
+    
     setTimeout(() => {
         addPlayerCloseButton();
     }, 1000);
     
-    // Adicionar hotkeys
+    // Atalho de teclado Ctrl+Alt+P para alternar player
     document.addEventListener('keydown', function(e) {
-        // Ctrl + Alt + P para alternar visibilidade do player
         if (e.ctrlKey && e.altKey && e.key === 'p') {
             e.preventDefault();
             
@@ -2089,34 +2237,24 @@ document.addEventListener("DOMContentLoaded", ()=>{
         }
     });
     
-    // Ajustar botão flutuante quando a tela for redimensionada
     window.addEventListener('resize', function() {
         adjustReopenButtonPosition();
     });
     
-    // Ajustar botão flutuante quando a orientação mudar
     window.addEventListener('orientationchange', function() {
         setTimeout(adjustReopenButtonPosition, 100);
     });
-    
-    // Debug após carregar as rádios
-    setTimeout(() => {
-        debugRadioImages();
-    }, 2000);
 });
 
-// ===============================
+// ====================================================
 // PROTEÇÕES ADICIONAIS
-// ===============================
-
-// Prevenir múltiplas instâncias de áudio
+// ====================================================
 if (window.audioPlayerInstance) {
     window.audioPlayerInstance.pause();
     window.audioPlayerInstance.src = '';
 }
 window.audioPlayerInstance = audioPlayer;
 
-// Limpar recursos quando a página for descarregada
 window.addEventListener('beforeunload', () => {
     stopAudioHealthCheck();
     if (retryTimeout) {
@@ -2125,19 +2263,44 @@ window.addEventListener('beforeunload', () => {
     audioPlayer.pause();
     audioPlayer.src = '';
     
-    // Remover botão flutuante se existir
     const reopenBtn = document.getElementById('reopenPlayerBtn');
     if (reopenBtn) {
         reopenBtn.remove();
     }
 });
 
-// Proteger contra ataques de timing
 setTimeout(() => {
     const scripts = document.querySelectorAll('script');
     scripts.forEach(script => {
-        if (!script.src && script.innerHTML.includes('eval') || script.innerHTML.includes('Function')) {
+        if (!script.src && (script.innerHTML.includes('eval') || script.innerHTML.includes('Function'))) {
             script.remove();
         }
     });
 }, 1000);
+
+// ====================================================
+// FUNÇÕES DE DEBUG (para uso no console)
+// ====================================================
+
+/**
+ * Função para debug dos contadores (para testar no console)
+ */
+window.debugCounters = function() {
+    console.log('🔍 Debug contadores:', {
+        favorites: favorites,
+        history: history,
+        favCount: favorites.length,
+        histCount: history.length,
+        localStorageFavorites: localStorage.getItem('favorites'),
+        localStorageHistory: localStorage.getItem('history')
+    });
+    updateButtonCounters();
+};
+
+/**
+ * Força atualização dos contadores
+ */
+function forceUpdateCounters() {
+    console.log('🔄 Forçando atualização dos contadores...');
+    updateButtonCounters();
+}
