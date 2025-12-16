@@ -12,7 +12,7 @@
   --accent-secondary: #7b61ff;
   --accent-hover: #2effff;
   --accent-gradient: linear-gradient(135deg, #00f7ff 0%, #7b61ff 50%, #ff2e92 100%);
-  --success-color: #00b894;
+  --success-color: #00ffc3;
   --error-color: #ff2e63;
   --warning-color: #ffd166;
   --icon-color: #00f7ff;
@@ -44,7 +44,7 @@
   --footer-height: auto;
 }
 
-/* MODO LIGHT - Aprimorado com mais contraste e personalidade */
+/* MODO LIGHT */
 [data-theme="light"] {
   --bg-color: #ffffff;
   --card-color: rgba(255, 255, 255, 0.98);
@@ -57,12 +57,10 @@
       #2563eb 0%,
       #7c3aed 50%,
       #0891b2 100%);
-  --success-color: #00d1b2;
+  --success-color: #059669;
   --error-color: #dc2626;
   --warning-color: #d97706;
   --icon-color: #2563eb;
-  
-  /* Gradientes mais marcantes */
   --bg-gradient: linear-gradient(135deg,
       #ffffff 0%,
       #f8fafc 25%,
@@ -70,33 +68,25 @@
   --card-gradient: linear-gradient(145deg,
       rgba(255, 255, 255, 0.98) 0%,
       rgba(248, 250, 252, 0.95) 100%);
-  
-  /* Sombra mais pronunciada para destaque */
   --neon-glow: 0 0 25px rgba(37, 99, 235, 0.2),
     0 8px 30px rgba(37, 99, 235, 0.15),
     0 0 0 1px rgba(37, 99, 235, 0.05);
-  
-  /* Header com mais contraste */
   --header-bg: linear-gradient(90deg,
       rgba(255, 255, 255, 0.98) 0%,
       rgba(248, 250, 252, 0.95) 100%);
   --header-border: rgba(37, 99, 235, 0.3);
   --header-text: #111827;
   --header-accent: #2563eb;
-  
-  /* Novas variáveis para melhor contraste */
   --text-secondary: #374151;
   --border-color: rgba(37, 99, 235, 0.15);
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
   --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
-  
-  /* Efeitos hover mais visíveis */
   --hover-overlay: rgba(37, 99, 235, 0.05);
   --active-overlay: rgba(37, 99, 235, 0.1);
 }
 
-/* Se quiser uma versão alternativa mais ousada e vibrante: */
+/* Versão alternativa mais ousada e vibrante: */
 [data-theme="light"].vibrant {
   --bg-color: #fdf2f8;
   --text-color: #1f2937;
@@ -133,7 +123,9 @@ main {
   flex: 1;
 }
 
-/* HEADER GERAL - Glassmorphic */
+/* ===========================
+# HEADER GERAL - Glassmorphic 
+/* =========================== */
 header {
   background: color-mix(in srgb, var(--bg-color) 85%, transparent); 
   backdrop-filter: blur(10px);
@@ -165,11 +157,6 @@ header {
   border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
-.header-title a {
-  text-decoration: none;
-  color: inherit;
-}
-
 .header-controls {
   display: flex;
   gap: 10px; 
@@ -193,7 +180,9 @@ header > .header-title {
   margin: 0 10px;
 }
 
-/* BOTÕES LATERAIS */
+/* =================
+# BOTÕES LATERAIS 
+/* ================= */
 
 .header-btn, .theme-toggle {
   width: 40px; 
@@ -259,7 +248,9 @@ header > .header-title {
     display: none !important; 
 }
 
-/* BADGE CONTER */
+/* ============
+# BADGE CONTER 
+===============*/
 .header-btn .badge {
   position: absolute;
   top: -4px; 
@@ -308,7 +299,9 @@ header > .header-title {
   display: none !important;
 }
 
-/* BADGE CONTER - Light Mode */
+/* =============
+# BADGE CONTER 
+================ */
 [data-theme="light"] .header-btn .badge {
   background: linear-gradient(
     135deg,
@@ -321,15 +314,12 @@ header > .header-title {
   font-weight: 900;
   min-width: 16px; 
   height: 16px; 
-  border-radius: 8px; 
-  
-  /* Borda e sombra bem definidas */
+  border-radius: 8px;
   border: 1.5px solid white; 
   box-shadow: 
     0 3px 8px rgba(220, 38, 38, 0.3),
     0 1px 3px rgba(220, 38, 38, 0.2),
     0 0 0 0.5px rgba(255, 255, 255, 0.5); 
-  
   z-index: 30;
   padding: 0 4px; 
   line-height: 1;
@@ -340,7 +330,9 @@ header > .header-title {
   right: -5px; 
 }
 
-/* RESPONSIVIDADE DESKTOP */
+/* ======================
+# RESPONSIVIDADE DESKTOP
+========================= */
 
 @media (min-width: 769px) {
   .header-btn {
@@ -364,7 +356,9 @@ header > .header-title {
   }
 }
 
-/* RESPONSIVIDADE LANDSCAPE */
+/* ==========================
+# RESPONSIVIDADE LANDSCAPE
+============================ */
 
 @media (orientation: landscape) and (max-height: 500px) {
   header {
@@ -543,13 +537,13 @@ header > .header-title {
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  font-size: clamp(2.2rem, 4.5vw, 4rem); 
+  font-size: clamp(2.5rem, 5vw, 4.5rem);
   font-weight: 800;
-  margin-bottom: 1.2rem; 
+  margin-bottom: 1.5rem;
   line-height: 1.1;
   letter-spacing: -0.02em;
   position: relative;
-  padding-bottom: 0.8rem; 
+  padding-bottom: 1rem;
 }
 
 .hero-content h1::after {
@@ -558,39 +552,39 @@ header > .header-title {
     bottom: 0;
     left: 50%;
     transform: translateX(-50%);
-    width: 100px; 
-    height: 2px; 
+    width: 120px;
+    height: 3px;
     background: linear-gradient(90deg,
         transparent,
         rgba(255,255,255,0.8),
         transparent
     );
-    border-radius: 2px; 
+    border-radius: 3px;
     animation: linePulse 2s ease-in-out infinite;
 }
 
 @keyframes linePulse {
     0%, 100% {
         opacity: 0.7;
-        width: 100px; 
+        width: 120px;
     }
     50% {
         opacity: 1;
-        width: 120px; 
+        width: 150px;
     }
 }
 
 .hero-content p {
-    font-size: clamp(1rem, 2.5vw, 1.4rem); 
-    margin-bottom: 2rem; 
-    line-height: 1.5; 
+    font-size: clamp(1.2rem, 3vw, 1.6rem);
+    margin-bottom: 2.5rem;
+    line-height: 1.6;
     color: rgba(255, 255, 255, 0.95);
     font-weight: 400;
     text-shadow:
         0 2px 8px rgba(0,0,0,0.4),
         0 4px 20px rgba(0,0,0,0.3);
     position: relative;
-    padding: 0 0.8rem; 
+    padding: 0 1rem;
     background: linear-gradient(135deg,
         rgba(255,255,255,0.95) 0%,
         rgba(248,250,252,0.95) 100%);
@@ -606,17 +600,17 @@ header > .header-title {
         transform: translateY(0);
     }
     50% {
-        transform: translateY(-3px); 
+        transform: translateY(-5px);
     }
 }
 
 .hero-content p::before {
     content: '';
     position: absolute;
-    top: -8px; 
+    top: -10px;
     left: 50%;
     transform: translateX(-50%);
-    width: 50px; 
+    width: 60px;
     height: 1px;
     background: linear-gradient(90deg,
         transparent,
@@ -948,10 +942,10 @@ header > .header-title {
   left: 12px;
   width: 12px;
   height: 12px;
-  background: var(--success-color);
+  background: #2bde73;
   border-radius: 50%;
-  box-shadow: 0 0 10px var(--success-color); 
-  animation: pulse 1.5s infinite;
+  box-shadow: 0 0 15px #2bde73; 
+  animation: pulse 2s infinite;
   z-index: 2;
 }
 
@@ -984,7 +978,7 @@ header > .header-title {
   font-size: 0.65rem;
 }
 
-/* Responsividade - CORRIGIDA PARA MANTER TAMANHOS IGUAIS */
+/* Responsividade MANTER TAMANHOS IGUAIS */
 @media (max-width: 768px) {
   .radios-grid {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
@@ -996,7 +990,6 @@ header > .header-title {
     padding: 12px;
   }
  
-  /* Tamanhos iguais para desktop e mobile */
   .radio-card img {
     width: 65px !important;
     height: 65px !important;
@@ -1027,7 +1020,6 @@ header > .header-title {
     padding: 10px;
   }
   
-  /* Tamanhos iguais para mobile pequeno */
   .radio-card img {
     width: 60px !important;
     height: 60px !important;
@@ -1146,47 +1138,52 @@ header > .header-title {
     color-mix(in srgb, var(--player-color) 98%, transparent) 50%,
     color-mix(in srgb, var(--player-color) 100%, transparent) 100%
   );
+  opacity: 1;
+  visibility: visible;
 }
 
-/* O PLAYER OCULTO - MAIS SUAVE */
 .player-fixed.hidden {
-  transform: translateX(-50%) translateY(150%);
-  opacity: 0;
-  animation: none;
-  pointer-events: none;
+  transform: translateX(-50%) translateY(150%) !important;
+  opacity: 0 !important;
+  visibility: hidden !important;
+  animation: none !important;
+  pointer-events: none !important;
+  display: flex !important;
 }
 
 /* O PLAYER VISÍVEL - ANIMAÇÃO DE ENTRADA */
 .player-fixed:not(.hidden) {
-  transform: translateX(-50%) translateY(0);
-  opacity: 1;
-  pointer-events: auto;
+  transform: translateX(-50%) translateY(0) !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
   animation: slideUpIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
-             float 6s ease-in-out infinite 0.5s;
+             float 6s ease-in-out infinite 0.5s !important;
+  display: flex !important;
 }
 
 /* ANIMAÇÃO DE ENTRADA DO PLAYER */
 @keyframes slideUpIn {
   from {
-    transform: translateX(-50%) translateY(100%);
-    opacity: 0;
+    transform: translateX(-50%) translateY(100%) !important;
+    opacity: 0 !important;
   }
   to {
-    transform: translateX(-50%) translateY(0);
-    opacity: 1;
+    transform: translateX(-50%) translateY(0) !important;
+    opacity: 1 !important;
   }
 }
 
 /* Animação de flutuação mais lenta */
 @keyframes float {
   0%, 100% {
-    transform: translateX(-50%) translateY(0px);
+    transform: translateX(-50%) translateY(0px) !important;
     box-shadow:
       0 20px 40px rgba(0, 0, 0, 0.4),
       0 8px 25px color-mix(in srgb, var(--accent-primary) 15%, transparent); 
   }
   50% {
-    transform: translateX(-50%) translateY(-6px);
+    transform: translateX(-50%) translateY(-6px) !important;
     box-shadow:
       0 25px 50px rgba(0, 0, 0, 0.5),
       0 12px 35px color-mix(in srgb, var(--accent-primary) 20%, transparent), 
@@ -1194,31 +1191,21 @@ header > .header-title {
   }
 }
 
-/* Animação do brilho da borda mais lenta */
-@keyframes borderGlow {
-  0%, 100% {
-    opacity: 0.5;
-  }
-  50% {
-    opacity: 0.8;
-  }
-}
-
 /* Efeito quando está tocando - mais lento */
 .player-fixed.playing {
-  animation: floatPlaying 5s ease-in-out infinite;
-  border: 2px solid color-mix(in srgb, var(--accent-primary) 80%, transparent); 
+  animation: floatPlaying 5s ease-in-out infinite !important;
+  border: 2px solid color-mix(in srgb, var(--accent-primary) 80%, transparent) !important; 
 }
 
 @keyframes floatPlaying {
   0%, 100% {
-    transform: translateX(-50%) translateY(0px);
+    transform: translateX(-50%) translateY(0px) !important;
     box-shadow:
       0 20px 45px rgba(0, 0, 0, 0.45),
       0 10px 30px color-mix(in srgb, var(--accent-primary) 25%, transparent); 
   }
   50% {
-    transform: translateX(-50%) translateY(-8px);
+    transform: translateX(-50%) translateY(-8px) !important;
     box-shadow:
       0 30px 60px rgba(0, 0, 0, 0.55),
       0 15px 40px color-mix(in srgb, var(--accent-primary) 30%, transparent), 
@@ -1226,57 +1213,7 @@ header > .header-title {
   }
 }
 
-/* Responsividade com animações mais lentas */
-@media (max-width: 768px) {
-  .player-fixed {
-    width: 92%;
-    padding: 15px;
-    border-radius: 18px;
-    animation: floatMobile 7s ease-in-out infinite;
-  }
- 
-  @keyframes floatMobile {
-    0%, 100% {
-      transform: translateX(-50%) translateY(0px);
-    }
-    50% {
-      transform: translateX(-50%) translateY(-5px);
-    }
-  }
- 
-  .player-fixed.playing {
-    animation: floatPlayingMobile 6s ease-in-out infinite;
-  }
- 
-  @keyframes floatPlayingMobile {
-    0%, 100% {
-      transform: translateX(-50%) translateY(0px);
-    }
-    50% {
-      transform: translateX(-50%) translateY(-7px);
-    }
-  }
-}
-
-@media (max-width: 480px) {
-  .player-fixed {
-    width: 90%;
-    padding: 12px;
-    border-radius: 16px;
-    animation: floatSmallMobile 8s ease-in-out infinite;
-  }
- 
-  @keyframes floatSmallMobile {
-    0%, 100% {
-      transform: translateX(-50%) translateY(0px);
-    }
-    50% {
-      transform: translateX(-50%) translateY(-4px);
-    }
-  }
-}
-
-/* LAYOUT DO PLAYER */
+/* === LAYOUT DO PLAYER === */
 .player-info {
   display: flex;
   align-items: center;
@@ -1304,31 +1241,57 @@ header > .header-title {
   min-width: 0;
 }
 
-.player-cover {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  object-fit: cover;
-  margin-bottom: 12px;
-  border: 2px solid var(--accent-primary); 
-  flex-shrink: 0;
+.player-cover,
+.player-fixed img {
+  width: 60px !important;
+  height: 60px !important;
+  min-width: 60px !important;
+  min-height: 60px !important;
+  border-radius: 50% !important;
+  object-fit: cover !important;
+  margin-bottom: 12px !important;
+  border: 2px solid var(--accent-primary) !important;
+  flex-shrink: 0 !important;
+  box-sizing: border-box !important;
+  display: block !important;
+  position: relative !important;
+  background: transparent !important;
 }
 
-/* Placeholder do ícone no player */
+.player-fixed img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"],
+.player-fixed img.radio-icon-default {
+  background: var(--accent-gradient) !important;
+  border: 2px solid var(--accent-primary) !important;
+  border-radius: 50% !important;
+  width: 60px !important;
+  height: 60px !important;
+  min-width: 60px !important;
+  min-height: 60px !important;
+  padding: 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.2) !important;
+  object-fit: contain !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.player-fixed img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"]::before,
+.player-fixed img.radio-icon-default::before {
+  content: "🎵" !important;
+  font-size: 2rem !important;
+  color: white !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1 !important;
+}
+
 .player-fixed img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"] {
-  background: linear-gradient(135deg, var(--card-color), var(--accent-primary)); 
-  border: 2px solid var(--accent-primary);
-  border-radius: 50%;
-  color: white;
-  content: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z'/%3E%3C/svg%3E") !important;
-  width: 50px !important;
-  height: 50px !important;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 8px;
-  box-shadow: 0 3px 10px rgba(0,0,0,0.2);
-  flex-shrink: 0;
+  content: none !important;
 }
 
 .player-title {
@@ -1348,7 +1311,7 @@ header > .header-title {
   text-overflow: ellipsis;
 }
 
-/* STATUS DE SEGURANÇA */
+/* === STATUS DE SEGURANÇA === */
 .security-status {
   display: flex;
   align-items: center;
@@ -1372,7 +1335,7 @@ header > .header-title {
   color: var(--warning-color);
 }
 
-/* AJUSTES PARA QUANDO O VOLUME ESTÁ VISÍVEL */
+/* === AJUSTES PARA QUANDO O VOLUME ESTÁ VISÍVEL === */
 .player-controls-group {
   display: flex;
   align-items: center;
@@ -1491,7 +1454,7 @@ header > .header-title {
   display: none;
 }
 
-/* AJUSTES ESPECÍFICOS PARA TELAS PEQUENAS */
+/* === AJUSTES ESPECÍFICOS PARA TELAS PEQUENAS === */
 @media (max-width: 480px) {
   .player-info {
     gap: 10px;
@@ -1512,7 +1475,22 @@ header > .header-title {
     gap: 8px;
   }
   
-  /* Em telas muito pequenas, texto pode quebrar */
+  /* Ajustes para o player cover em mobile */
+  .player-cover,
+  .player-fixed img,
+  .player-fixed img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"],
+  .player-fixed img.radio-icon-default {
+    width: 50px !important;
+    height: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+  }
+  
+  .player-fixed img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"]::before,
+  .player-fixed img.radio-icon-default::before {
+    font-size: 1.6rem !important;
+  }
+  
   .player-title, .player-subtitle {
     white-space: nowrap;
     overflow: hidden;
@@ -1531,9 +1509,19 @@ header > .header-title {
       min-width: 80px;
     }
     
-    .player-cover {
-      width: 50px;
-      height: 50px;
+    .player-cover,
+    .player-fixed img,
+    .player-fixed img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"],
+    .player-fixed img.radio-icon-default {
+      width: 45px !important;
+      height: 45px !important;
+      min-width: 45px !important;
+      min-height: 45px !important;
+    }
+    
+    .player-fixed img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"]::before,
+    .player-fixed img.radio-icon-default::before {
+      font-size: 1.4rem !important;
     }
     
     .player-btn.large-btn {
@@ -1555,10 +1543,20 @@ header > .header-title {
     gap: 8px;
   }
   
-  .player-cover {
-    width: 45px;
-    height: 45px;
-    margin-bottom: 8px;
+  .player-cover,
+  .player-fixed img,
+  .player-fixed img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"],
+  .player-fixed img.radio-icon-default {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    margin-bottom: 8px !important;
+  }
+  
+  .player-fixed img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"]::before,
+  .player-fixed img.radio-icon-default::before {
+    font-size: 1.2rem !important;
   }
   
   .audio-animation-status {
@@ -1570,7 +1568,7 @@ header > .header-title {
   }
 }
 
-/* GARANTE QUE O STATUS SEMPRE FIQUE VISÍVEL */
+/* === O PLAYER SEMPRE FIQUE VISÍVEL === */
 .player-fixed.playing .player-text-container {
   padding-right: 0;
   margin-right: 0;
@@ -1582,6 +1580,64 @@ header > .header-title {
   display: flex !important;
 }
 
+/* Responsividade com animações mais lentas */
+@media (max-width: 768px) {
+  .player-fixed {
+    width: 92%;
+    padding: 15px;
+    border-radius: 18px;
+  }
+  
+  .player-fixed:not(.hidden) {
+    animation: slideUpIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+               floatMobile 7s ease-in-out infinite 0.5s !important;
+  }
+ 
+  @keyframes floatMobile {
+    0%, 100% {
+      transform: translateX(-50%) translateY(0px) !important;
+    }
+    50% {
+      transform: translateX(-50%) translateY(-5px) !important;
+    }
+  }
+ 
+  .player-fixed.playing:not(.hidden) {
+    animation: slideUpIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+               floatPlayingMobile 6s ease-in-out infinite 0.5s !important;
+  }
+ 
+  @keyframes floatPlayingMobile {
+    0%, 100% {
+      transform: translateX(-50%) translateY(0px) !important;
+    }
+    50% {
+      transform: translateX(-50%) translateY(-7px) !important;
+    }
+  }
+}
+
+@media (max-width: 480px) {
+  .player-fixed {
+    width: 90%;
+    padding: 12px;
+    border-radius: 16px;
+  }
+  
+  .player-fixed:not(.hidden) {
+    animation: slideUpIn 0.5s cubic-bezier(0.25, 0.46, 0.45, 0.94), 
+               floatSmallMobile 8s ease-in-out infinite 0.5s !important;
+  }
+ 
+  @keyframes floatSmallMobile {
+    0%, 100% {
+      transform: translateX(-50%) translateY(0px) !important;
+    }
+    50% {
+      transform: translateX(-50%) translateY(-4px) !important;
+    }
+  }
+}
 
 /* MODAIS DE FAVORITOS E HISTÓRICO*/
 .modal {
@@ -1654,7 +1710,7 @@ header > .header-title {
   display: flex;
   align-items: center;
   gap: 10px;
-  padding-right: 40px; 
+  padding-right: 40px; /* Espaço para o botão de fechar */
 }
 
 /* Botão de fechar */
@@ -1821,6 +1877,8 @@ header > .header-title {
   gap: 12px;
 }
 
+/* ESTILOS ESPECÍFICOS PARA MODAL DE FAVORITOS E HISTÓRICO */
+
 .modal-radio-item {
   display: flex;
   align-items: center;
@@ -1839,10 +1897,12 @@ header > .header-title {
   box-shadow: 0 5px 15px color-mix(in srgb, var(--accent-primary) 20%, transparent);
 }
 
-/* Imagens do modal - tamanho consistente para TODAS */
+/* Imagens do modal - tamanho FIXO para TODAS as imagens */
 .modal-radio-item img {
   width: 50px !important;
   height: 50px !important;
+  min-width: 50px !important;
+  min-height: 50px !important;
   border-radius: 50% !important;
   object-fit: cover !important;
   border: 2px solid var(--accent-primary) !important;
@@ -1852,18 +1912,79 @@ header > .header-title {
   padding: 0 !important;
   display: block !important;
   position: relative !important;
-  background: transparent !important; 
+  background: transparent !important;
 }
 
-/* Apenas para ícones padrão (sem logo real) */
-.modal-radio-item img.radio-icon-default {
+/* Ícone padrão para rádios sem logo - COM BACKGROUND GRADIENT */
+.modal-radio-item img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"] {
   background: var(--accent-gradient) !important;
-  padding: 12px !important; 
-  object-fit: contain !important; 
+  border: 2px solid var(--accent-primary) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 50px !important;
+  height: 50px !important;
+  min-width: 50px !important;
+  min-height: 50px !important;
+  padding: 0 !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2) !important;
+  object-fit: contain !important;
 }
 
-.modal-radio-item img.radio-icon-default::before {
+/* Adiciona o emoji musical como fundo para o ícone padrão */
+.modal-radio-item img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"]::before {
+  content: "🎵" !important;
+  font-size: 1.8rem !important;
+  color: white !important;
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1 !important;
+}
+
+/* Remove qualquer conteúdo SVG antigo do ícone */
+.modal-radio-item img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png" i] {
   content: none !important;
+}
+
+/* Adiciona background gradient para ícones padrão que não têm logo */
+.modal-radio-item .radio-icon-default {
+  background: var(--accent-gradient) !important;
+  border: 2px solid var(--accent-primary) !important;
+  border-radius: 50% !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 50px !important;
+  height: 50px !important;
+  min-width: 50px !important;
+  min-height: 50px !important;
+  padding: 12px !important;
+  position: relative !important;
+  overflow: hidden !important;
+  box-shadow: 0 3px 10px rgba(0, 0, 0, 0.2) !important;
+  object-fit: contain !important;
+}
+
+/* Adiciona emoji musical para ícones padrão */
+.modal-radio-item .radio-icon-default::before {
+  content: "🎵" !important;
+  font-size: 1.8rem !important;
+  color: white !important;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* Garante que a classe radio-icon-default também tenha o mesmo tamanho */
+.modal-radio-item .radio-icon-default {
+  width: 50px !important;
+  height: 50px !important;
+  min-width: 50px !important;
+  min-height: 50px !important;
 }
 
 .modal-radio-info {
@@ -1910,20 +2031,6 @@ header > .header-title {
   transform: scale(1.1);
 }
 
-/* Mensagem quando a lista está vazia */
-.modal-empty-message {
-  text-align: center;
-  padding: 40px 20px;
-  color: color-mix(in srgb, var(--text-color) 50%, transparent);
-  font-style: italic;
-}
-
-.modal-empty-message i {
-  font-size: 3rem;
-  margin-bottom: 15px;
-  opacity: 0.5;
-}
-
 /* Responsividade dos modais */
 @media (max-width: 768px) {
   .modal-content {
@@ -1946,15 +2053,39 @@ header > .header-title {
     padding: 12px;
   }
   
+  /* Tamanho consistente para mobile também */
   .modal-radio-item img {
     width: 45px !important;
     height: 45px !important;
+    min-width: 45px !important;
+    min-height: 45px !important;
   }
   
-  .modal-radio-item img.radio-icon-default {
+  /* Background gradient para ícones sem logo em mobile */
+  .modal-radio-item img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"] {
     width: 45px !important;
     height: 45px !important;
+    min-width: 45px !important;
+    min-height: 45px !important;
+    background: var(--accent-gradient) !important;
+  }
+  
+  .modal-radio-item img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"]::before {
+    font-size: 1.6rem !important;
+  }
+  
+  /* Ícone padrão em mobile */
+  .modal-radio-item .radio-icon-default {
+    width: 45px !important;
+    height: 45px !important;
+    min-width: 45px !important;
+    min-height: 45px !important;
+    background: var(--accent-gradient) !important;
     padding: 10px !important;
+  }
+  
+  .modal-radio-item .radio-icon-default::before {
+    font-size: 1.6rem !important;
   }
 }
 
@@ -1975,15 +2106,39 @@ header > .header-title {
     gap: 10px;
   }
   
+  /* Tamanho consistente para mobile pequeno */
   .modal-radio-item img {
     width: 40px !important;
     height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
   }
   
-  .modal-radio-item img.radio-icon-default {
+  /* Background gradient para ícones sem logo em mobile pequeno */
+  .modal-radio-item img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"] {
     width: 40px !important;
     height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    background: var(--accent-gradient) !important;
+  }
+  
+  .modal-radio-item img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"]::before {
+    font-size: 1.4rem !important;
+  }
+  
+  /* Ícone padrão em mobile pequeno */
+  .modal-radio-item .radio-icon-default {
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 40px !important;
+    min-height: 40px !important;
+    background: var(--accent-gradient) !important;
     padding: 8px !important;
+  }
+  
+  .modal-radio-item .radio-icon-default::before {
+    font-size: 1.4rem !important;
   }
   
   .modal-radio-info h3 {
@@ -1995,6 +2150,21 @@ header > .header-title {
     height: 35px;
   }
 }
+
+/* Garante que a classe radio-icon-default seja aplicada corretamente */
+.modal-radio-item .radio-icon-default,
+.modal-radio-item img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"] {
+  background: var(--accent-gradient) !important;
+  border: 2px solid var(--accent-primary) !important;
+}
+
+/* Hover effect para ícones com gradient */
+.modal-radio-item:hover .radio-icon-default,
+.modal-radio-item:hover img[src="https://cdn-icons-png.flaticon.com/512/727/727245.png"] {
+  transform: scale(1.08);
+  box-shadow: 0 5px 20px color-mix(in srgb, var(--accent-primary) 40%, transparent) !important;
+}
+
 /* PRIVACY, TERMS, DMCA E ABOUT*/
 #pageModal.modal {
   z-index: 100;
@@ -2662,13 +2832,13 @@ footer {
     gap: 16px;
     padding: 0 15px;
   }
- 
+
   .legal-links a {
     padding: 7px 20px;
     font-size: 0.8rem;
     gap: 10px;
   }
- 
+
   .disclaimer {
     font-size: 0.85rem;
   }
@@ -2681,14 +2851,14 @@ footer {
     flex-direction: column;
     align-items: center;
   }
- 
+
   .legal-links a {
     padding: 7px 20px;
     width: 100%;
     max-width: 280px;
     justify-content: center;
   }
- 
+
   .legal-links i {
     font-size: 1.1rem;
   }
@@ -2825,121 +2995,120 @@ footer {
 
 /* ESTILOS PARA ÍCONES SOCIAIS - ÍCONE COM GRADIENTE NO HOVER */
 .socials {
-    display: flex;
-    gap: 20px;
-    justify-content: center;
-    align-items: center;
-    margin: 20px 0;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: center;
+  margin: 20px 0;
 }
 
 .social-icon {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: 55px;
-    height: 55px;
-    border-radius: 50%;
-    background: var(--card-color);
-    color: var(--text-color);
-    font-size: 1.2rem;
-    text-decoration: none;
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-    border: 2px solid transparent;
-    position: relative;
-    overflow: hidden;
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 55px;
+  height: 55px;
+  border-radius: 50%;
+  background: var(--card-color);
+  color: var(--text-color);
+  font-size: 1.2rem;
+  text-decoration: none;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  border: 2px solid transparent;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
 }
 
 /* Efeito de brilho sutil no fundo no hover */
 .social-icon::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border-radius: 50%;
-    background: var(--accent-gradient);
-    opacity: 0;
-    transition: opacity 0.4s ease;
-    z-index: 1;
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: var(--accent-gradient);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  z-index: 1;
 }
 
 /* Ícone */
 .social-icon i {
-    position: relative;
-    z-index: 2;
-    transition: all 0.4s ease;
+  position: relative;
+  z-index: 2;
+  transition: all 0.4s ease;
 }
 
 /* HOVER - Apenas o ícone recebe gradiente */
 .social-icon:hover i {
-    background: var(--accent-gradient);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-    transform: scale(1.15);
+  background: var(--accent-gradient);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  transform: scale(1.15);
 }
 
 /* Efeito sutil de brilho no fundo */
 .social-icon:hover::before {
-    opacity: 0.15;
+  opacity: 0.15;
 }
 
 /* Efeitos adicionais no hover */
 .social-icon:hover {
-    border-color: var(--accent-primary);
-    box-shadow: 0 0 20px rgba(0, 247, 255, 0.3),
-                0 6px 20px rgba(0, 0, 0, 0.2);
-    transform: translateY(-3px);
+  border-color: var(--accent-primary);
+  box-shadow: 0 0 20px rgba(0, 247, 255, 0.3),
+    0 6px 20px rgba(0, 0, 0, 0.2);
+  transform: translateY(-3px);
 }
 
 /* Modo Light - ajustes */
 [data-theme="light"] .social-icon {
-    background: var(--card-color);
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  background: var(--card-color);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
 }
 
 [data-theme="light"] .social-icon:hover {
-    box-shadow: 0 0 25px rgba(37, 99, 235, 0.2),
-                0 6px 20px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0 25px rgba(37, 99, 235, 0.2),
+    0 6px 20px rgba(0, 0, 0, 0.1);
 }
 
 /* Efeito ativo */
 .social-icon:active {
-    transform: translateY(-1px);
-    transition: transform 0.1s ease;
+  transform: translateY(-1px);
+  transition: transform 0.1s ease;
 }
 
 /* Foco para acessibilidade */
 .social-icon:focus {
-    outline: none;
-    box-shadow: 0 0 0 3px var(--accent-primary);
+  outline: none;
+  box-shadow: 0 0 0 3px var(--accent-primary);
 }
 
 /* Responsividade */
 @media (max-width: 768px) {
-    .socials {
-        gap: 15px;
-    }
-    
-    .social-icon {
-        width: 50px;
-        height: 50px;
-        font-size: 1.4rem;
-    }
+  .socials {
+    gap: 15px;
+  }
+  
+  .social-icon {
+    width: 50px;
+    height: 50px;
+    font-size: 1.4rem;
+  }
 }
 
 @media (max-width: 480px) {
-    .socials {
-        gap: 12px;
-    }
-    
-    .social-icon {
-        width: 45px;
-        height: 45px;
-        font-size: 1.3rem;
-    }
+  .socials {
+    gap: 12px;
+  }
+  
+  .social-icon {
+    width: 45px;
+    height: 45px;
+    font-size: 1.3rem;
+  }
 }
-
 
