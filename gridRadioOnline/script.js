@@ -2430,7 +2430,7 @@ shareOptions.forEach(option => {
         const platform = option.dataset.share;
         const url = encodeURIComponent(window.location.href);
         const title = encodeURIComponent('Grid Rádio - Sua música sem limites 🎧');
-        const text = encodeURIComponent('Descubra milhares de rádios online gratuitamente no Grid Rádio!');
+        const text = encodeURIComponent('Descubra milhares de rádios online gratuitamente no Grid Radio!');
         
         let shareUrl;
         
@@ -2474,8 +2474,8 @@ if (navigator.share) {
             
             try {
                 await navigator.share({
-                    title: 'Grid Rádio',
-                    text: 'Descubra milhares de rádios online gratuitamente no Grid Rádio!',
+                    title: 'Grid Radio',
+                    text: 'Descubra milhares de rádios online gratuitamente no Grid Radio!',
                     url: window.location.href,
                 });
                 
