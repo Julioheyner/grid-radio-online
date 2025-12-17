@@ -2311,7 +2311,7 @@ shareModal.id = 'shareModal';
 shareModal.innerHTML = `
   <div class="share-modal-content">
     <div class="share-modal-header">
-      <h2><i class="fas fa-share-alt"></i> Compartilhar Grid Rádio</h2>
+      <h2><i class="fas fa-share-alt"></i> Compartilhar Grid Radio</h2>
       <button class="share-modal-close" id="closeShareModal">
         <i class="fas fa-times"></i>
       </button>
@@ -2353,7 +2353,7 @@ shareModal.innerHTML = `
     </div>
     
     <div class="share-note">
-      <i class="fas fa-info-circle"></i> Ajude a espalhar o Grid Rádio!
+      <i class="fas fa-info-circle"></i> Ajude a espalhar o Grid Radio!
     </div>
   </div>
 `;
@@ -2429,7 +2429,7 @@ shareOptions.forEach(option => {
     option.addEventListener('click', () => {
         const platform = option.dataset.share;
         const url = encodeURIComponent(window.location.href);
-        const title = encodeURIComponent('Grid Rádio - Sua música sem limites 🎧');
+        const title = encodeURIComponent('Grid Radio - Sua música sem limites 🎧');
         const text = encodeURIComponent('Descubra milhares de rádios online gratuitamente no Grid Radio!');
         
         let shareUrl;
