@@ -2304,3 +2304,197 @@ function forceUpdateCounters() {
     console.log('🔄 Forçando atualização dos contadores...');
     updateButtonCounters();
 }
+
+// Modal de BOTÃO de Compartilhamento
+const shareModal = document.createElement('div');
+shareModal.id = 'shareModal';
+shareModal.innerHTML = `
+  <div class="share-modal-content">
+    <div class="share-modal-header">
+      <h2><i class="fas fa-share-alt"></i> Compartilhar Grid Rádio</h2>
+      <button class="share-modal-close" id="closeShareModal">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    
+    <div class="share-options">
+      <div class="share-option whatsapp" data-share="whatsapp">
+        <i class="fab fa-whatsapp"></i>
+        <span>WhatsApp</span>
+      </div>
+      
+      <div class="share-option facebook" data-share="facebook">
+        <i class="fab fa-facebook"></i>
+        <span>Facebook</span>
+      </div>
+      
+       <div class="share-option x" data-share="x">
+        <i class="fab fa-x-twitter"></i>
+        <span>X</span>
+      </div>
+      
+      <div class="share-option telegram" data-share="telegram">
+        <i class="fab fa-telegram"></i>
+        <span>Telegram</span>
+      </div>
+      
+      <div class="share-option link" data-share="link">
+        <i class="fas fa-link"></i>
+        <span>Copiar Link</span>
+      </div>
+    </div>
+    
+    <div class="share-url-container">
+      <input type="text" id="shareUrl" readonly value="${window.location.href}">
+      <button id="copyShareUrl" class="tooltip">
+        Copiar
+        <span class="tooltiptext">Link copiado!</span>
+      </button>
+    </div>
+    
+    <div class="share-note">
+      <i class="fas fa-info-circle"></i> Ajude a espalhar o Grid Rádio!
+    </div>
+  </div>
+`;
+
+// Adiciona o modal ao body
+document.body.appendChild(shareModal);
+
+// Elementos do modal
+const shareBtn = document.getElementById('shareBtn');
+const closeShareModal = document.getElementById('closeShareModal');
+const copyShareUrlBtn = document.getElementById('copyShareUrl');
+const shareUrlInput = document.getElementById('shareUrl');
+const shareOptions = document.querySelectorAll('.share-option');
+
+// Abrir modal de compartilhamento
+shareBtn.addEventListener('click', (e) => {
+    e.preventDefault();
+    shareModal.classList.add('active');
+    
+    // Atualiza o URL no input (caso tenha mudado)
+    shareUrlInput.value = window.location.href;
+});
+
+// Fechar modal de compartilhamento
+closeShareModal.addEventListener('click', () => {
+    shareModal.classList.remove('active');
+});
+
+// Fechar modal ao clicar fora
+shareModal.addEventListener('click', (e) => {
+    if (e.target === shareModal) {
+        shareModal.classList.remove('active');
+    }
+});
+
+// Copiar URL para área de transferência
+copyShareUrlBtn.addEventListener('click', async () => {
+    try {
+        await navigator.clipboard.writeText(shareUrlInput.value);
+        
+        // Mostrar tooltip
+        const tooltip = copyShareUrlBtn.querySelector('.tooltiptext');
+        tooltip.textContent = 'Link copiado!';
+        tooltip.style.visibility = 'visible';
+        tooltip.style.opacity = '1';
+        
+        setTimeout(() => {
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.opacity = '0';
+        }, 2000);
+        
+    } catch (err) {
+        console.error('Erro ao copiar: ', err);
+        
+        // Fallback para navegadores antigos
+        shareUrlInput.select();
+        document.execCommand('copy');
+        
+        const tooltip = copyShareUrlBtn.querySelector('.tooltiptext');
+        tooltip.textContent = 'Copiado!';
+        tooltip.style.visibility = 'visible';
+        tooltip.style.opacity = '1';
+        
+        setTimeout(() => {
+            tooltip.style.visibility = 'hidden';
+            tooltip.style.opacity = '0';
+        }, 2000);
+    }
+});
+
+// Compartilhar nas redes sociais
+shareOptions.forEach(option => {
+    option.addEventListener('click', () => {
+        const platform = option.dataset.share;
+        const url = encodeURIComponent(window.location.href);
+        const title = encodeURIComponent('Grid Rádio - Sua música sem limites 🎧');
+        const text = encodeURIComponent('Descubra milhares de rádios online gratuitamente no Grid Rádio!');
+        
+        let shareUrl;
+        
+        switch (platform) {
+            case 'whatsapp':
+                shareUrl = `https://wa.me/?text=${text}%20${url}`;
+                break;
+                
+            case 'facebook':
+                shareUrl = `https://www.facebook.com/sharer/sharer.php?u=${url}`;
+                break;
+                
+            case 'x':
+            // X (antigo Twitter) - usa parâmetros diferentes
+                shareUrl = `https://x.com/intent/tweet?url=${url}&text=${text}&hashtags=${hashtags}`;
+                 break;
+                
+            case 'telegram':
+                shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
+                break;
+                
+            case 'link':
+                // Já tratado pelo botão de copiar
+                return;
+        }
+        
+        // Abrir janela de compartilhamento
+        window.open(shareUrl, '_blank', 'width=600,height=400');
+        
+        // Fechar modal
+        shareModal.classList.remove('active');
+    });
+});
+
+// Web Share API (para dispositivos móveis)
+if (navigator.share) {
+    shareBtn.addEventListener('click', async (e) => {
+        // Verifica se é um dispositivo móvel
+        if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+            e.preventDefault();
+            
+            try {
+                await navigator.share({
+                    title: 'Grid Rádio',
+                    text: 'Descubra milhares de rádios online gratuitamente no Grid Rádio!',
+                    url: window.location.href,
+                });
+                
+                console.log('Conteúdo compartilhado com sucesso');
+            } catch (err) {
+                // Usuário cancelou o compartilhamento ou ocorreu um erro
+                if (err.name !== 'AbortError') {
+                    console.error('Erro ao compartilhar:', err);
+                    // Abre o modal normal se a Web Share API falhar
+                    shareModal.classList.add('active');
+                }
+            }
+        }
+    });
+}
+
+// Tecla ESC para fechar modal
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && shareModal.classList.contains('active')) {
+        shareModal.classList.remove('active');
+    }
+});
