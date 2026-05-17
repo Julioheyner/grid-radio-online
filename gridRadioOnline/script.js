@@ -2329,7 +2329,7 @@ shareModal.innerHTML = `
       </div>
       
        <div class="share-option x" data-share="x">
-        <i class="fa-brands fa-x-twitter" style="color: rgb(116, 192, 252);"></i>
+        <i class="fa-brands fa-x-twitter"></i>
         <span>X</span>
       </div>
       
