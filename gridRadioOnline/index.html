@@ -1,23 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-<title>🎧 Grid Radio</title>
-<meta name="theme-color" content="#6366f1" media="(prefers-color-scheme: light)">
-<meta name="theme-color" content="#0d1117" media="(prefers-color-scheme: dark)">
-
-<meta name="msapplication-navbutton-color" content="#0d1117">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-
-<!-- Opcional: cores adicionais para diferentes browsers -->
-<meta name="msapplication-TileColor" content="#0d1117">
-<meta name="msapplication-config" content="/browserconfig.xml">
-
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" xintegrity="sha512-iecdLmaskl7CVkqkXNQ/ZH/XLlvWZOJyj7Yy7tcenmpD1ypASozpmT/E0iPtmFIB46ZmdtAc9eNBvH0H/ZpiBw==" crossorigin="anonymous" referrerpolicy="no-referrer">
-<link rel="stylesheet" href="style.css">
-
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Grid Rádio</title>
+  <meta name="theme-color" id="themeColor" content="#6366f1">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+  
+  <link rel="stylesheet" href="style.css">
 </head>
 <body>
   
@@ -56,20 +46,18 @@
   
    <section id="hero-section">
    <div class="hero-image-container">
-     <img src="img/conceito-de-coracao-partido.jpg" alt="Web Radio Online - Sua música sem limites" class="hero-image">
+     <img src="img/conceito-de-coracao-partido.jpg" alt="Web Rádio Online - Sua música sem limites" class="hero-image">
    </div>
    <div class="hero-content">
      <h1>Sua Música, Sem Limites</h1>
      <p>Sinta o som ir além do fone de ouvido.</p>
    </div>
-   <div class="image-credits">
-  <a href="https://br.freepik.com/imagem-ia-gratis/conceito-de-coracao-partido_152783762.htm#fromView=search&page=1&position=4&uuid=bc141c95-543c-44bb-a40f-6d4f9a159076&query=Mulher+ouvindo+m%C3%BAsica+"
-target="_blank"
-rel="noopener noreferrer"
-aria-label="Créditos da imagem - abre em nova aba"
->Imagem de Magnific
-</a>
-
+  <div class="image-credits">
+  <a href="https://br.freepik.com/imagem-ia-gratis/conceito-de-coracao-partido_152783762.htm#fromView=search&page=1&position=4&uuid=bc141c95-543c-44bb-a40f-6d4f9a159076&query=Mulher+ouvindo+m%C3%BAsica+" 
+     target="_blank" 
+     rel="noopener noreferrer">
+    Imagem de freepik
+  </a>
 </div>
  </section>
   
@@ -108,7 +96,7 @@ aria-label="Créditos da imagem - abre em nova aba"
     <img class="player-cover" id="playerCover" src="https://cdn-icons-png.flaticon.com/512/727/727245.png" alt="Capa da rádio" crossorigin="anonymous" referrerpolicy="no-referrer">
     <div class="player-details">
       <div class="player-title" id="nowPlaying">Selecione uma rádio...</div>
-      <div class="player-subtitle" id="playerSubtitle">Grid Radio</div>
+      <div class="player-subtitle" id="playerSubtitle">Grid Rádio</div>
       <div class="security-status" id="securityStatus">
         </div>
     </div>
@@ -151,17 +139,17 @@ aria-label="Créditos da imagem - abre em nova aba"
     <div class="modal-header">
       <h2><i class="fas fa-sliders-h"></i> Filtrar Rádios</h2>
     </div>
-    <input type="text" id="searchInput" placeholder="🔍 Nome da rádio..." />
+    <input type="text" id="searchInput" placeholder=" Nome da rádio..." />
    
   <select id="countrySelect" class="country-select">
-    <option value="">🌎 Todos os países</option>
+    <option value=""> Todos os países</option>
   </select>
     <div id="genreSearchContainer">
-        <input type="text" id="genreSearchInput" placeholder="🎶 Digite 3 letras do Gênero (Ex: val)" autocomplete="off" />
+        <input type="text" id="genreSearchInput" placeholder=" Digite 3 letras do Gênero (Ex: val)" autocomplete="off" />
         <div id="genreResultsList">
             </div>
     </div>
-    <select id="genreSelect" style="display:none;"><option value="">🎶 Todos os gêneros</option></select>
+    <select id="genreSelect" style="display:none;"><option value=""> Todos os gêneros</option></select>
     <button id="searchBtn" class="modal-action-btn">
       <i class="fas fa-search"></i> Buscar
     </button>
@@ -194,7 +182,8 @@ aria-label="Créditos da imagem - abre em nova aba"
 <div id="notification" class="notification"></div>
 <footer>
   <div class="footer-content">
-    <p>Desenvolvido com <i class="fas fa-heart" style="color: var(--error-color);"></i> por <strong>Julio Gonzales</strong> © 2025 - Brasil</p>
+    <p>Desenvolvido com <i class="fas fa-heart" style="color: var(--error-color);"></i> e muito <i class="fas fa-mug-hot" style="color: var(--accent-primary);"></i> por <strong>Julio Gonzales</strong> © 2025 - Brasil
+</p>
     
     <div class="socials">
   <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank">
@@ -206,8 +195,8 @@ aria-label="Créditos da imagem - abre em nova aba"
   <a href="mailto:juliogonzales.dev@proton.me" title="Email">
     <i class="fas fa-envelope"></i>
   </a>
-  <a href="#" id="shareBtn" aria-label="Compartilhar app" title="Compartilhar">
-  <i class="fas fa-share-alt"></i>
+  <a href="#" id="shareBtn" arial-label="Compartilhar app" title="Compartilhar">
+    <i class="fas fa-share-alt"></i>
   </a>
 </div>
    
