@@ -1,6 +1,6 @@
-// ====================================================
+// =====================================
 // GRID RÁDIO ONLINE - SCRIPT PRINCIPAL
-// ====================================================
+// =====================================
 // Este script controla todas as funcionalidades do Grid Rádio Online:
 // - Reprodução de rádios online
 // - Gerenciamento de favoritos e histórico
@@ -8,9 +8,9 @@
 // - Interface do usuário e controles de áudio
 // ====================================================
 
-// ====================================================
+// =========================
 // EFEITO DA IMAGEM DO HERO
-// ====================================================
+// =========================
 document.addEventListener('DOMContentLoaded', function() {
     const heroSection = document.getElementById('hero-section');
     
@@ -27,9 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-// ====================================================
+// ===================================
 // CONFIGURAÇÕES DE SEGURANÇA E UTILS
-// ====================================================
+// ===================================
 const SECURITY_CONFIG = {
     ALLOWED_PROTOCOLS: ['http:', 'https:'],
     ALLOWED_AUDIO_DOMAINS: ['cast.streamhosting.rs', 's2.voscast.com', 'streaming.radio.co', 
@@ -39,9 +39,9 @@ const SECURITY_CONFIG = {
     SUSPICIOUS_PATTERNS: [/(\.exe|\.js|\.php|\.cgi|\.pl)$/i, /eval\(|Function\(|document\.write/i]
 };
 
-// ====================================================
+// ==================
 // VARIÁVEIS GLOBAIS
-// ====================================================
+// ==================
 const API_BASE = "https://de1.api.radio-browser.info/json";
 const radiosContainer = document.getElementById("radios");
 const favoritesList = document.getElementById("favoritesList");
@@ -78,9 +78,9 @@ const loadMoreBtn = document.getElementById('loadMoreBtn');
 const securityStatusEl = document.getElementById("securityStatus");
 const playerFixedEl = document.querySelector('.player-fixed');
 
-// ====================================================
+// =============================
 // VARIÁVEIS DE ESTADO DO ÁUDIO
-// ====================================================
+// =============================
 let allGenreTags = [];
 let page = 1;
 let loading = false;
@@ -111,9 +111,9 @@ const MUSIC_ICON_SVG = 'data:image/svg+xml;base64,' + btoa(`
 
 const DEFAULT_ICON = 'https://cdn-icons-png.flaticon.com/512/727/727245.png';
 
-// ====================================================
+// =====================
 // FUNÇÕES DE UTILIDADE
-// ====================================================
+// =====================
 
 /**
  * Sanitiza strings HTML para prevenir XSS
@@ -155,7 +155,7 @@ function secureLocalStorageSet(key, value) {
             localStorage.setItem(key, JSON.stringify(value));
         }
     } catch (error) {
-        console.error('❌ Erro ao salvar no localStorage:', error);
+        console.error(' Erro ao salvar no localStorage:', error);
         try {
             localStorage.clear();
             if (Array.isArray(value)) {
@@ -215,7 +215,7 @@ function secureLocalStorageGet(key, defaultValue) {
         
         return parsed;
     } catch (error) {
-        console.error('❌ Erro ao recuperar do localStorage:', error);
+        console.error(' Erro ao recuperar do localStorage:', error);
         try {
             localStorage.removeItem(key);
         } catch (e) {
@@ -539,13 +539,13 @@ function updateButtonCounters() {
             histBadge.setAttribute('title', `${histCount} rádio${histCount !== 1 ? 's' : ''} no histórico`);
         }
     } catch (error) {
-        console.error('❌ Erro ao atualizar contadores:', error);
+        console.error(' Erro ao atualizar contadores:', error);
     }
 }
 
-// ====================================================
+// ==================
 // CONTROLE DE ÁUDIO
-// ====================================================
+// ==================
 
 /**
  * Configura event listeners do áudio
@@ -576,7 +576,7 @@ function startAudioHealthCheck() {
         if (silenceDetected) {
             silenceDetected = false;
             console.log("Áudio retomado após silêncio");
-            showNotification("🔊 Conexão restaurada", "success");
+            showNotification(" Conexão restaurada", "success");
         }
     };
     
@@ -588,7 +588,7 @@ function startAudioHealthCheck() {
                 if (!silenceDetected) {
                     silenceDetected = true;
                     console.log("Silêncio detectado no stream");
-                    showNotification("🔇 Problema na conexão, tentando reconectar...", "warning");
+                    showNotification(" Problema na conexão, tentando reconectar...", "warning");
                     attemptAudioRecovery();
                 }
             }
@@ -614,7 +614,7 @@ function stopAudioHealthCheck() {
  */
 function attemptAudioRecovery() {
     if (!currentRadio || audioErrorCount >= MAX_AUDIO_ERRORS) {
-        showNotification("❌ Muitos erros na conexão. Tente outra rádio.", "error");
+        showNotification(" Muitos erros na conexão. Tente outra rádio.", "error");
         pauseAudio();
         return;
     }
@@ -652,10 +652,10 @@ function handleAudioError(error) {
     audioErrorCount++;
     
     if (audioErrorCount >= MAX_AUDIO_ERRORS) {
-        showNotification("❌ Muitos erros na conexão. Tente outra rádio.", "error");
+        showNotification(" Muitos erros na conexão. Tente outra rádio.", "error");
         pauseAudio();
     } else {
-        showNotification("🔇 Problema na conexão, tentando novamente...", "warning");
+        showNotification(" Problema na conexão, tentando novamente...", "warning");
         setTimeout(() => {
             if (currentRadio && isPlaying) {
                 attemptAudioRecovery();
@@ -670,7 +670,7 @@ function handleAudioError(error) {
 function handleAudioEnded() {
     console.log("Áudio terminou naturalmente");
     if (isPlaying) {
-        showNotification("📻 Transmissão encerrada", "info");
+        showNotification(" Transmissão encerrada", "info");
         pauseAudio();
     }
 }
@@ -689,7 +689,7 @@ function handleAudioCanPlay() {
 function handleAudioStalled() {
     console.log("Áudio travado, tentando recuperar...");
     if (isPlaying) {
-        showNotification("🔇 Conexão instável...", "warning");
+        showNotification(" Conexão instável...", "warning");
         attemptAudioRecovery();
     }
 }
@@ -732,7 +732,7 @@ function playAudio() {
         console.error("Erro ao tentar tocar a rádio:", error);
         
         if (error.name === "NotAllowedError") {
-            showNotification("🔇 Clique no botão Play para iniciar a reprodução", "warning");
+            showNotification(" Clique no botão Play para iniciar a reprodução", "warning");
             isPlaying = false;
             playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             playerFixedEl.classList.remove('playing');
@@ -875,17 +875,58 @@ function playRadio(name, url, favicon, country, tags) {
             playAudio();
         } catch (error) {
             console.error('Erro ao configurar áudio:', error);
-            showNotification("❌ Erro ao configurar reprodução", "error");
+            showNotification(" Erro ao configurar reprodução", "error");
         }
     }, 500);
 }
 
-// ====================================================
+// ===================
 // FUNÇÕES PRINCIPAIS
-// ====================================================
+// ===================
 
 /**
- * Busca rádios da API
+ * Renderiza rádios a partir do cache
+ * @param {Array} radios - Lista de rádios em cache
+ */
+function renderRadiosFromCache(radios) {
+    if (!radios || radios.length === 0) {
+        radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px;'> Nenhuma rádio encontrada.</p>";
+        return;
+    }
+    
+    const html = radios.map(r => {
+        const sanitizedRadio = sanitizeRadioData({
+            name: r.name,
+            url: r.url_resolved || r.url,
+            favicon: r.favicon,
+            country: r.country,
+            tags: r.tags
+        });
+        
+        const isFavorite = favorites.some(fav => fav.url === sanitizedRadio.url);
+        const isCurrent = currentRadio && currentRadio.url === sanitizedRadio.url;
+
+        return `
+            <div class="radio-card ${isFavorite ? 'favorite' : ''} ${isCurrent ? 'playing' : ''}"
+                 onclick="playRadio('${(r.name || 'Rádio').replace(/'/g, "\\'")}', '${(r.url_resolved || r.url || '').replace(/'/g, "\\'")}', '${(r.favicon || '').replace(/'/g, "\\'")}', '${(r.country || '').replace(/'/g, "\\'")}', '${(r.tags || '').replace(/'/g, "\\'")}')">
+                ${getRadioImageHTML(sanitizedRadio, 'normal')}
+                <h3>${sanitizedRadio.name}</h3>
+                <small>${sanitizedRadio.country} - ${cleanGenreName(sanitizedRadio.tags)}</small>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width:${isCurrent && isPlaying ? '50%' : '0%'}"></div>
+                </div>
+            </div>
+        `;
+    }).join("");
+
+    radiosContainer.innerHTML = html;
+    page = 2; // Próxima página para carregar mais
+    hasMoreResults = radios.length === 100;
+    updateLoadMoreButton();
+}
+
+/**
+ * Busca rádios da API com cache
  * @param {string} query - Termo de busca
  * @param {string} country - País para filtrar
  * @param {string} tag - Tag/gênero para filtrar
@@ -895,6 +936,7 @@ async function fetchRadios(query = "", country = "", tag = "", append = false) {
     if (loading) return;
     loading = true;
 
+    // CORREÇÃO: Não exibir "Carregando" duas vezes
     if (!append) {
         radiosContainer.innerHTML = "<div class='loading-text'><div class='loader'></div> Carregando rádios...</div>";
         page = 1;
@@ -917,14 +959,25 @@ async function fetchRadios(query = "", country = "", tag = "", append = false) {
 
         if (!radios.length) {
             if (!append) {
-                radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px;'>😕 Nenhuma rádio encontrada.</p>";
+                radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px;'> Nenhuma rádio encontrada.</p>";
             }
             hasMoreResults = false;
+            updateLoadMoreButton();
+            loading = false;
             return;
         }
 
         hasMoreResults = radios.length === 100;
-       
+        
+        // Cache dos resultados para carregamento mais rápido
+        if (!append && query === "" && country === "" && tag === "") {
+            try {
+                sessionStorage.setItem('cachedRadios', JSON.stringify(radios));
+            } catch (e) {
+                // Ignorar erro de cache
+            }
+        }
+        
         const html = radios.map(r => {
             const sanitizedRadio = sanitizeRadioData({
                 name: r.name,
@@ -933,13 +986,13 @@ async function fetchRadios(query = "", country = "", tag = "", append = false) {
                 country: r.country,
                 tags: r.tags
             });
-           
+            
             const isFavorite = favorites.some(fav => fav.url === sanitizedRadio.url);
             const isCurrent = currentRadio && currentRadio.url === sanitizedRadio.url;
 
             return `
                 <div class="radio-card ${isFavorite ? 'favorite' : ''} ${isCurrent ? 'playing' : ''}"
-                     onclick="playRadio('${r.name.replace(/'/g, "\\'")}', '${r.url_resolved.replace(/'/g, "\\'")}', '${r.favicon ? r.favicon.replace(/'/g, "\\'") : ''}', '${r.country ? r.country.replace(/'/g, "\\'") : ''}', '${r.tags ? r.tags.replace(/'/g, "\\'") : ''}')">
+                     onclick="playRadio('${(r.name || 'Rádio').replace(/'/g, "\\'")}', '${(r.url_resolved || '').replace(/'/g, "\\'")}', '${(r.favicon || '').replace(/'/g, "\\'")}', '${(r.country || '').replace(/'/g, "\\'")}', '${(r.tags || '').replace(/'/g, "\\'")}')">
                     ${getRadioImageHTML(sanitizedRadio, 'normal')}
                     <h3>${sanitizedRadio.name}</h3>
                     <small>${sanitizedRadio.country} - ${cleanGenreName(sanitizedRadio.tags)}</small>
@@ -960,9 +1013,9 @@ async function fetchRadios(query = "", country = "", tag = "", append = false) {
     } catch (err) {
         console.error("Erro ao buscar rádios:", err);
         if (!append) {
-            radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px; color: var(--error-color);'>⚠️ Erro ao carregar as rádios.</p>";
+            radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px; color: var(--error-color);'> Erro ao carregar as rádios.</p>";
         } else {
-            showNotification("⚠️ Erro ao carregar mais rádios.", "error");
+            showNotification(" Erro ao carregar mais rádios.", "error");
         }
     } finally {
         loading = false;
@@ -971,16 +1024,17 @@ async function fetchRadios(query = "", country = "", tag = "", append = false) {
 }
 
 /**
- * Atualiza botão "Ver mais"
+ * Atualiza botão "Ver mais" 
  */
 function updateLoadMoreButton() {
-    const isAllTabActive = document.querySelector('.tab[data-tab="all"]').classList.contains('active');
+    const isAllTabActive = document.querySelector('.tab[data-tab="all"]')?.classList.contains('active');
 
+    // CORREÇÃO: Não mostrar botão de carregamento duplicado
     if (loading) {
         loadMoreBtn.disabled = true;
         loadMoreBtn.innerHTML = '<div class="loader"></div> Carregando...';
         loadMoreBtn.classList.remove('hidden');
-    } else if (hasMoreResults && isAllTabActive) {
+    } else if (hasMoreResults && isAllTabActive && page > 1) {
         loadMoreBtn.disabled = false;
         loadMoreBtn.innerHTML = '<i class="fas fa-plus"></i> Ver mais rádios';
         loadMoreBtn.classList.remove('hidden');
@@ -1006,9 +1060,9 @@ function updateSecurityStatus(url) {
     }
 }
 
-// ====================================================
+// ===========================
 // GERENCIAMENTO DE FAVORITOS
-// ====================================================
+// ===========================
 
 /**
  * Alterna rádio atual nos favoritos
@@ -1018,11 +1072,11 @@ function toggleFavoriteRadio() {
     const index = favorites.findIndex(fav => fav.url === currentRadio.url);
     if (index === -1) {
         favorites.push(currentRadio);
-        showNotification("⭐ Rádio adicionada aos favoritos", "success");
+        showNotification(" Rádio adicionada aos favoritos", "success");
         toggleFavorite.innerHTML = '<i class="fas fa-star"></i>';
     } else {
         favorites.splice(index, 1);
-        showNotification("⭐ Rádio removida dos favoritos", "success");
+        showNotification(" Rádio removida dos favoritos", "success");
         toggleFavorite.innerHTML = '<i class="far fa-star"></i>';
     }
     secureLocalStorageSet('favorites', favorites);
@@ -1047,7 +1101,7 @@ function updateFavoriteButton() {
  */
 function updateFavoritesUI() {
     if (favorites.length === 0) {
-        favoritesList.innerHTML = "<p style='text-align:center; padding: 20px;'>⭐ Nenhuma rádio favorita ainda.</p>";
+        favoritesList.innerHTML = "<p style='text-align:center; padding: 20px;'> Nenhuma rádio favorita ainda.</p>";
         return;
     }
     const header = `
@@ -1067,7 +1121,7 @@ function updateFavoritesUI() {
                 ${getRadioImageHTML(radio, 'normal')}
                 <h3>${radio.name}</h3>
                 <small>${radio.country} - ${displayTags}</small>
-                <button onclick="event.stopPropagation(); removeFavorite('${radio.url}')" style="background:var(--error-color); color:#fff; border:none; padding:4px 8px; border-radius:6px; margin-top:6px; font-size:0.85rem; cursor:pointer; font-weight: 500;">
+                <button onclick="event.stopPropagation(); showConfirmationModal('removeFavorite', '${radio.url.replace(/'/g, "\\'")}')" style="background:var(--error-color); color:#fff; border:none; padding:4px 8px; border-radius:6px; margin-top:6px; font-size:0.85rem; cursor:pointer; font-weight: 500;">
                     <i class='fas fa-trash'></i> Remover
                 </button>
                 <div class="progress-container">
@@ -1089,7 +1143,7 @@ function removeFavorite(url) {
     updateFavoritesUI();
     updateFavoriteButton();
     updateRadioCards();
-    showNotification("⭐ Rádio removida dos favoritos", "success");
+    showNotification(" Rádio removida dos favoritos", "success");
     
     // Atualizar contador
     updateButtonCounters();
@@ -1104,15 +1158,15 @@ function clearFavoritesAction() {
     updateFavoritesUI();
     updateFavoriteButton();
     updateRadioCards();
-    showNotification("⭐ Todos os favoritos removidos", "success");
+    showNotification(" Todos os favoritos removidos", "success");
     
     // Atualizar contador
     updateButtonCounters();
 }
 
-// ====================================================
+// ===========================
 // GERENCIAMENTO DE HISTÓRICO
-// ====================================================
+// ===========================
 
 /**
  * Atualiza interface de histórico
@@ -1139,7 +1193,7 @@ function updateHistoryUI() {
                 ${getRadioImageHTML(radio, 'normal')}
                 <h3>${radio.name}</h3>
                 <small>${radio.country} - ${displayTags}</small>
-                <button onclick="event.stopPropagation(); removeFromHistory('${radio.url}')" style="background:var(--error-color); color:#fff; border:none; padding:4px 8px; border-radius:6px; margin-top:6px; font-size:0.85rem; cursor:pointer; font-weight: 500;">
+                <button onclick="event.stopPropagation(); showConfirmationModal('removeHistory', '${radio.url.replace(/'/g, "\\'")}')" style="background:var(--error-color); color:#fff; border:none; padding:4px 8px; border-radius:6px; margin-top:6px; font-size:0.85rem; cursor:pointer; font-weight: 500;">
                     <i class='fas fa-trash'></i> Remover
                 </button>
                 <div class="progress-container">
@@ -1214,9 +1268,9 @@ function updateRadioCards() {
     });
 }
 
-// ====================================================
+// ====================================
 // FUNCIONALIDADE PARA FECHAR O PLAYER
-// ====================================================
+// ====================================
 
 /**
  * Adiciona botão para fechar o player
@@ -1564,9 +1618,9 @@ function reopenPlayer() {
     showNotification('🎧 Player restaurado', 'success');
 }
 
-// ====================================================
+// =========================
 // CONTROLES DE UI E MODAIS
-// ====================================================
+// =========================
 
 // Gerenciador de Tabs
 tabs.forEach(tab => {
@@ -1704,6 +1758,76 @@ function showHistoryModal() {
     historyModal.style.display = "flex";
 }
 
+// ===========================
+// GERENCIAMENTO DE FAVORITOS 
+// ===========================
+
+/**
+ * Atualiza interface de favoritos
+ */
+function updateFavoritesUI() {
+    if (favorites.length === 0) {
+        favoritesList.innerHTML = "<p style='text-align:center; padding: 40px; color: var(--text-secondary);'><i class='fas fa-star' style='font-size:2rem;display:block;margin-bottom:12px;opacity:0.5;'></i>Nenhuma rádio favorita ainda.</p>";
+        return;
+    }
+    
+    const html = favorites.map((radio, index) => {
+        const isCurrent = currentRadio && currentRadio.url === radio.url;
+        const displayTags = cleanGenreName(radio.tags);
+
+        return `
+            <div class="radio-card favorite ${isCurrent ? 'playing' : ''}"
+                 onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${radio.url.replace(/'/g, "\\'")}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
+                ${getRadioImageHTML(radio, 'normal')}
+                <h3>${radio.name}</h3>
+                <small>${radio.country} - ${displayTags}</small>
+                <button onclick="event.stopPropagation(); showConfirmationModal('removeFavorite', '${radio.url.replace(/'/g, "\\'")}')" 
+                        style="background:var(--error-color); color:#fff; border:none; padding:4px 8px; border-radius:6px; margin-top:6px; font-size:0.85rem; cursor:pointer; font-weight: 500;">
+                    <i class='fas fa-trash'></i> Remover
+                </button>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width:${isCurrent && isPlaying ? '50%' : '0%'}"></div>
+                </div>
+            </div>`;
+    }).join("");
+
+    favoritesList.innerHTML = html;
+}
+
+/**
+ * Atualiza interface de histórico
+ */
+function updateHistoryUI() {
+    if (history.length === 0) {
+        historyList.innerHTML = "<p style='text-align:center; padding: 40px; color: var(--text-secondary);'><i class='fas fa-history' style='font-size:2rem;display:block;margin-bottom:12px;opacity:0.5;'></i>Nenhuma rádio no histórico ainda.</p>";
+        return;
+    }
+    
+    const html = history.map(radio => {
+        const isCurrent = currentRadio && currentRadio.url === radio.url;
+        const displayTags = cleanGenreName(radio.tags);
+        const date = new Date(radio.date);
+        const timeAgo = formatTimeAgo(date);
+
+        return `
+            <div class="radio-card ${isCurrent ? 'playing' : ''}"
+                 onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${radio.url.replace(/'/g, "\\'")}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
+                ${getRadioImageHTML(radio, 'normal')}
+                <h3>${radio.name}</h3>
+                <small>${radio.country} - ${displayTags}</small>
+                <small style="font-size: 0.65rem; opacity: 0.5; margin-top: 2px;">${timeAgo}</small>
+                <button onclick="event.stopPropagation(); showConfirmationModal('removeHistory', '${radio.url.replace(/'/g, "\\'")}')" 
+                        style="background:var(--error-color); color:#fff; border:none; padding:4px 8px; border-radius:6px; margin-top:6px; font-size:0.85rem; cursor:pointer; font-weight: 500;">
+                    <i class='fas fa-trash'></i> Remover
+                </button>
+                <div class="progress-container">
+                    <div class="progress-bar" style="width:${isCurrent && isPlaying ? '50%' : '0%'}"></div>
+                </div>
+            </div>`;
+    }).join("");
+    historyList.innerHTML = html;
+}
+
 /**
  * Formata tempo relativo para exibição
  * @param {Date} date - Data a ser formatada
@@ -1724,100 +1848,125 @@ function formatTimeAgo(date) {
     return date.toLocaleDateString('pt-BR');
 }
 
-// ====================================================
-// CONTEÚDO DAS PÁGINAS
-// ====================================================
+// =====================
+// CONTEÚDO DAS PÁGINAS 
+// =====================
 const pageContents = {
     privacy: `
-        <h2><i class="fas fa-user-shield"></i> Política de Privacidade</h2>
-        
-        <h3>1. Dados Coletados</h3>
-        <p>O Grid Rádio Online não coleta dados pessoais identificáveis. Utilizamos apenas o <strong>localStorage</strong> do seu navegador para salvar:</p>
-        <ul>
-            <li>Rádios Favoritas</li>
-            <li>Histórico de Reprodução</li>
-            <li>Tema (Claro/Escuro)</li>
-            <li>Preferências de Volume</li>
-        </ul>
-        <p>Estes dados ficam armazenados exclusivamente no seu dispositivo e nunca são enviados para nossos servidores.</p>
-        <h3>2. Fontes de Rádio</h3>
-        <p>Usamos a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a> para buscar listas de estações.</p>
-        <h3>3. Segurança</h3>
-        <p>Implementamos validações básicas de URL e sanitização de HTML para mitigar riscos de segurança, mas você é responsável por verificar a segurança das estações que decide ouvir. Usamos HTTPS e validamos fontes externas para proteger suas informações contra acesso não autorizado.</p>
-        <h3>6. Contato</h3>
-        <p>Para questões sobre privacidade, entre em contato: <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link email-link">juliogonzales.dev@proton.me</a></p>
+        <div class="page-content">
+            <h2><i class="fas fa-user-shield"></i> Política de Privacidade</h2>
+            
+            <h3>1. Dados Coletados</h3>
+            <p>O Grid Rádio Online não coleta dados pessoais identificáveis. Utilizamos apenas o <strong>localStorage</strong> do seu navegador para salvar:</p>
+            <ul>
+                <li>Rádios Favoritas</li>
+                <li>Histórico de Reprodução</li>
+                <li>Tema (Claro/Escuro)</li>
+                <li>Preferências de Volume</li>
+            </ul>
+            <p>Estes dados ficam armazenados exclusivamente no seu dispositivo e nunca são enviados para nossos servidores.</p>
+            
+            <h3>2. Fontes de Rádio</h3>
+            <p>Usamos a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a> para buscar listas de estações.</p>
+            
+            <h3>3. Segurança</h3>
+            <p>Implementamos validações básicas de URL e sanitização de HTML para mitigar riscos de segurança, mas você é responsável por verificar a segurança das estações que decide ouvir. Usamos HTTPS e validamos fontes externas para proteger suas informações contra acesso não autorizado.</p>
+            
+            <h3>4. Contato</h3>
+            <p>Para questões sobre privacidade, entre em contato: <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link email-link">juliogonzales.dev@proton.me</a></p>
+        </div>
     `,
+    
     terms: `
-        <h2><i class="fas fa-file-signature"></i> Termos de Uso</h2>
-        <h3>1. Aceitação dos Termos</h3>
-        <p>Ao usar o Grid Rádio Online, você concorda com estes termos de uso.</p>
-        <h3>2. Serviço</h3>
-        <p>O Grid Rádio Online é um agregador de estações de rádio online. Não hospedamos nenhum conteúdo de áudio.</p>
-        <h3>3. Uso Aceitável</h3>
-        <p>Você concorda em usar o serviço apenas para fins legais e de acordo com todas as leis aplicáveis.</p>
-        <h3>4. Direitos Autorais</h3>
-        <p>Todo o conteúdo de áudio transmitido pertence às respectivas estações de rádio. Respeite os direitos autorais.</p>
-        <h3>5. Limitação de Responsabilidade</h3>
-        <p>Não nos responsabilizamos por:</p>
-        <ul>
-            <li>Interrupções no serviço</li>
-            <li>Conteúdo das estações de rádio</li>
-            <li>Problemas técnicos nas transmissões</li>
-        </ul>
-        <h3>6. Modificações</h3>
-        <p>Reservamo-nos o direito de modificar estes termos a qualquer momento.</p>
+        <div class="page-content">
+            <h2><i class="fas fa-file-signature"></i> Termos de Uso</h2>
+            
+            <h3>1. Aceitação dos Termos</h3>
+            <p>Ao usar o Grid Rádio Online, você concorda com estes termos de uso.</p>
+            
+            <h3>2. Serviço</h3>
+            <p>O Grid Rádio Online é um agregador de estações de rádio online. Não hospedamos nenhum conteúdo de áudio.</p>
+            
+            <h3>3. Uso Aceitável</h3>
+            <p>Você concorda em usar o serviço apenas para fins legais e de acordo com todas as leis aplicáveis.</p>
+            
+            <h3>4. Direitos Autorais</h3>
+            <p>Todo o conteúdo de áudio transmitido pertence às respectivas estações de rádio. Respeite os direitos autorais.</p>
+            
+            <h3>5. Limitação de Responsabilidade</h3>
+            <p>Não nos responsabilizamos por:</p>
+            <ul>
+                <li>Interrupções no serviço</li>
+                <li>Conteúdo das estações de rádio</li>
+                <li>Problemas técnicos nas transmissões</li>
+            </ul>
+            
+            <h3>6. Modificações</h3>
+            <p>Reservamo-nos o direito de modificar estes termos a qualquer momento.</p>
+        </div>
     `,
+    
     dmca: `
-        <h2><i class="fas fa-gavel"></i> Política DMCA</h2>
-        
-        <div class="educational-notice" style="background: var(--player-color); padding: 12px; border-radius: 8px; margin: 15px 0; border-left: 3px solid var(--accent-primary);">
-            <p style="margin: 0; font-size: 0.9rem;">
-                <strong><i class="fas fa-graduation-cap"></i> Nota:</strong> Este projeto tem caráter educacional e utiliza a API pública do Radio Browser para fins de aprendizado em desenvolvimento web.
-            </p>
-        </div>
-        
-        <h3>Notificação de Infração de Direitos Autorais</h3>
-        <p>O Grid Rádio Online respeita os direitos de propriedade intelectual. Se você acredita que seu trabalho foi copiado de forma que constituis violação de direitos autorais, envie uma notificação para:</p>
-        
-        <p><strong>Email:</strong> <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link">juliogonzales.dev@proton.me</a></p>
-        
-        <h3>Informações Requeridas</h3>
-        <p>Sua notificação deve incluir:</p>
-        <ul>
-            <li>Assinatura do proprietário dos direitos autorais</li>
-            <li>Identificação do trabalho protegido</li>
-            <li>Identificação do material alegadamente infringente</li>
-            <li>Suas informações de contato</li>
-            <li>Declaração de boa fé</li>
-        </ul>
-        
-        <h3>Ação</h3>
-        <p>Upon receipt of a valid DMCA notice, we will promptly remove or disable access to the allegedly infringing content.</p>
-        
-        <div style="font-size: 0.8rem; color: color-mix(in srgb, var(--text-color) 60%, transparent); text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid color-mix(in srgb, var(--text-color) 20%, transparent);">
-            <p><strong>Projeto educacional</strong> • Desenvolvido para fins de aprendizado</p>
+        <div class="page-content">
+            <h2><i class="fas fa-gavel"></i> Política DMCA</h2>
+            
+            <div class="educational-notice">
+                <p>
+                    <strong><i class="fas fa-graduation-cap"></i> Nota:</strong> 
+                    Este projeto tem caráter educacional e utiliza a API pública do Radio Browser para fins de aprendizado em desenvolvimento web.
+                </p>
+            </div>
+            
+            <h3>Notificação de Infração de Direitos Autorais</h3>
+            <p>O Grid Rádio Online respeita os direitos de propriedade intelectual. Se você acredita que seu trabalho foi copiado de forma que constitui violação de direitos autorais, envie uma notificação para:</p>
+            
+            <p><strong>Email:</strong> <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link email-link">juliogonzales.dev@proton.me</a></p>
+            
+            <h3>Informações Requeridas</h3>
+            <p>Sua notificação deve incluir:</p>
+            <ul>
+                <li>Assinatura do proprietário dos direitos autorais</li>
+                <li>Identificação do trabalho protegido</li>
+                <li>Identificação do material alegadamente infringente</li>
+                <li>Suas informações de contato</li>
+                <li>Declaração de boa fé</li>
+            </ul>
+            
+            <h3>Ação</h3>
+            <p>Upon receipt of a valid DMCA notice, we will promptly remove or disable access to the allegedly infringing content.</p>
+            
+            <div class="footer-note">
+                <p><strong>Projeto educacional</strong> • Desenvolvido para fins de aprendizado</p>
+            </div>
         </div>
     `,
+    
     about: `
-        <h2><i class="fas fa-circle-info"></i> Sobre o Grid Rádio Online</h2>
-        <p>O Grid Rádio Online é um projeto de caráter educacional de código aberto, criado com o objetivo de oferecer uma interface simples e moderna para acessar rádios de todo o mundo, utilizando a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a>.</p>
-        <p>Este projeto foca em:</p>
-        <ul>
-            <li><strong>Desempenho:</strong> Carregamento rápido e eficiente.</li>
-            <li><strong>Design Moderno:</strong> Interface amigável e responsiva.</li>
-            <li><strong>Privacidade:</strong> Não coleta dados pessoais.</li>
-        </ul>
-        <p>Código fonte disponível no <a href="https://github.com/Julioheyner" target="_blank" class="site-link gradient-link"><i class="fab fa-github"></i> GitHub</a>.</p>
-        <div class="socials">
-            <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank" class="social-icon">
-                <i class="fab fa-github"></i>
-            </a>
-            <a href="https://www.linkedin.com/in/julio-gonzales-31a723379" title="LinkedIn" rel="noopener noreferrer" target="_blank" class="social-icon">
-                <i class="fab fa-linkedin"></i>
-            </a>
-            <a href="mailto:juliogonzales.dev@proton.me" title="Email" class="social-icon">
-                <i class="fas fa-envelope"></i>
-            </a>
+        <div class="page-content">
+            <h2><i class="fas fa-circle-info"></i> Sobre o Grid Rádio Online</h2>
+            
+            <p>O Grid Rádio Online é um projeto de caráter educacional de código aberto, criado com o objetivo de oferecer uma interface simples e moderna para acessar rádios de todo o mundo, utilizando a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a>.</p>
+            
+            <p>Este projeto foca em:</p>
+            <ul>
+                <li><strong>Desempenho:</strong> Carregamento rápido e eficiente.</li>
+                <li><strong>Design Moderno:</strong> Interface amigável e responsiva.</li>
+                <li><strong>Privacidade:</strong> Não coleta dados pessoais.</li>
+            </ul>
+            
+            <p>Código fonte disponível no <a href="https://github.com/Julioheyner" target="_blank" class="site-link gradient-link"><i class="fab fa-github"></i> GitHub</a>.</p>
+            
+            <div class="socials">
+                <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank" class="social-icon">
+                    <i class="fab fa-github"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/julio-gonzales-31a723379" title="LinkedIn" rel="noopener noreferrer" target="_blank" class="social-icon">
+                    <i class="fab fa-linkedin"></i>
+                </a>
+                <a href="mailto:juliogonzales.dev@proton.me" title="Email" class="social-icon">
+                    <i class="fas fa-envelope"></i>
+                </a>
+            </div>
         </div>
     `
 };
@@ -1960,8 +2109,9 @@ confirmNo.onclick = () => confirmationModal.style.display = 'none';
 /**
  * Exibe modal de confirmação para ações destrutivas
  * @param {string} action - Ação a ser confirmada
+ * @param {string} url - URL do item a ser removido (opcional)
  */
-function showConfirmationModal(action) {
+function showConfirmationModal(action, url = null) {
     confirmationModal.style.display = 'flex';
 
     if (action === 'clearFavorites') {
@@ -1971,7 +2121,6 @@ function showConfirmationModal(action) {
             clearFavoritesAction();
             confirmationModal.style.display = 'none';
         };
-        confirmYes.style.backgroundColor = 'var(--error-color)';
     } else if (action === 'clearAllHistory') {
         confirmTitle.innerHTML = '<i class="fas fa-history"></i> Limpar Histórico';
         confirmMessage.textContent = "Deseja remover todo o histórico de reprodução?";
@@ -1979,7 +2128,20 @@ function showConfirmationModal(action) {
             clearAllHistoryAction();
             confirmationModal.style.display = 'none';
         };
-        confirmYes.style.backgroundColor = 'var(--error-color)';
+    } else if (action === 'removeFavorite' && url) {
+        confirmTitle.innerHTML = '<i class="fas fa-star" style="font-size: 1.1rem;"></i> <span style="font-size: 1.1rem; font-weight: 800">Remover Rádio</span>';
+        confirmMessage.textContent = "Deseja remover esta rádio dos favoritos?";
+        confirmYes.onclick = () => {
+            removeFavorite(url);
+            confirmationModal.style.display = 'none';
+        };
+    } else if (action === 'removeHistory' && url) {
+        confirmTitle.innerHTML = '<i class="fas fa-history"></i> Remover Rádio';
+        confirmMessage.textContent = "Deseja remover esta rádio do histórico?";
+        confirmYes.onclick = () => {
+            removeFromHistory(url);
+            confirmationModal.style.display = 'none';
+        };
     }
 }
 
@@ -2038,9 +2200,9 @@ function showNotification(message, type) {
     }, 3000);
 }
 
-// ====================================================
+// ========================
 // CARREGAMENTO DE FILTROS
-// ====================================================
+// ========================
 
 /**
  * Carrega países e gêneros para os filtros
@@ -2088,9 +2250,9 @@ async function loadFilters() {
     }
 }
 
-// ====================================================
+// ==================================
 // LÓGICA DE BUSCA RÁPIDA DE GÊNEROS
-// ====================================================
+// ==================================
 const genreSearchContainer = document.querySelector('#genreSearchContainer');
 
 genreSearchInput.addEventListener('input', filterGenreResults);
@@ -2142,9 +2304,9 @@ function selectGenre(item, tag, display) {
     item.classList.add('selected');
 }
 
-// ====================================================
+// ======================
 // GERENCIAMENTO DE TEMA
-// ====================================================
+// ======================
 themeToggle.addEventListener("click", () => {
     const isLight = document.body.getAttribute("data-theme") === "light";
     const newTheme = isLight ? "dark" : "light";
@@ -2166,9 +2328,9 @@ audioPlayer.addEventListener('volumechange', () => {
     secureLocalStorageSet('volume', audioPlayer.volume);
 });
 
-// ====================================================
-// INICIALIZAÇÃO SEGURA
-// ====================================================
+// =====================
+// INICIALIZAÇÃO SEGURA 
+// =====================
 document.addEventListener("DOMContentLoaded", () => {
     /**
      * Limpa dados corrompidos do localStorage
@@ -2193,7 +2355,7 @@ document.addEventListener("DOMContentLoaded", () => {
     favorites = secureLocalStorageGet('favorites', []);
     history = secureLocalStorageGet('history', []);
     
-    console.log('📊 Dados carregados:', {
+    console.log(' Dados carregados:', {
         favoritesCount: favorites.length,
         historyCount: history.length
     });
@@ -2207,7 +2369,26 @@ document.addEventListener("DOMContentLoaded", () => {
     setupAudioEventListeners();
 
     loadFilters();
-    fetchRadios();
+    
+    // Carregar rádios apenas uma vez com cache
+    const cachedRadios = sessionStorage.getItem('cachedRadios');
+    if (cachedRadios) {
+        try {
+            const parsed = JSON.parse(cachedRadios);
+            if (parsed && parsed.length > 0) {
+                // Usar dados do cache
+                renderRadiosFromCache(parsed);
+                console.log(' Rádios carregadas do cache');
+            } else {
+                fetchRadios();
+            }
+        } catch (e) {
+            fetchRadios();
+        }
+    } else {
+        fetchRadios();
+    }
+    
     updateFavoritesUI();
     updateHistoryUI();
     
@@ -2217,7 +2398,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Verificar novamente após um pequeno delay para garantir
     setTimeout(() => {
         updateButtonCounters();
-        console.log('✅ Contadores atualizados após inicialização');
+        console.log(' Contadores atualizados após inicialização');
     }, 500);
     
     setTimeout(() => {
@@ -2246,9 +2427,9 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-// ====================================================
+// =====================
 // PROTEÇÕES ADICIONAIS
-// ====================================================
+// =====================
 if (window.audioPlayerInstance) {
     window.audioPlayerInstance.pause();
     window.audioPlayerInstance.src = '';
@@ -2278,15 +2459,15 @@ setTimeout(() => {
     });
 }, 1000);
 
-// ====================================================
+// =======================================
 // FUNÇÕES DE DEBUG (para uso no console)
-// ====================================================
+// =======================================
 
 /**
  * Função para debug dos contadores (para testar no console)
  */
 window.debugCounters = function() {
-    console.log('🔍 Debug contadores:', {
+    console.log(' Debug contadores:', {
         favorites: favorites,
         history: history,
         favCount: favorites.length,
@@ -2301,7 +2482,7 @@ window.debugCounters = function() {
  * Força atualização dos contadores
  */
 function forceUpdateCounters() {
-    console.log('🔄 Forçando atualização dos contadores...');
+    console.log(' Forçando atualização dos contadores...');
     updateButtonCounters();
 }
 
@@ -2330,7 +2511,7 @@ shareModal.innerHTML = `
       
        <div class="share-option x" data-share="x">
         <i class="fa-brands fa-x-twitter"></i>
-        <span>X</span>
+        <span>Ex-twitter</span>
       </div>
       
       <div class="share-option telegram" data-share="telegram">
@@ -2431,6 +2612,7 @@ shareOptions.forEach(option => {
         const url = encodeURIComponent(window.location.href);
         const title = encodeURIComponent('Grid Radio - Sua música sem limites 🎧');
         const text = encodeURIComponent('Descubra milhares de rádios online gratuitamente no Grid Radio!');
+        const hashtags = 'GridRadio,RadioOnline,Musica';
         
         let shareUrl;
         
@@ -2444,9 +2626,8 @@ shareOptions.forEach(option => {
                 break;
                 
             case 'x':
-            // X (antigo Twitter) - usa parâmetros diferentes
                 shareUrl = `https://x.com/intent/tweet?url=${url}&text=${text}&hashtags=${hashtags}`;
-                 break;
+                break;
                 
             case 'telegram':
                 shareUrl = `https://t.me/share/url?url=${url}&text=${text}`;
@@ -2498,3 +2679,5 @@ document.addEventListener('keydown', (e) => {
         shareModal.classList.remove('active');
     }
 });
+
+
