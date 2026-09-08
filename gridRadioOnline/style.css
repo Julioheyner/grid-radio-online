@@ -4155,9 +4155,10 @@ footer {
 }
 
 .back-to-top-btn:hover {
-  background: var(--accent-gradient);
-  color: #050505;
-  box-shadow: 0 10px 26px color-mix(in srgb, var(--accent-primary) 45%, transparent);
+  background: color-mix(in srgb, var(--accent-primary) 92%, var(--card-color));
+  border-color: var(--accent-primary);
+  color: var(--bg-color);
+  box-shadow: 0 10px 26px color-mix(in srgb, var(--accent-primary) 45%, transparent), var(--neon-glow);
   transform: translateY(-3px);
 }
 
