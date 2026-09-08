@@ -2379,7 +2379,7 @@ document.addEventListener("DOMContentLoaded", () => {
     document.body.setAttribute("data-theme", savedTheme);
     themeToggle.innerHTML = savedTheme === "light" ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
    
-    audioPlayer.volume = secureLocalStorageGet("volume", 0.8);
+    audioPlayer.volume = secureLocalStorageGet("volume", 0.3);
     
     setupAudioEventListeners();
 
