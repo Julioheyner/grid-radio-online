@@ -13,6 +13,7 @@
 // =========================
 document.addEventListener('DOMContentLoaded', function() {
     const heroSection = document.getElementById('hero-section');
+    const backToTopBtn = document.getElementById('backToTopBtn');
     
     window.addEventListener('scroll', function() {
         const scrolled = window.pageYOffset;
@@ -24,7 +25,21 @@ document.addEventListener('DOMContentLoaded', function() {
                 heroSection.classList.remove('scrolled');
             }
         }
+        
+        if (backToTopBtn) {
+            if (scrolled > 400) {
+                backToTopBtn.classList.add('visible');
+            } else {
+                backToTopBtn.classList.remove('visible');
+            }
+        }
     });
+    
+    if (backToTopBtn) {
+        backToTopBtn.addEventListener('click', function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
+    }
 });
 
 // ===================================
