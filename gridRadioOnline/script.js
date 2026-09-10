@@ -554,7 +554,7 @@ function updateButtonCounters() {
             histBadge.setAttribute('title', `${histCount} rádio${histCount !== 1 ? 's' : ''} no histórico`);
         }
     } catch (error) {
-        console.error(' Erro ao atualizar contadores:', error);
+        console.error('Erro ao atualizar contadores:', error);
     }
 }
 
@@ -591,7 +591,7 @@ function startAudioHealthCheck() {
         if (silenceDetected) {
             silenceDetected = false;
             console.log("Áudio retomado após silêncio");
-            showNotification(" Conexão restaurada", "success");
+            showNotification("Conexão restaurada", "success");
         }
     };
     
@@ -603,7 +603,7 @@ function startAudioHealthCheck() {
                 if (!silenceDetected) {
                     silenceDetected = true;
                     console.log("Silêncio detectado no stream");
-                    showNotification(" Problema na conexão, tentando reconectar...", "warning");
+                    showNotification("Problema na conexão, tentando reconectar...", "warning");
                     attemptAudioRecovery();
                 }
             }
@@ -629,7 +629,7 @@ function stopAudioHealthCheck() {
  */
 function attemptAudioRecovery() {
     if (!currentRadio || audioErrorCount >= MAX_AUDIO_ERRORS) {
-        showNotification(" Muitos erros na conexão. Tente outra rádio.", "error");
+        showNotification("Muitos erros na conexão. Tente outra rádio.", "error");
         pauseAudio();
         return;
     }
@@ -667,10 +667,10 @@ function handleAudioError(error) {
     audioErrorCount++;
     
     if (audioErrorCount >= MAX_AUDIO_ERRORS) {
-        showNotification(" Muitos erros na conexão. Tente outra rádio.", "error");
+        showNotification("Muitos erros na conexão. Tente outra rádio.", "error");
         pauseAudio();
     } else {
-        showNotification(" Problema na conexão, tentando novamente...", "warning");
+        showNotification("Problema na conexão, tentando novamente...", "warning");
         setTimeout(() => {
             if (currentRadio && isPlaying) {
                 attemptAudioRecovery();
@@ -685,7 +685,7 @@ function handleAudioError(error) {
 function handleAudioEnded() {
     console.log("Áudio terminou naturalmente");
     if (isPlaying) {
-        showNotification(" Transmissão encerrada", "info");
+        showNotification("Transmissão encerrada", "info");
         pauseAudio();
     }
 }
@@ -704,7 +704,7 @@ function handleAudioCanPlay() {
 function handleAudioStalled() {
     console.log("Áudio travado, tentando recuperar...");
     if (isPlaying) {
-        showNotification(" Conexão instável...", "warning");
+        showNotification("Conexão instável...", "warning");
         attemptAudioRecovery();
     }
 }
@@ -747,7 +747,7 @@ function playAudio() {
         console.error("Erro ao tentar tocar a rádio:", error);
         
         if (error.name === "NotAllowedError") {
-            showNotification(" Clique no botão Play para iniciar a reprodução", "warning");
+            showNotification("Clique no botão Play para iniciar a reprodução", "warning");
             isPlaying = false;
             playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
             playerFixedEl.classList.remove('playing');
@@ -890,7 +890,7 @@ function playRadio(name, url, favicon, country, tags) {
             playAudio();
         } catch (error) {
             console.error('Erro ao configurar áudio:', error);
-            showNotification(" Erro ao configurar reprodução", "error");
+            showNotification("Erro ao configurar reprodução", "error");
         }
     }, 500);
 }
@@ -1030,7 +1030,7 @@ async function fetchRadios(query = "", country = "", tag = "", append = false) {
         if (!append) {
             radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px; color: var(--error-color);'> Erro ao carregar as rádios.</p>";
         } else {
-            showNotification(" Erro ao carregar mais rádios.", "error");
+            showNotification("Erro ao carregar mais rádios.", "error");
         }
     } finally {
         loading = false;
@@ -1087,11 +1087,11 @@ function toggleFavoriteRadio() {
     const index = favorites.findIndex(fav => fav.url === currentRadio.url);
     if (index === -1) {
         favorites.push(currentRadio);
-        showNotification(" Rádio adicionada aos favoritos", "success");
+        showNotification("Rádio adicionada aos favoritos", "success");
         toggleFavorite.innerHTML = '<i class="fas fa-star"></i>';
     } else {
         favorites.splice(index, 1);
-        showNotification(" Rádio removida dos favoritos", "success");
+        showNotification("Rádio removida dos favoritos", "success");
         toggleFavorite.innerHTML = '<i class="far fa-star"></i>';
     }
     secureLocalStorageSet('favorites', favorites);
@@ -1158,7 +1158,7 @@ function removeFavorite(url) {
     updateFavoritesUI();
     updateFavoriteButton();
     updateRadioCards();
-    showNotification(" Rádio removida dos favoritos", "success");
+    showNotification("Rádio removida dos favoritos", "success");
     
     // Atualizar contador
     updateButtonCounters();
@@ -1228,7 +1228,7 @@ function removeFromHistory(url) {
     secureLocalStorageSet('history', history);
     updateHistoryUI();
     updateRadioCards();
-    showNotification(" Rádio removida do histórico", "success");
+    showNotification("Rádio removida do histórico", "success");
     
     // Atualizar contador
     updateButtonCounters();
@@ -1242,7 +1242,7 @@ function clearAllHistoryAction() {
     secureLocalStorageSet('history', history);
     updateHistoryUI();
     updateRadioCards();
-    showNotification(" Histórico de reprodução limpo", "success");
+    showNotification("Histórico de reprodução limpo", "success");
     
     // Atualizar contador
     updateButtonCounters();
@@ -1613,7 +1613,7 @@ function adjustReopenButtonPosition() {
  */
 function closePlayer() {
     playerFixedEl.classList.add('hidden');
-    showNotification('🎧 Player minimizado. O áudio continua tocando em segundo plano.', 'info');
+    showNotification('🎧Player minimizado. O áudio continua tocando em segundo plano.', 'info');
     
     // Adicionar botão flutuante com estado correto
     addReopenPlayerButton();
@@ -1630,7 +1630,7 @@ function reopenPlayer() {
         reopenBtn.remove();
     }
     
-    showNotification('🎧 Player restaurado', 'success');
+    showNotification('🎧Player restaurado', 'success');
 }
 
 // =========================
@@ -2207,9 +2207,18 @@ function showPage(pageName) {
  * @param {string} message - Mensagem a ser exibida
  * @param {string} type - Tipo da notificação (success, warning, error, info)
  */
-function showNotification(message, type) {
-    notification.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : type === 'warning' ? 'exclamation-triangle' : 'exclamation-circle'}"></i> ${sanitizeHTML(message)}`;
+function showNotification(message, type = 'info') {
+    const icons = {
+        success: 'fa-check-circle',
+        warning: 'fa-exclamation-triangle',
+        error:   'fa-times-circle',
+        info:    'fa-info-circle'
+    };
+    const icon = icons[type] || 'fa-info-circle';
+    
+    notification.innerHTML = `<i class="fas ${icon}"></i> <span>${sanitizeHTML(message)}</span>`;
     notification.className = `notification ${type} show`;
+    
     setTimeout(() => {
         notification.classList.remove('show');
     }, 3000);
@@ -2251,7 +2260,7 @@ async function loadFilters() {
        
         allGenreTags.sort((a, b) => a.display.localeCompare(b.display));
 
-        genreSelect.innerHTML = '<option value="">🎶 Todos os gêneros</option>';
+        genreSelect.innerHTML = '<option value="">🎶Todos os gêneros</option>';
        
         allGenreTags.forEach(g => {
             const opt = document.createElement("option");
@@ -2393,7 +2402,7 @@ document.addEventListener("DOMContentLoaded", () => {
             if (parsed && parsed.length > 0) {
                 // Usar dados do cache
                 renderRadiosFromCache(parsed);
-                console.log(' Rádios carregadas do cache');
+                console.log('Rádios carregadas do cache');
             } else {
                 fetchRadios();
             }
@@ -2413,7 +2422,7 @@ document.addEventListener("DOMContentLoaded", () => {
     // Verificar novamente após um pequeno delay para garantir
     setTimeout(() => {
         updateButtonCounters();
-        console.log(' Contadores atualizados após inicialização');
+        console.log('Contadores atualizados após inicialização');
     }, 500);
     
     setTimeout(() => {
@@ -2497,7 +2506,7 @@ window.debugCounters = function() {
  * Força atualização dos contadores
  */
 function forceUpdateCounters() {
-    console.log(' Forçando atualização dos contadores...');
+    console.log('Forçando atualização dos contadores...');
     updateButtonCounters();
 }
 
@@ -2625,7 +2634,7 @@ shareOptions.forEach(option => {
     option.addEventListener('click', () => {
         const platform = option.dataset.share;
         const url = encodeURIComponent(window.location.href);
-        const title = encodeURIComponent('Grid Radio - Sua música sem limites 🎧');
+        const title = encodeURIComponent('Grid Radio - Sua música sem limites🎧');
         const text = encodeURIComponent('Descubra milhares de rádios online gratuitamente no Grid Radio!');
         const hashtags = 'GridRadio,RadioOnline,Musica';
         
