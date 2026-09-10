@@ -30,7 +30,7 @@
   </div>
   
   <div class="header-title">
-  <a href="index.html">Grid Radio Online</a>
+  <a href="index.html">Grid Radio</a>
 </div>
   
   <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
@@ -73,7 +73,6 @@
     </div>
   </div>
 
-
   <div class="tab-content active" id="tab-all">
     <div id="radios" class="radios-grid"></div>
     <div class="load-more-container">
@@ -82,7 +81,6 @@
       </button>
     </div>
   </div>
-
 
   <div class="tab-content" id="tab-favorites">
     <div id="favoritesList" class="radios-grid"></div>
@@ -93,39 +91,37 @@
 </main>
 <div class="player-fixed hidden">
   <div class="player-info">
-    <img class="player-cover" id="playerCover" src="https://cdn-icons-png.flaticon.com/512/727/727245.png" alt="Capa da rádio" crossorigin="anonymous" referrerpolicy="no-referrer">
+    <div class="player-cover-wrapper">
+      <img class="player-cover" id="playerCover"
+           src="https://cdn-icons-png.flaticon.com/512/727/727245.png"
+           alt="Capa da rádio" crossorigin="anonymous" referrerpolicy="no-referrer">
+      <span class="player-live-dot" aria-hidden="true"></span>
+    </div>
     <div class="player-details">
       <div class="player-title" id="nowPlaying">Selecione uma rádio...</div>
       <div class="player-subtitle" id="playerSubtitle">Grid Rádio</div>
-      <div class="security-status" id="securityStatus">
-        </div>
+      <div class="security-status" id="securityStatus"></div>
     </div>
   </div>
+
   <div class="player-controls-group">
     <div class="player-controls">
-      <button class="player-btn large-btn" id="playPauseBtn" title="Reproduzir/Pausar">
+      <button class="player-btn large-btn" id="playPauseBtn"
+              title="Reproduzir/Pausar" aria-label="Reproduzir ou pausar">
         <i class="fas fa-play"></i>
       </button>
-     
-      <div class="audio-animation-status">
-        <div class="volume-bars" id="volumeBars">
-          <span style="--i:1;"></span>
-          <span style="--i:2;"></span>
-          <span style="--i:3;"></span>
-          <span style="--i:4;"></span>
-          <span style="--i:5;"></span>
-          <span style="--i:6;"></span>
-          <span style="--i:7;"></span>
-          <span style="--i:8;"></span>
-          <span style="--i:9;"></span>
-          <span style="--i:10;"></span>
+
+      <div class="audio-animation-status" aria-hidden="true">
+        <div class="equalizer">
+          <span></span><span></span><span></span><span></span><span></span>
         </div>
         <span class="playing-text">Tocando</span>
       </div>
     </div>
-   
+
     <div class="secondary-controls">
-      <button class="player-btn secondary" id="toggleFavorite" title="Favoritar">
+      <button class="player-btn secondary" id="toggleFavorite"
+              title="Favoritar" aria-label="Favoritar rádio">
         <i class="far fa-star"></i>
       </button>
     </div>
@@ -227,7 +223,6 @@
       <p><strong>Aviso Legal:</strong> Grid Radio Online é um agregador de rádios online. Não hospedamos nenhum conteúdo de áudio. Todas as transmissões são provenientes de fontes públicas na internet. Os direitos autorais do conteúdo transmitido pertencem às respectivas estações de rádio.</p>
     </div>
    
-    
   </div>
 </footer>
 
@@ -239,8 +234,7 @@
     <div id="pageContent"></div>
   </div>
 </div>
-
-
+  
 <script src="script.js"></script>
 </body>
 </html>
