@@ -17,19 +17,19 @@
   
   --card-color: rgba(22, 27, 34, 0.6);
   --player-color: rgba(16, 20, 28, 0.7);
-  --text-color: #f0f6fc;
+  --text-color: #e6edf3;
   --text-secondary: #9198a1;
   
-  --accent-primary: #00f7ff;
-  --accent-secondary: #7b61ff;
+  --accent-primary: #00d9e0;
+  --accent-secondary: #6b52e0;
   --accent-hover: #2effff;
   --accent-gradient: linear-gradient(135deg, #00f7ff 0%, #7b61ff 50%, #ff2e92 100%);
   
   --hero-title-gradient: linear-gradient(135deg, #ffffff 0%, #f8fafc 25%, #e2e8f0 50%, #f8fafc 75%, #ffffff 100%);
   --hero-overlay: linear-gradient(to top, rgba(13, 17, 23, 0.95) 0%, rgba(13, 17, 23, 0.4) 50%, rgba(13, 17, 23, 0.1) 100%);
 
-  --success-color: #00ffc3;
-  --error-color: #ff2e63;
+  --success-color: #00d9b3;
+  --error-color: #e63946;
   --warning-color: #ffd166;
   --icon-color: #00f7ff;
   --deep-ocean: #0a0d14;
