@@ -116,10 +116,12 @@
 }
 
 /* ============================================
-   CORREÇÃO GLOBAL NO BODY E MAIN
+   GLOBAL NO BODY E MAIN
    ============================================ */
 html {
   overflow-x: hidden;
+  overflow-y: auto;          
+  scroll-behavior: smooth;   
 }
 
 body {
@@ -135,10 +137,6 @@ body {
   overflow-x: hidden;
   position: relative;
   width: 100%;
-}
-
-body::-webkit-scrollbar {
-  display: none;
 }
 
 main {
