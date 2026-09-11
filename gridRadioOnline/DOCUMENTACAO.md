@@ -1,811 +1,324 @@
-## 📖 DOCUMENTACAO.md
+Documentação Técnica — Grid Rádio
+Versão: 1.0.0
+Última Atualização: 11 de setembro de 2026
+Autor: Julio Gonzales
+Contato: juliogonzales.dev@proton.me
 
-```markdown
-# 📚 Documentação Técnica - Grid Rádio
+Índice
+1.	Visão Geral
+2.	Arquitetura
+3.	Estrutura do Código
+4.	API e Dados
+5.	Sistema de Áudio
+6.	Gerenciamento de Estado
+7.	Segurança
+8.	UI/UX
+9.	Player Fixo
+10.	Performance
+11.	Troubleshooting
+12.	Roadmap e Desenvolvimento
+    
+1. Visão Geral
+O Grid Rádio é uma aplicação web single-page (SPA) construída com HTML5, CSS3 e JavaScript Vanilla. A aplicação consome a API pública do Radio Browser para disponibilizar milhares de estações de rádio online em tempo real, integrando uma interface em glassmorphism, player flutuante fixo e alternância de temas (claro/escuro).
 
-## Índice
+Principais Objetivos
+•	Navegação Intuitiva: Interface responsiva para descoberta e escuta contínua de rádios.
+•	Persistência Local: Manutenção de favoritos, histórico, tema e volume direto no navegador.
+•	Responsividade: Experiência consistente adaptada para desktops, tablets e smartphones.
+•	Segurança Integrada: Sanitização rigorosa de dados de entrada/saída e validação de URLs de mídia.
 
-1. [Visão Geral](#visão-geral)
-2. [Arquitetura](#arquitetura)
-3. [Estrutura de Código](#estrutura-de-código)
-4. [API e Dados](#api-e-dados)
-5. [Sistema de Áudio](#sistema-de-áudio)
-6. [Gerenciamento de Estado](#gerenciamento-de-estado)
-7. [Segurança](#segurança)
-8. [UI/UX](#uiux)
-9. [Performance](#performance)
-10. [Troubleshooting](#troubleshooting)
-11. [Roadmap](#roadmap)
+Stack Tecnológica
+Camada	Tecnologia / Ferramenta
+Estrutura	HTML5 semântico
+Estilos	CSS3 (Variáveis, Grid, Flexbox, Glassmorphism)
+Lógica	JavaScript ES6+ (Vanilla JS)
+Tipografia	Google Fonts — Poppins
+Iconografia	Font Awesome 6.5.1 (CDN)
+Áudio	Web Audio API / HTML5 Audio()
+Persistência	localStorage + sessionStorage
+Fonte de Dados	Radio Browser API
 
-## Visão Geral
+3. Arquitetura
+Diagrama de Componentes
+Plaintext
+┌─────────────────────────────────────────────────────────────┐
+│                    Interface do Usuário                     │
+├──────────────────────────────┬──────────────────────────────┤
+│            Header            │         Main Content         │
+│     (Busca, Temas, Tabs)     │    (Hero, Grid de Rádios)    │
+├──────────────────────────────┴──────────────────────────────┤
+│                   Player Fixed (Flutuante)                  │
+├─────────────────────────────────────────────────────────────┤
+│                 Controladores JS (script.js)                │
+├─────────────────────────────────────────────────────────────┤
+│                   Gerenciamento de Estado                   │
+│   ┌──────────────┐      ┌──────────────┐    ┌───────────┐   │
+│   │  Favoritos   │      │  Histórico   │    │  Volume   │   │
+│   └──────────────┘      └──────────────┘    └───────────┘   │
+├─────────────────────────────────────────────────────────────┤
+│                    Integração com a API                     │
+│               Radio Browser (de1.api.radio-browser)         │
+└─────────────────────────────────────────────────────────────┘
+Fluxo de Dados
+1.	Interação do Usuário: Ações de clique em rádios, alteração de volume, busca ou alternância de temas iniciam o fluxo.
+2.	Captura de Eventos: Event Listeners direcionam as chamadas para os métodos do script.js.
+3.	Atualização de Estado Global: Atualizam-se os estados em memória (favorites, history, currentRadio, isPlaying).
+4.	Persistência Segura: Armazenamento via secureLocalStorageSet().
+5.	Re-renderização: A interface gráfica é reativa às mudanças do estado.
+6.	Consumo de API: Chamadas assíncronas via fetchRadios() ou loadFilters() apenas sob demanda.
+   
+3. Estrutura do Código
+Estrutura de Arquivos
+Plaintext
+gridRadioOnline/
+├── index.html          # Layout principal (SPA)
+├── style.css           # Estilização completa (Glassmorphism & Responsivo)
+├── script.js           # Lógica principal da aplicação
+├── README.md           # Guia rápido para o usuário
+├── DOCUMENTACAO.md     # Documentação técnica detalhada
+└── img/
+    └── conceito-de-coracao-partido.jpg
+   
+Mapeamento do script.js
+1.	Efeito Parallax / Scroll: Animações do Hero e botão "Voltar ao Topo".
+2.	Segurança (SECURITY_CONFIG): Validações de segurança, whitelist de protocolos e domínios.
+3.	Variáveis Globais: Endpoints da API, referências DOM e estados de áudio.
+4.	Funções Utilitárias: sanitizeHTML, secureLocalStorageSet/Get, cleanGenreName, etc.
+5.	Controle de Áudio: Manipuladores de eventos (handleAudioError, attemptAudioRecovery, playAudio, pauseAudio).
+6.	Funções Principais: Fetch de rádios, paginação e atualização da interface.
+7.	Favoritos & Histórico: Funções de inserção, remoção, leitura e limpeza local.
+8.	Controles do Player Fixo: Minimização, reabertura e sincronização de estado.
+9.	Gerenciamento de Modais: Controle de modais de Filtros, Favoritos, Histórico, Páginas de Termos e Compartilhamento.
+10.	Gerenciamento de Temas: Alternância e salvamento do modo claro/escuro.
+11.	Inicialização (DOMContentLoaded): Restauração do estado salvo e bootstrap da aplicação.
+    
+4. API e Dados
+Endpoints da Radio Browser API
+•	Base URL: [https://de1.api.radio-browser.info/json](https://de1.api.radio-browser.info/json)
+•	Busca de Rádios: /stations/search?limit=100&offset=0&hidebroken=true&order=votes&reverse=true
+•	Países Disponíveis: /countries
+•	Gêneros/Tags: /tags
 
-Grid Rádio é uma aplicação web single-page (SPA) construída com HTML, CSS e JavaScript vanilla. A aplicação consome a API pública do Radio Browser para fornecer acesso a milhares de estações de rádio online.
+Parâmetros de Busca
+Parâmetro	Tipo	Descrição
+name	string	Filtra pelo nome da rádio
+country	string	Filtra pelo país de origem
+tag	string	Filtra pelo gênero musical
+limit	number	Quantidade de itens por página (padrão: 100)
+offset	number	Deslocamento do ponteiro para paginação
+hidebroken	boolean	Quando true, oculta rádios inativas
+order	string	Campo base para ordenação (ex: votes)
 
-### Principais Objetivos
-- Fornecer interface intuitiva para descobrir rádios
-- Manter dados localmente (favoritos/histórico)
-- Garantir experiência de usuário responsiva
-- Manter altos padrões de segurança
-
-## Arquitetura
-
-### Diagrama de Componentes
-```
-
-┌─────────────────────────────────────────┐
-│Interface do Usuário                     │
-├─────────────────────────────────────────┤
-│Header │ Main Content │ Player Fixed     │
-├─────────────────────────────────────────┤
-│Controladores JS                         │
-├─────────────────────────────────────────┤
-│Gerenciamento de Estado                  │          
-│┌─────────┐  ┌─────────┐                 │ 
-││Favoritos│  │Histórico│                 │  
-│└─────────┘  └─────────┘                 │   
-├─────────────────────────────────────────┤
-│API Integration                          │
-│Radio Browser                            │
-└─────────────────────────────────────────┘
-
-```
-
-### Fluxo de Dados
-1. Usuário (visitante) interage com a interface
-2. Eventos são capturados pelos listeners
-3. Estado é atualizado (LocalStorage)
-4. UI é renderizada com base no estado
-5. Chamadas à API quando necessário
-
-## Estrutura de Código
-
-### Estrutura de Arquivos
-```javascript
-// script.js - Organização Principal
-
-// 1. CONSTANTES E CONFIGURAÇÕES
-const SECURITY_CONFIG = { /* ... */ };
-const API_BASE = "https://de1.api.radio-browser.info/json";
-
-// 2. VARIÁVEIS GLOBAIS DE ESTADO
-let favorites = [];
-let history = [];
-let currentRadio = null;
-let isPlaying = false;
-
-// 3. FUNÇÕES UTILITÁRIAS
-function sanitizeHTML() { /* ... */ }
-function validateURL() { /* ... */ }
-
-// 4. FUNÇÕES DE DADOS
-async function fetchRadios() { /* ... */ }
-function updateFavoritesUI() { /* ... */ }
-
-// 5. CONTROLE DE ÁUDIO
-function playAudio() { /* ... */ }
-function pauseAudio() { /* ... */ }
-
-// 6. GERENCIAMENTO DE UI
-function showNotification() { /* ... */ }
-function updateButtonCounters() { /* ... */ }
-
-// 7. EVENT LISTENERS E INICIALIZAÇÃO
-document.addEventListener("DOMContentLoaded", () => { /* ... */ });
-```
-
-Componentes Principais
-
-1. Header (<header>)
-
-· Controles de navegação (Filtros, Favoritos, Histórico)
-· Título com gradiente animado
-· Alternador de tema
-
-2. Hero Section (#hero-section)
-
-· Imagem com efeito parallax
-· Texto de introdução
-· Créditos da imagem
-
-3. Grades de Rádio (.radios-grid)
-
-· Layout grid responsivo
-· Cards com informações da rádio
-· Estados: favorito, tocando, hover
-
-4. Player Fixo (.player-fixed)
-
-· Informações da rádio atual
-· Controles de reprodução
-· Status de segurança
-· Animação de ondas de áudio
-
-5. Modais
-
-· Filtros: busca avançada
-· Favoritos: lista gerenciável
-· Histórico: reproduções recentes
-· Informações: termos, privacidade, etc.
-
-API e Dados
-
-Radio Browser API
-
-Endpoint Base: https://de1.api.radio-browser.info/json
-
-Endpoints Utilizados:
-
-```javascript
-// Buscar rádios
-/stations/search?limit=100&offset=0&hidebroken=true
-
-// Países disponíveis
-/countries
-
-// Gêneros/tags disponíveis
-/tags
-```
-
-Parâmetros de Busca:
-
-· name: Nome da rádio
-· country: País da rádio
-· tag: Gênero musical
-· order=votes&reverse=true: Ordenar por popularidade
-
-Estrutura de Dados da Rádio:
-
-```javascript
-{
-  "name": "Nome da Rádio",
-  "url_resolved": "https://stream.url",
-  "favicon": "https://logo.url",
-  "country": "País",
-  "tags": "rock,pop,80s",
-  "votes": 1234
-}
-```
-
-Sanitização de Dados
-
-```javascript
+Sanitização de Dados de Rádios
+JavaScript
 function sanitizeRadioData(radio) {
+  if (!radio || typeof radio !== 'object') {
+    return {
+      name: 'Rádio Desconhecida',
+      url: '',
+      favicon: DEFAULT_ICON,
+      country: 'Desconhecido',
+      tags: 'Sem Gênero'
+    };
+  }
+  
+  const name = sanitizeHTML(radio.name) || 'Rádio Desconhecida';
+  const url = radio.url || '';
+  let favicon = DEFAULT_ICON;
+
+  if (radio.favicon && typeof radio.favicon === 'string') {
+    const f = radio.favicon.trim();
+    if (f.length > 5 && !f.includes('undefined') && !f.includes('null') && f !== 'https://' && f !== 'http://') {
+      if (f.startsWith('//')) favicon = 'https:' + f;
+      else if (f.startsWith('http')) favicon = f;
+      else if (f.startsWith('/') && radio.url) {
+        try {
+          const u = new URL(radio.url);
+          favicon = u.protocol + '//' + u.hostname + f;
+        } catch { favicon = DEFAULT_ICON; }
+      }
+    }
+  }
+
   return {
-    name: sanitizeHTML(radio.name) || 'Rádio Desconhecida',
-    url: radio.url || '',
-    favicon: processFavicon(radio.favicon),
+    name,
+    url,
+    favicon,
     country: sanitizeHTML(radio.country) || 'Desconhecido',
     tags: sanitizeHTML(radio.tags) || 'Sem Gênero'
   };
 }
-```
 
-Sistema de Áudio
-
-Controle do Player
-
-```javascript
+5. Sistema de Áudio
+Instanciação e Eventos
+O áudio é controlado pela instância da classe nativa Audio() do navegador:
+JavaScript
 const audioPlayer = new Audio();
+audioPlayer.volume = 0.8;
 
-// Eventos monitorados
+// Event Listeners para integridade da conexão
 audioPlayer.addEventListener('error', handleAudioError);
 audioPlayer.addEventListener('ended', handleAudioEnded);
 audioPlayer.addEventListener('canplay', handleAudioCanPlay);
 audioPlayer.addEventListener('stalled', handleAudioStalled);
-```
+audioPlayer.addEventListener('waiting', handleAudioWaiting);
+audioPlayer.addEventListener('volumechange', () => {
+  secureLocalStorageSet('volume', audioPlayer.volume);
+});
 
-Recuperação de Conexão
+Fluxo de Recuperação Automática
+Em caso de instabilidade na transmissão, a aplicação executa até 3 tentativas de reconexão re-instanciando o elemento de áudio:
+JavaScript
+const MAX_AUDIO_ERRORS = 3;
 
-```javascript
 function attemptAudioRecovery() {
-  if (audioErrorCount >= MAX_AUDIO_ERRORS) {
-    showNotification("❌ Muitos erros na conexão", "error");
+  if (!currentRadio || audioErrorCount >= MAX_AUDIO_ERRORS) {
+    showNotification("Muitos erros na conexão. Tente outra rádio.", "error");
     pauseAudio();
     return;
   }
-  
-  // Reconfigurar player
+  audioErrorCount++;
+
+  audioPlayer.pause();
   const newAudio = new Audio();
   newAudio.src = audioPlayer.src;
-  // ... reconectar
+  newAudio.volume = audioPlayer.volume;
+
+  audioPlayer.src = '';
+  window.audioPlayer = newAudio;
+  setupAudioEventListeners();
+
+  setTimeout(() => { if (currentRadio) playAudio(); }, 1000);
 }
-```
 
-Health Check
-
-Monitora silêncio prolongado (>10s) para detectar streams travados.
-
-Gerenciamento de Estado
-
-LocalStorage Keys
-
-```javascript
-const STORAGE_KEYS = {
-  THEME: 'theme',
-  FAVORITES: 'favorites',
-  HISTORY: 'history',
-  VOLUME: 'volume'
-};
-```
-
-Funções de Armazenamento
-
-```javascript
+6. Gerenciamento de Estado
+Estrutura do LocalStorage & SessionStorage
+Chave	Escopo	Conteúdo
+theme	localStorage	Prefixo do tema ("dark" ou "light")
+favorites	localStorage	Array de rádios favoritadas
+history	localStorage	Array contendo o histórico recente com data
+volume	localStorage	Valor numérico da reprodução (0.0 a 1.0)
+cachedRadios	sessionStorage	Cache dos resultados da primeira página
+Persistência Segura
+JavaScript
 function secureLocalStorageSet(key, value) {
   try {
-    // Serialização segura
-    localStorage.setItem(key, JSON.stringify(value));
+    if (Array.isArray(value)) {
+      const serializable = value.map(item => {
+        const simple = {
+          name: item.name || '',
+          url: item.url || '',
+          favicon: item.favicon || '',
+          country: item.country || '',
+          tags: item.tags || ''
+        };
+        if (item.date) simple.date = item.date;
+        return simple;
+      });
+      localStorage.setItem(key, JSON.stringify(serializable));
+    } else {
+      localStorage.setItem(key, JSON.stringify(value));
+    }
   } catch (error) {
-    // Fallback e limpeza
-    handleStorageError(error, key);
+    try { localStorage.clear(); } catch {}
   }
 }
-```
 
-Estados da Aplicação
-
-```javascript
-// Estado global
-const appState = {
-  currentView: 'all', // 'all', 'favorites', 'history'
-  filters: {
-    query: '',
-    country: '',
-    tag: ''
-  },
-  audio: {
-    isPlaying: false,
-    currentRadio: null,
-    volume: 0.8
-  }
-};
-```
-
-Segurança
-
-Configurações de Segurança
-
-```javascript
+7. Segurança
+   
+A aplicação implementa diretrizes de segurança no lado do cliente para prevencao contra ataques de Cross-Site Scripting (XSS) e links maliciosos.
+Configurações Globais de Segurança
+JavaScript
 const SECURITY_CONFIG = {
   ALLOWED_PROTOCOLS: ['http:', 'https:'],
-  ALLOWED_AUDIO_DOMAINS: ['streamhosting.rs', 'radio.co', 'zeno.fm'],
-  BLOCKED_DOMAINS: ['script', 'virus', 'malware'],
-  SUSPICIOUS_PATTERNS: [
-    /(\.exe|\.js|\.php|\.cgi|\.pl)$/i,
-    /eval\(|Function\(|document\.write/i
-  ]
+  ALLOWED_AUDIO_DOMAINS: [
+    'cast.streamhosting.rs', 's2.voscast.com', 'streaming.radio.co',
+    'stream.zeno.fm', 'live.hunter.fm', 'icecast-fan.musicradio.com',
+    'live.stream', 'stream.host', 'stream.serv', 'stream.audio', 'stream.radio'
+  ],
+  BLOCKED_DOMAINS: ['script', 'virus', 'malware', 'bad', 'evil', 'spam', 'ad', 'tracker', 'analytic', 'miner'],
+  SUSPICIOUS_PATTERNS: [/(\.exe|\.js|\.php|\.cgi|\.pl)$/i, /eval\(|Function\(|document\.write/i]
 };
-```
 
 Validações Implementadas
-
-1. Validação de URL
-
-```javascript
-function validateURL(url) {
-  try {
-    const urlObj = new URL(url);
-    
-    // Protocolos permitidos
-    if (!SECURITY_CONFIG.ALLOWED_PROTOCOLS.includes(urlObj.protocol)) {
-      return false;
-    }
-    
-    // Padrões suspeitos
-    for (const pattern of SECURITY_CONFIG.SUSPICIOUS_PATTERNS) {
-      if (pattern.test(url)) return false;
-    }
-    
-    return true;
-  } catch {
-    return false;
-  }
-}
-```
-
-2. Sanitização de HTML
-
-```javascript
-function sanitizeHTML(str) {
-  const div = document.createElement('div');
-  div.textContent = str;
-  return div.innerHTML;
-}
-```
-
-3. Verificação de Stream de Áudio
-
-```javascript
-function isSafeAudioURL(url) {
-  if (!validateURL(url)) return false;
-  
-  // Domínios conhecidos de streaming
-  const domain = new URL(url).hostname.toLowerCase();
-  return SECURITY_CONFIG.ALLOWED_AUDIO_DOMAINS.some(
-    allowed => domain.includes(allowed)
-  );
-}
-```
-
-UI/UX
-
-Sistema de Temas
-
-Variáveis CSS
-
-```css
+1.	Validação de URL: Impede chamadas para URLs contendo scripts ou extensões executáveis.
+2.	Sanitização de HTML: Converte strings dinâmicas usando o nó DOM textContent para neutralizar injeções de tags.
+3.	Checagem de Protocolo / Domínio: Avalia a integridade do link de streaming e atualiza a badge no player (Link Seguro vs Stream não verificado).
+   
+8. UI/UX
+   
+Sistema de Temas e Paleta de Cores
+As variáveis CSS controlam as mudanças de tema dinamicamente no elemento <body> via atributo data-theme.
+Tema Escuro (Padrão)
+CSS
 :root {
-  /* Dark Mode */
   --bg-color: #0d1117;
-  --card-color: rgba(22, 27, 34, 0.85);
-  --player-color: rgba(16, 20, 28, 0.9);
-  --text-color: #f0f6fc;
-  --accent-primary: #00f7ff;
-  --accent-secondary: #7b61ff;
-  --accent-hover: #2effff;
+  --glass-bg: rgba(255, 255, 255, 0.04);
+  --glass-border: rgba(255, 255, 255, 0.06);
+  --glass-blur: blur(16px);
+  --text-color: #e6edf3;
+  --text-secondary: #9198a1;
+  --accent-primary: #00d9e0;
+  --accent-secondary: #6b52e0;
   --accent-gradient: linear-gradient(135deg, #00f7ff 0%, #7b61ff 50%, #ff2e92 100%);
-  --success-color: #00ffc3;
-  --error-color: #ff2e63;
-  --warning-color: #ffd166;
-  --icon-color: #00f7ff;
-  --deep-ocean: #0a0d14;
-  --midnight-blue: #161b22;
-  --electric-cyan: #00ffea;
-  --bg-gradient: linear-gradient(135deg,
-      #0d1117 0%,
-      #161b22 40%,
-      #1a1f2e 100%);
-  --card-gradient: linear-gradient(145deg,
-      rgba(22, 27, 34, 0.85) 0%,
-      rgba(28, 33, 43, 0.9) 100%);
-  --neon-glow: 0 0 20px rgba(0, 247, 255, 0.4),
-    0 0 40px rgba(123, 97, 255, 0.2);
-  --header-bg: linear-gradient(90deg,
-      rgba(13, 17, 23, 0.95) 0%,
-      rgba(22, 27, 34, 0.9) 100%);
-  --header-border: rgba(0, 247, 255, 0.3);
-  --header-text: #f0f6fc;
-  --header-accent: #00f7ff;
-  --accent-color: var(--accent-primary);
-  --dark-gradient: var(--bg-gradient);
-  --light-gradient: linear-gradient(135deg,
-      #f8fafc 0%,
-      #ffffff 30%,
-      #f1f5f9 100%);
-  --player-height: 90px;
-  --footer-height: auto;
+  --success-color: #00d9b3;
+  --error-color: #e63946;
 }
 
-/* MODO LIGHT - Aprimorado com mais contraste e personalidade */
+Tema Claro
+CSS
 [data-theme="light"] {
-  --bg-color: #ffffff;
-  --card-color: rgba(255, 255, 255, 0.98);
-  --player-color: rgba(255, 255, 255, 0.98);
-  --text-color: #111827;
+  --bg-color: #f1f5f9;
+  --glass-bg: rgba(255, 255, 255, 0.75);
+  --glass-border: rgba(0, 0, 0, 0.08);
+  --text-color: #0f172a;
+  --text-secondary: #475569;
   --accent-primary: #2563eb;
   --accent-secondary: #7c3aed;
-  --accent-hover: #1d4ed8;
-  --accent-gradient: linear-gradient(135deg,
-      #2563eb 0%,
-      #7c3aed 50%,
-      #0891b2 100%);
   --success-color: #059669;
   --error-color: #dc2626;
-  --warning-color: #d97706;
-  --icon-color: #2563eb;
-  
-  /* Gradientes mais marcantes */
-  --bg-gradient: linear-gradient(135deg,
-      #ffffff 0%,
-      #f8fafc 25%,
-      #f1f5f9 100%);
-  --card-gradient: linear-gradient(145deg,
-      rgba(255, 255, 255, 0.98) 0%,
-      rgba(248, 250, 252, 0.95) 100%);
-  
-  /* Sombra mais pronunciada para destaque */
-  --neon-glow: 0 0 25px rgba(37, 99, 235, 0.2),
-    0 8px 30px rgba(37, 99, 235, 0.15),
-    0 0 0 1px rgba(37, 99, 235, 0.05);
-  
-  /* Header com mais contraste */
-  --header-bg: linear-gradient(90deg,
-      rgba(255, 255, 255, 0.98) 0%,
-      rgba(248, 250, 252, 0.95) 100%);
-  --header-border: rgba(37, 99, 235, 0.3);
-  --header-text: #111827;
-  --header-accent: #2563eb;
-  
-  /* Novas variáveis para melhor contraste */
-  --text-secondary: #374151;
-  --border-color: rgba(37, 99, 235, 0.15);
-  --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.05);
-  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --shadow-lg: 0 10px 25px rgba(0, 0, 0, 0.1);
-  
-  /* Efeitos hover mais visíveis */
-  --hover-overlay: rgba(37, 99, 235, 0.05);
-  --active-overlay: rgba(37, 99, 235, 0.1);
 }
 
-/* Se quiser uma versão alternativa mais ousada e vibrante: */
-[data-theme="light"].vibrant {
-  --bg-color: #fdf2f8;
-  --text-color: #1f2937;
-  --accent-primary: #db2777;
-  --accent-secondary: #7c3aed;
-  --accent-hover: #be185d;
-  --accent-gradient: linear-gradient(135deg,
-      #db2777 0%,
-      #7c3aed 50%,
-      #ec4899 100%);
-  --icon-color: #db2777;
-  --header-border: rgba(219, 39, 119, 0.3);
-  --neon-glow: 0 0 30px rgba(219, 39, 119, 0.2),
-    0 10px 40px rgba(219, 39, 119, 0.15);
-}
-```
-
-Alternância de Tema
-
-```javascript
-themeToggle.addEventListener("click", () => {
-  const isLight = document.body.getAttribute("data-theme") === "light";
-  const newTheme = isLight ? "dark" : "light";
-  
-  document.body.setAttribute("data-theme", newTheme);
-  secureLocalStorageSet("theme", newTheme);
-});
-```
-
-Animações e Transições
-
-Keyframes Principais
-
-```css
-@keyframes float {
-  0%, 100% { transform: translateX(-50%) translateY(0px); }
-  50% { transform: translateX(-50%) translateY(-6px); }
-}
-
-@keyframes pulse {
-  0% { box-shadow: 0 0 0 0 rgba(0, 247, 255, 0.4); }
-  70% { box-shadow: 0 0 0 10px rgba(0, 247, 255, 0); }
-  100% { box-shadow: 0 0 0 0 rgba(0, 247, 255, 0); }
-}
-
-@keyframes equalize {
-  0% { transform: scaleY(0.7); opacity: 0.7; }
-  100% { transform: scaleY(1.3); opacity: 1; }
-}
-```
-
-Classes de Transição
-
-```css
-.radio-card {
-  transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94);
-}
-
-.modal-content {
-  animation: slideUp 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-```
-
-Responsividade
-
-Breakpoints
-
-```css
-/* Desktop: > 768px */
-@media (min-width: 769px) { /* ... */ }
-
-/* Tablet: 481px - 768px */
-@media (max-width: 768px) { /* ... */ }
-
-/* Mobile: <= 480px */
-@media (max-width: 480px) { /* ... */ }
-
-/* Landscape Mobile */
-@media (orientation: landscape) and (max-height: 500px) { /* ... */ }
-```
-
-Grid Responsivo
-
-```css
-.radios-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 20px;
-}
-
-@media (max-width: 768px) {
-  .radios-grid {
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 15px;
-  }
-}
-```
-
-Performance
-
-Otimizações Implementadas
-
-1. Lazy Loading de Imagens
-
-```javascript
-function getRadioImageHTML(radioData) {
-  // Fallback para ícone padrão
-  const isDefaultIcon = !radioData.favicon || 
-                       radioData.favicon.includes('undefined');
-  
-  if (isDefaultIcon) {
-    return `<div class="radio-icon-default">🎵</div>`;
-  }
-  
-  return `<img src="${radioData.favicon}" 
-               loading="lazy"
-               onerror="this.onerror=null; this.classList.add('radio-icon-default')">`;
-}
-```
-
-2. Debounce para Busca
-
-```javascript
-let searchTimeout;
-genreSearchInput.addEventListener('input', () => {
-  clearTimeout(searchTimeout);
-  searchTimeout = setTimeout(filterGenreResults, 300);
-});
-```
-
-3. Paginação
-
-```javascript
-let page = 1;
-const LIMIT = 100;
-
-async function fetchRadios(append = false) {
-  if (!append) page = 1;
-  
-  const endpoint = `${API_BASE}/stations/search?limit=${LIMIT}&offset=${(page - 1) * LIMIT}`;
-  // ...
-  
-  page++;
-}
-```
-
-4. Cleanup de Event Listeners
-
-```javascript
-window.addEventListener('beforeunload', () => {
-  stopAudioHealthCheck();
-  audioPlayer.pause();
-  audioPlayer.src = '';
-});
-```
-
-Métricas de Performance
-
-· Tempo de Carregamento Inicial: < 2s
-· Tamanho Total: ~50KB (sem imagens)
-· Requests Concorrentes: 3-5
-· Uso de Memória: < 50MB
-
-Troubleshooting
-
-Problemas Comuns e Soluções
-
-1. Áudio Não Reproduz
-
-Sintoma: Player mostra "Carregando..." mas não toca.
-
-Causas Possíveis:
-
-· Bloqueio de autoplay do navegador
-· URL de stream inválida
-· Restrições CORS
-
-Soluções:
-
-```javascript
-// Verificar erro de autoplay
-audioPlayer.play().catch(error => {
-  if (error.name === "NotAllowedError") {
-    showNotification("🔇 Clique no botão Play para iniciar", "warning");
-  }
-});
-
-// Tentar streams alternativas
-function tryAlternateStreams(radio) {
-  const backupUrls = [
-    radio.url_resolved,
-    radio.url,
-    `https://proxy.stream?url=${encodeURIComponent(radio.url)}`
-  ];
-  // Tentar cada URL até uma funcionar
-}
-```
-
-2. Favoritos Não Salvam
-
-Solução:
-
-```javascript
-// Verificar limite do localStorage
-try {
-  localStorage.setItem('test', 'test');
-  localStorage.removeItem('test');
-} catch (e) {
-  // Limpar dados antigos
-  localStorage.clear();
-  showNotification("⚠️ Dados locais limpos por falta de espaço", "warning");
-}
-```
-
-3. Imagens Não Carregam
-
-Solução:
-
-```javascript
-// Usar fallback robusto
-function getSafeFavicon(favicon) {
-  const DEFAULT = 'data:image/svg+xml;base64,...';
-  
-  if (!favicon || favicon.includes('undefined')) {
-    return DEFAULT;
-  }
-  
-  // Forçar HTTPS
-  return favicon.replace('http://', 'https://');
-}
-```
-
-4. API Fora do Ar
-
-Fallback:
-
-```javascript
-async function fetchRadiosWithFallback() {
-  try {
-    return await fetch(API_BASE);
-  } catch (error) {
-    // Usar cache local
-    const cached = localStorage.getItem('cachedRadios');
-    if (cached) return JSON.parse(cached);
-    
-    // Usar endpoint de backup
-    return await fetch('https://backup.api.radio-browser.info/json');
-  }
-}
-```
-
-Logging e Debug
-
-```javascript
-// Modo debug
-const DEBUG = localStorage.getItem('debug') === 'true';
-
-function debugLog(message, data) {
-  if (DEBUG) {
-    console.log(`[GridRadio] ${message}:`, data);
-  }
-}
-
-// Ativar no console
-localStorage.setItem('debug', 'true');
-location.reload();
-```
-
-Roadmap
-
-Versão 1.1 (Próxima)
-
-· Cache de rádios offline
-· Playlists personalizadas
-· Compartilhamento de rádios
-· Mais opções de filtro (bitrate, codec)
-
-Versão 1.2
-
-· Login social (opcional)
-· Sincronização entre dispositivos
-· Recomendações baseadas em histórico
-· Equalizador básico
-
-Versão 2.0
-
-· Aplicativo PWA
-· Notificações de rádio favorita ao vivo
-· Modo rádio (descoberta automática)
-· API pública para desenvolvedores
-
-Desenvolvimento
-
-Setup de Desenvolvimento
-
-```bash
-# 1. Clone o repositório
+09. Player Fixo
+O player de áudio flutuante foi otimizado para manter o controle contínuo durante a navegação do usuário.
+Plaintext
+┌────────────────────────────────────────────────────────────────────────┐
+│                        Player Fixo Flutuante                           │
+├─────────────────┬───────────────────────────────┬──────────────────────┤
+│ [ Capa / Live ] │  Título da Rádio              │ [ Play/Pause ]       │
+│  Indicador      │  Gênero • Localização         │ [ Favoritar  ]       │
+│  Pulsante       │  Status: Link Seguro          │ [ Minimizar  ]       │
+└─────────────────┴───────────────────────────────┴──────────────────────┘
+Controles de Minimização e Reabertura
+•	Atalho de Teclado: O atalho Ctrl + Alt + P permite alternar o estado do player rapidamente.
+•	Segundo Plano: Fechar o player oculta a interface flutuante sem interromper a execução do fluxo de áudio. Um botão flutuante discreto permite reabrir o controle a qualquer momento.
+
+10. Performance
+•	Lazy Loading: Imagens de capa utilizam o atributo nativo loading="lazy" integrado com fallback automático em SVG.
+•	Debouncing: Pesquisas de texto e buscas por tags utilizam um tempo limite de 300ms antes da execução das requisições.
+•	Paginação Eficiente: Carregamento controlado em blocos de 100 estações de rádio.
+•	Gerenciamento de Recursos: Limpeza de intervalos (clearInterval) e encerramento de conexões no evento beforeunload.
+
+11. Troubleshooting
+Problema	Causa Provável	Solução Recomendada
+Áudio não toca	Bloqueio de autoplay do navegador ou stream offline	Solicitar interação direta do usuário (clique no Play) ou tentar reconectar.
+Favoritos não salvam	Cota do localStorage excedida	O sistema executa limpeza automática do cache antigo ou aciona alerta de espaço.
+Imagens quebradas	URLs inválidas no retorno da API	Truncamento tratado automaticamente com SVG embutido de substituição.
+Player oculto em dispositivos móveis	Incompatibilidade do seletor CSS :has() em navegadores antigos	A reabertura via JS adiciona classes fallback ao elemento body.
+
+12. Roadmap e Desenvolvimento
+Próximos Recursos (v1.1.0)
+•	Criador de playlists personalizadas armazenadas localmente.
+•	Opção para compartilhamento de links diretos de estações específicas.
+•	Filtros avançados baseados em bitrate e codec de áudio.
+
+Execução Local
+Para iniciar um servidor Web simples para testes locais:
+Bash
+# Clonar o repositório
 git clone https://github.com/Julioheyner/grid-radio-online.git
+cd grid-radio-online
 
-# 2. Instale uma extensão Live Server (VS Code)
-# ou use Python para servir localmente:
-python3 -m http.server 8000
+# Abrir no navegador: http://localhost:8000
 
-# 3. Acesse http://localhost:8000
-```
 
-Convenções de Código
-
-JavaScript
-
-· Usar const para valores fixos
-· Usar let para variáveis mutáveis
-· Prefixar funções utilitárias com _ (opcional)
-· Comentar funções complexas
-
-CSS
-
-· Usar variáveis CSS para cores
-· Prefixar classes com propósito
-· Organizar por componente
-· Manter media queries próximas dos estilos originais
-
-HTML
-
-· Usar atributos aria- para acessibilidade
-· Semântica apropriada
-· Atributos data- para estado
-
-Testes
-
-```javascript
-// Testes manuais recomendados
-const testSuite = {
-  audio: ['play', 'pause', 'volume', 'stream recovery'],
-  ui: ['themes', 'responsive', 'modals', 'notifications'],
-  data: ['favorites', 'history', 'search', 'filters'],
-  security: ['url validation', 'xss prevention', 'localStorage']
-};
-```
-
-Recursos Adicionais
-
-Links Úteis
-
-· Radio Browser API Documentation
-· Web Audio API MDN
-· LocalStorage Best Practices
-
-Ferramentas Recomendadas
-
-· Debugging: Chrome DevTools
-· Performance: Lighthouse
-· Acessibilidade: axe DevTools
-· Design: Figma (para mockups)
-
----
-
-Documentação atualizada em: Janeiro 2025
-Última revisão: v1.0.0
-Próxima atualização: v1.1.0 (Março 2025)
-
-Para questões técnicas: juliogonzales.dev@proton.me
-
-```
-
-## 📁 Estrutura de Arquivos Sugerida
-
-```
-
-gridRadioOnline/
-├──index.html              # Página principal
-├──style.css              # Estilos principais
-├──script.js              # Lógica JavaScript
-├──README.md              # Documentação do usuário
-├──DOCUMENTACAO.md        # Documentação técnica
-├──img/                   # Imagem
-│├── conceito-de-coracao-partido.jpg
-│──
-
-```
