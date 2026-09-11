@@ -319,6 +319,6 @@ Bash
 git clone https://github.com/Julioheyner/grid-radio-online.git
 cd grid-radio-online
 
-# Abrir no navegador: http://localhost:8000
+
 
 
