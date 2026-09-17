@@ -3,78 +3,100 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>🎧Grid Radio Online</title>
-  <meta name="theme-color" id="themeColor" content="#6366f1">
+  <title>🎧 Grid Radio Online</title>
+  <meta name="theme-color" id="themeColor" content="#0a0b0f">
+  <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f6ff">
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0b0f">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  
+
+<!----------------------------------
+     HEADER — brand + busca inline + ações
+ ------------------------------->
 <header>
-  <div class="header-controls">
-    <button class="header-btn" id="openFilters" aria-label="Filtrar rádios">
-      <i class="fas fa-sliders-h"></i>
-      <span class="btn-text">Filtrar</span>
-    </button>
-    
-    <button class="header-btn" id="openFavorites" aria-label="Favoritos">
-      <i class="fas fa-star"></i>
-      <span class="btn-text">Favoritos</span>
-    </button>
-    
-    <button class="header-btn" id="openHistory" aria-label="Histórico">
-      <i class="fas fa-history"></i>
-      <span class="btn-text">Histórico</span>
+  <a href="index.html" class="brand" aria-label="Grid Radio — Início">
+    <span class="brand-icon"><i class="fa-solid fa-radio"></i></span>
+    <span class="brand-name">Grid Radio </span>
+  </a>
+
+  <div class="search-box">
+    <i class="fas fa-search search-icon" aria-hidden="true"></i>
+    <input
+      type="text"
+      id="searchInput"
+      placeholder="Buscar rádios..."
+      autocomplete="off"
+      aria-label="Buscar rádios"
+    >
+    <button id="searchBtn" class="search-btn" aria-label="Buscar">
+      <i class="fas fa-arrow-right"></i>
     </button>
   </div>
-  
-  <div class="header-title">
-  <a href="index.html">Grid Radio</a>
-</div>
-  
-  <button class="theme-toggle" id="themeToggle" aria-label="Alternar tema">
-    <i class="fas fa-moon"></i>
-  </button>
+
+  <div class="header-actions">
+    <button class="icon-btn" id="openFilters" aria-label="Filtrar" title="Filtrar">
+      <i class="fas fa-sliders-h"></i>
+    </button>
+    <button class="icon-btn" id="openFavorites" aria-label="Favoritos" title="Favoritos">
+      <i class="fas fa-star"></i>
+    </button>
+    <button class="icon-btn" id="openHistory" aria-label="Histórico" title="Histórico">
+      <i class="fas fa-history"></i>
+    </button>
+    <button class="icon-btn" id="themeToggle" aria-label="Alternar tema" title="Alternar tema">
+      <i class="fas fa-moon"></i>
+    </button>
+  </div>
 </header>
 
-<div class="security-warning" id="securityWarning">
+<!-- 
+     TAB BAR — sticky abaixo do header
+ -->
+<nav class="tab-bar" aria-label="Navegação principal">
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="all" role="tab" aria-selected="true">
+      <i class="fas fa-globe-americas"></i>
+      <span>Todas</span>
+    </button>
+    <button class="tab" data-tab="favorites" role="tab" aria-selected="false">
+      <i class="fas fa-star"></i>
+      <span>Favoritas</span>
+    </button>
+    <button class="tab" data-tab="history" role="tab" aria-selected="false">
+      <i class="fas fa-history"></i>
+      <span>Histórico</span>
+    </button>
+  </div>
+</nav>
+
+<div class="security-warning" id="securityWarning" role="alert">
   <i class="fas fa-shield-alt"></i> Verificando segurança da rádio...
 </div>
 
+<!-- --------------------
+     MAIN
+ ----------------- -->
 <main>
-  
-   <section id="hero-section">
-   <div class="hero-image-container">
-     <img src="img/conceito-de-coracao-partido.jpg" alt="Web Rádio Online - Sua música sem limites" class="hero-image">
-   </div>
-   <div class="hero-content">
-     <h1>Sua Música, Sem Limites</h1>
-     <p>Sinta o som ir além do fone de ouvido.</p>
-   </div>
-  <div class="image-credits">
-  <a href="https://br.freepik.com/imagem-ia-gratis/conceito-de-coracao-partido_152783762.htm#fromView=search&page=1&position=4&uuid=bc141c95-543c-44bb-a40f-6d4f9a159076&query=Mulher+ouvindo+m%C3%BAsica+" 
-     target="_blank" 
-     rel="noopener noreferrer">
-    Designed by Magnific
-  </a>
-</div>
- </section>
-  
-  <div class="tabs">
-    <div class="tab active" data-tab="all">
-      <i class="fas fa-globe-americas"></i> Todas
+  <section id="hero-section">
+    <div class="hero-image-container">
+      <img src="img/conceito-de-coracao-partido.jpg"
+           alt="Web Rádio Online — Sua música sem limites"
+           class="hero-image">
     </div>
-    <div class="tab" data-tab="favorites">
-      <i class="fas fa-star"></i> Favoritas
+    <div class="hero-content">
+      <h1>Sua Música, Sem Limites</h1>
+      <p>Sinta o som ir além do fone de ouvido.</p>
     </div>
-    <div class="tab" data-tab="history">
-      <i class="fas fa-history"></i> Histórico
+    <div class="image-credits">
+      <a href="https://br.freepik.com/imagem-ia-gratis/conceito-de-coracao-partido_152783762.htm"
+         target="_blank" rel="noopener noreferrer">Designed by Magnific</a>
     </div>
-  </div>
+  </section>
 
-  <div class="tab-content active" id="tab-all">
-    <div id="radios" class="radios-grid"></div>
+  <div class="tab-content active" id="tab-all" role="tabpanel">
+    <div id="radios" class="radios-grid" aria-live="polite"></div>
     <div class="load-more-container">
       <button class="load-more-btn" id="loadMoreBtn">
         <i class="fas fa-plus"></i> Ver mais rádios
@@ -82,28 +104,41 @@
     </div>
   </div>
 
-  <div class="tab-content" id="tab-favorites">
+  <div class="tab-content" id="tab-favorites" role="tabpanel">
     <div id="favoritesList" class="radios-grid"></div>
   </div>
-  <div class="tab-content" id="tab-history">
+
+  <div class="tab-content" id="tab-history" role="tabpanel">
     <div id="historyList" class="radios-grid"></div>
   </div>
 </main>
-<div class="player-fixed hidden">
+
+<!-- -----------
+     PLAYER FIXO
+  -------------- -->
+<div class="player-fixed hidden" role="region" aria-label="Player de áudio">
+  <!-- Informações da Rádio (Capa + Título + Subtítulo) -->
   <div class="player-info">
     <div class="player-cover-wrapper">
       <img class="player-cover" id="playerCover"
            src="https://cdn-icons-png.flaticon.com/512/727/727245.png"
            alt="Capa da rádio" crossorigin="anonymous" referrerpolicy="no-referrer">
-      <span class="player-live-dot" aria-hidden="true"></span>
     </div>
     <div class="player-details">
       <div class="player-title" id="nowPlaying">Selecione uma rádio...</div>
       <div class="player-subtitle" id="playerSubtitle">Grid Rádio</div>
-      <div class="security-status" id="securityStatus"></div>
     </div>
   </div>
 
+  <!-- Equalizador / Animação Visual -->
+  <div class="audio-animation-status" aria-hidden="true">
+    <div class="equalizer">
+      <span></span><span></span><span></span><span></span><span></span>
+    </div>
+    <span class="playing-text">Tocando</span>
+  </div>
+
+  <!-- Grupo dos Controles (Botões em cima, Status abaixo) -->
   <div class="player-controls-group">
     <div class="player-controls">
       <button class="player-btn large-btn" id="playPauseBtn"
@@ -111,50 +146,56 @@
         <i class="fas fa-play"></i>
       </button>
 
-      <div class="audio-animation-status" aria-hidden="true">
-        <div class="equalizer">
-          <span></span><span></span><span></span><span></span><span></span>
-        </div>
-        <span class="playing-text">Tocando</span>
-      </div>
-    </div>
-
-    <div class="secondary-controls">
       <button class="player-btn secondary" id="toggleFavorite"
               title="Favoritar" aria-label="Favoritar rádio">
         <i class="far fa-star"></i>
       </button>
     </div>
+
+    <!-- Status de Segurança posicionado abaixo dos botões -->
+    <div class="security-status" id="securityStatus"></div>
   </div>
 </div>
+<!-- ---------------
+     MODAL DE FILTROS
+  -------- -->
 <div id="filtersModal" class="modal">
   <div class="modal-content">
-    <button class="modal-close" id="closeFilters">
+    <button class="modal-close" id="closeFilters" aria-label="Fechar">
       <i class="fas fa-times"></i>
     </button>
     <div class="modal-header">
       <h2><i class="fas fa-sliders-h"></i> Filtrar Rádios</h2>
     </div>
-    <input type="text" id="searchInput" placeholder=" Nome da rádio..." />
-   
-  <select id="countrySelect" class="country-select">
-    <option value=""> Todos os países</option>
-  </select>
+
+    <label class="field-label" for="searchInputModal">Nome da rádio</label>
+    <input type="text" id="searchInputModal" placeholder="Digite o nome..." autocomplete="off">
+
+    <label class="field-label" for="countrySelect">País</label>
+    <select id="countrySelect" class="country-select">
+      <option value="">Todos os países</option>
+    </select>
+
+    <label class="field-label" for="genreSearchInput">Gênero</label>
     <div id="genreSearchContainer">
-        <input type="text" id="genreSearchInput" placeholder=" Digite 3 letras do Gênero (Ex: val)" autocomplete="off" />
-        <div id="genreResultsList">
-            </div>
+      <input type="text" id="genreSearchInput" placeholder="Digite 3 letras (Ex: val)" autocomplete="off">
+      <div id="genreResultsList"></div>
     </div>
-    <select id="genreSelect" style="display:none;"><option value=""> Todos os gêneros</option></select>
-    <button id="searchBtn" class="modal-action-btn">
-      <i class="fas fa-search"></i> Buscar
+    <select id="genreSelect" style="display:none;"><option value="">Todos os gêneros</option></select>
+
+    <button class="modal-action-btn" id="applyFiltersBtn"
+            onclick="var m=document.getElementById('searchInputModal');var h=document.getElementById('searchInput');if(m&&h){h.value=m.value;}document.getElementById('searchBtn').click();">
+      <i class="fas fa-search"></i> Aplicar filtros
     </button>
   </div>
 </div>
 
+<!-- 
+     MODAL DE FAVORITOS
+   -->
 <div id="favoritesModal" class="modal">
   <div class="modal-content">
-    <button class="modal-close" id="closeFavorites">
+    <button class="modal-close" id="closeFavorites" aria-label="Fechar">
       <i class="fas fa-times"></i>
     </button>
     <div class="modal-header">
@@ -163,9 +204,13 @@
     <div id="favoritesModalList"></div>
   </div>
 </div>
+
+<!-- ------
+     MODAL DE HISTÓRICO
+  --------- -->
 <div id="historyModal" class="modal">
   <div class="modal-content">
-    <button class="modal-close" id="closeHistory">
+    <button class="modal-close" id="closeHistory" aria-label="Fechar">
       <i class="fas fa-times"></i>
     </button>
     <div class="modal-header">
@@ -175,66 +220,66 @@
   </div>
 </div>
 
-<button class="back-to-top-btn" id="backToTopBtn" aria-label="Voltar ao topo" title="Voltar ao topo">
-  <i class="fas fa-arrow-up"></i>
-</button>
-
-<div id="notification" class="notification"></div>
-<footer>
-  <div class="footer-content">
-    <p>Desenvolvido com <i class="fas fa-heart" style="color: var(--error-color);"></i> e muito <i class="fas fa-mug-hot" style="color: var(--accent-primary);"></i> por <strong>Julio Gonzales</strong> © 2025 - Brasil
-</p>
-    
-    <div class="socials">
-  <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank">
-    <i class="fab fa-github"></i>
-  </a>
-  <a href="https://www.linkedin.com/in/julio-gonzales-31a723379" title="LinkedIn" rel="noopener noreferrer" target="_blank">
-    <i class="fab fa-linkedin"></i>
-  </a>
-  <a href="mailto:juliogonzales.dev@proton.me" title="Email">
-    <i class="fas fa-envelope"></i>
-  </a>
-  <a href="#" id="shareBtn" arial-label="Compartilhar app" title="Compartilhar">
-    <i class="fas fa-share-alt"></i>
-  </a>
-</div>
-   
-    <div class="legal-links">
-      <a href="#" onclick="showPage('privacy')">
-        <i class="fas fa-user-shield"></i>
-        Política de Privacidade
-      </a>
-      <a href="#" onclick="showPage('terms')">
-        <i class="fas fa-file-signature"></i>
-        Termos de Uso
-      </a>
-      <a href="#" onclick="showPage('dmca')">
-        <i class="fas fa-gavel"></i>
-        DMCA
-      </a>
-      <a href="#" onclick="showPage('about')">
-        <i class="fas fa-circle-info"></i>
-        Sobre
-      </a>
-    </div>
-   
-    <div class="disclaimer">
-      <p><strong>Aviso Legal:</strong> Grid Radio Online é um agregador de rádios online. Não hospedamos nenhum conteúdo de áudio. Todas as transmissões são provenientes de fontes públicas na internet. Os direitos autorais do conteúdo transmitido pertencem às respectivas estações de rádio.</p>
-    </div>
-   
-  </div>
-</footer>
-
+<!-- ----------------------
+     MODAL DE PÁGINAS (privacidade, termos…)
+  -------------- -->
 <div id="pageModal" class="modal">
   <div class="modal-content">
-    <button class="modal-close" id="closePageModal">
+    <button class="modal-close" id="closePageModal" aria-label="Fechar">
       <i class="fas fa-times"></i>
     </button>
     <div id="pageContent"></div>
   </div>
 </div>
-  
+
+<!-- --------------------------------
+     BOTÃO VOLTAR AO TOPO + NOTIFICAÇÃO
+  ---------------------------------- -->
+<button class="back-to-top-btn" id="backToTopBtn" aria-label="Voltar ao topo" title="Voltar ao topo">
+  <i class="fas fa-arrow-up"></i>
+</button>
+
+<div id="notification" class="notification" role="status"></div>
+
+<!-- --------
+     FOOTER
+  -------- -->
+<footer>
+  <div class="footer-content">
+    <p>Desenvolvido com <i class="fas fa-heart" style="color: var(--error-color);"></i> e muito
+       <i class="fas fa-mug-hot" style="color: var(--accent-primary);"></i> por
+       <strong> Julio Gonzales</strong> © 2025</p>
+
+    <div class="socials">
+      <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank">
+        <i class="fab fa-github"></i>
+      </a>
+      <a href="https://www.linkedin.com/in/julio-gonzales-31a723379" title="LinkedIn" rel="noopener noreferrer" target="_blank">
+        <i class="fab fa-linkedin"></i>
+      </a>
+      <a href="mailto:juliogonzales.dev@proton.me" title="Email">
+        <i class="fas fa-envelope"></i>
+      </a>
+      <a href="#" id="shareBtn" aria-label="Compartilhar app" title="Compartilhar">
+        <i class="fas fa-share-alt"></i>
+      </a>
+    </div>
+
+    <div class="legal-links">
+      <a href="#" onclick="showPage('privacy')"><i class="fas fa-user-shield"></i> Privacidade</a>
+      <a href="#" onclick="showPage('terms')"><i class="fas fa-file-signature"></i> Termos</a>
+      <a href="#" onclick="showPage('dmca')"><i class="fas fa-gavel"></i> DMCA</a>
+      <a href="#" onclick="showPage('about')"><i class="fas fa-circle-info"></i> Sobre</a>
+    </div>
+
+    <div class="disclaimer">
+      <p><strong>Aviso Legal:</strong> Grid Radio Online é um agregador de rádios online.
+         Não hospedamos nenhum conteúdo de áudio. Todas as transmissões são provenientes
+         de fontes públicas na internet.</p>
+    </div>
+  </div>
+</footer>
+
 <script src="script.js"></script>
 </body>
 </html>
