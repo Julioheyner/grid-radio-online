@@ -1,40 +1,34 @@
-// =====================================
-// GRID RÁDIO ONLINE - SCRIPT PRINCIPAL
-// =====================================
-// Este script controla todas as funcionalidades do Grid Rádio Online:
-// - Reprodução de rádios online
-// - Gerenciamento de favoritos e histórico
-// - Busca e filtragem de estações
-// - Interface do usuário e controles de áudio
-// ====================================================
+// ====================================
+// GRID RÁDIO ONLINE — SCRIPT PRINCIPAL
+// ====================================
+
+function fixEmailLinksIn(container) {
+    if (!container || typeof container.querySelectorAll !== 'function') return;
+    const emailLinks = container.querySelectorAll('a[href^="mailto:"]');
+    emailLinks.forEach((link) => {
+        link.setAttribute('rel', 'noopener noreferrer');
+    });
+}
 
 // =========================
 // EFEITO DA IMAGEM DO HERO
 // =========================
 document.addEventListener('DOMContentLoaded', function() {
+    fixEmailLinksIn(document);
+
     const heroSection = document.getElementById('hero-section');
     const backToTopBtn = document.getElementById('backToTopBtn');
-    
+
     window.addEventListener('scroll', function() {
         const scrolled = window.pageYOffset;
-        
         if (heroSection) {
-            if (scrolled > 50) {
-                heroSection.classList.add('scrolled');
-            } else {
-                heroSection.classList.remove('scrolled');
-            }
+            heroSection.classList.toggle('scrolled', scrolled > 50);
         }
-        
         if (backToTopBtn) {
-            if (scrolled > 400) {
-                backToTopBtn.classList.add('visible');
-            } else {
-                backToTopBtn.classList.remove('visible');
-            }
+            backToTopBtn.classList.toggle('visible', scrolled > 400);
         }
     });
-    
+
     if (backToTopBtn) {
         backToTopBtn.addEventListener('click', function() {
             window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -43,13 +37,15 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // ===================================
-// CONFIGURAÇÕES DE SEGURANÇA E UTILS
+// CONFIGURAÇÕES DE SEGURANÇA
 // ===================================
 const SECURITY_CONFIG = {
     ALLOWED_PROTOCOLS: ['http:', 'https:'],
-    ALLOWED_AUDIO_DOMAINS: ['cast.streamhosting.rs', 's2.voscast.com', 'streaming.radio.co', 
-                             'stream.zeno.fm', 'live.hunter.fm', 'icecast-fan.musicradio.com', 
-                             'live.stream', 'stream.host', 'stream.serv', 'stream.audio', 'stream.radio'],
+    ALLOWED_AUDIO_DOMAINS: [
+        'cast.streamhosting.rs', 's2.voscast.com', 'streaming.radio.co',
+        'stream.zeno.fm', 'live.hunter.fm', 'icecast-fan.musicradio.com',
+        'live.stream', 'stream.host', 'stream.serv', 'stream.audio', 'stream.radio'
+    ],
     BLOCKED_DOMAINS: ['script', 'virus', 'malware', 'bad', 'evil', 'spam', 'ad', 'tracker', 'analytic', 'miner'],
     SUSPICIOUS_PATTERNS: [/(\.exe|\.js|\.php|\.cgi|\.pl)$/i, /eval\(|Function\(|document\.write/i]
 };
@@ -59,42 +55,42 @@ const SECURITY_CONFIG = {
 // ==================
 const API_BASE = "https://de1.api.radio-browser.info/json";
 const radiosContainer = document.getElementById("radios");
-const favoritesList = document.getElementById("favoritesList");
-const historyList = document.getElementById("historyList");
-const nowPlaying = document.getElementById("nowPlaying");
-const playerSubtitle = document.getElementById("playerSubtitle");
-const playerCover = document.getElementById("playerCover");
+const favoritesList   = document.getElementById("favoritesList");
+const historyList     = document.getElementById("historyList");
+const nowPlaying      = document.getElementById("nowPlaying");
+const playerSubtitle  = document.getElementById("playerSubtitle");
+const playerCover     = document.getElementById("playerCover");
 const securityWarning = document.getElementById("securityWarning");
-const searchInput = document.getElementById("searchInput");
-const searchBtn = document.getElementById("searchBtn");
-const countrySelect = document.getElementById("countrySelect");
-const genreSelect = document.getElementById("genreSelect");
-const genreSearchInput = document.getElementById("genreSearchInput");
-const genreResultsList = document.getElementById("genreResultsList");
-const filtersModal = document.getElementById("filtersModal");
-const favoritesModal = document.getElementById("favoritesModal");
-const historyModal = document.getElementById("historyModal");
-const pageModal = document.getElementById("pageModal");
-const pageContent = document.getElementById("pageContent");
-const openFilters = document.getElementById("openFilters");
-const openFavorites = document.getElementById("openFavorites");
-const openHistory = document.getElementById("openHistory");
-const closeFilters = document.getElementById("closeFilters");
-const closeFavorites = document.getElementById("closeFavorites");
-const closeHistory = document.getElementById("closeHistory");
-const closePageModal = document.getElementById("closePageModal");
-const themeToggle = document.getElementById("themeToggle");
-const toggleFavorite = document.getElementById("toggleFavorite");
-const playPauseBtn = document.getElementById("playPauseBtn");
-const notification = document.getElementById("notification");
-const tabs = document.querySelectorAll('.tab');
-const tabContents = document.querySelectorAll('.tab-content');
-const loadMoreBtn = document.getElementById('loadMoreBtn');
-const securityStatusEl = document.getElementById("securityStatus");
-const playerFixedEl = document.querySelector('.player-fixed');
+const searchInput     = document.getElementById("searchInput");
+const searchBtn       = document.getElementById("searchBtn");
+const countrySelect   = document.getElementById("countrySelect");
+const genreSelect     = document.getElementById("genreSelect");
+const genreSearchInput= document.getElementById("genreSearchInput");
+const genreResultsList= document.getElementById("genreResultsList");
+const filtersModal    = document.getElementById("filtersModal");
+const favoritesModal  = document.getElementById("favoritesModal");
+const historyModal    = document.getElementById("historyModal");
+const pageModal       = document.getElementById("pageModal");
+const pageContent     = document.getElementById("pageContent");
+const openFilters     = document.getElementById("openFilters");
+const openFavorites   = document.getElementById("openFavorites");
+const openHistory     = document.getElementById("openHistory");
+const closeFilters    = document.getElementById("closeFilters");
+const closeFavorites  = document.getElementById("closeFavorites");
+const closeHistory    = document.getElementById("closeHistory");
+const closePageModal  = document.getElementById("closePageModal");
+const themeToggle     = document.getElementById("themeToggle");
+const toggleFavorite  = document.getElementById("toggleFavorite");
+const playPauseBtn    = document.getElementById("playPauseBtn");
+const notification    = document.getElementById("notification");
+const tabs            = document.querySelectorAll('.tab');
+const tabContents     = document.querySelectorAll('.tab-content');
+const loadMoreBtn     = document.getElementById('loadMoreBtn');
+const securityStatusEl= document.getElementById("securityStatus");
+const playerFixedEl   = document.querySelector('.player-fixed');
 
 // =============================
-// VARIÁVEIS DE ESTADO DO ÁUDIO
+// VARIÁVEIS DE ESTADO
 // =============================
 let allGenreTags = [];
 let page = 1;
@@ -112,12 +108,12 @@ let audioErrorCount = 0;
 const MAX_AUDIO_ERRORS = 3;
 let isUserInteraction = false;
 let retryTimeout = null;
+let isClosingPlayer = false;
+let isPageHidden = false;
 
-// Criar elemento de áudio dinamicamente
 const audioPlayer = new Audio();
 audioPlayer.volume = 0.8;
 
-// SVG de notas musicais brancas (fallback)
 const MUSIC_ICON_SVG = 'data:image/svg+xml;base64,' + btoa(`
     <svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'>
         <path d='M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z'/>
@@ -126,15 +122,121 @@ const MUSIC_ICON_SVG = 'data:image/svg+xml;base64,' + btoa(`
 
 const DEFAULT_ICON = 'https://cdn-icons-png.flaticon.com/512/727/727245.png';
 
-// =====================
-// FUNÇÕES DE UTILIDADE
-// =====================
+// ============================================================
+// GÊNEROS CURADOS — garante que gêneros importantes apareçam
+// mesmo que a API não os retorne na lista padrão (ex.: gospel,
+// christian/cristã, sertanejo, etc.) e adiciona sinônimos para
+// a busca rápida funcionar com abreviações (gos, chris, cristã...).
+// ============================================================
+const CURATED_GENRES = [
+    // ----- Gospel / Cristã -----
+    { tag: 'gospel',    display: 'Gospel',              terms: ['gospel','gospe','gos','evangelico','evangélico','evangelho','adoracao','adoração'] },
+    { tag: 'christian', display: 'Cristã / Christian',  terms: ['christian','chris','chr','crista','cristã','cristao','cristão','cristianismo'] },
+    { tag: 'worship',   display: 'Worship / Adoração',  terms: ['worship','adoracao','adoração','louvor'] },
 
-/**
- * Sanitiza strings HTML para prevenir XSS
- * @param {string} str - String a ser sanitizada
- * @returns {string} String sanitizada
- */
+    // ----- Brasileiros -----
+    { tag: 'sertanejo',               display: 'Sertanejo',                  terms: ['sertanejo','sertanej','serta'] },
+    { tag: 'sertanejo universitario', display: 'Sertanejo Universitário',    terms: ['sertanejo universitario','universitario'] },
+    { tag: 'forro',                   display: 'Forró',                      terms: ['forro','forró','forrozeiro'] },
+    { tag: 'mpb',                     display: 'MPB',                        terms: ['mpb','musica popular brasileira'] },
+    { tag: 'samba',                   display: 'Samba',                      terms: ['samba','samb'] },
+    { tag: 'pagode',                  display: 'Pagode',                     terms: ['pagode','pagod'] },
+    { tag: 'funk',                    display: 'Funk',                       terms: ['funk','funk carioca'] },
+    { tag: 'axe',                     display: 'Axé',                        terms: ['axe','axé'] },
+    { tag: 'arrocha',                 display: 'Arrocha',                    terms: ['arrocha','arroc'] },
+    { tag: 'pisadinha',               display: 'Pisadinha',                  terms: ['pisadinha','pisad'] },
+    { tag: 'bossa nova',              display: 'Bossa Nova',                 terms: ['bossa','bossa nova','bossanova'] },
+    { tag: 'brega',                   display: 'Brega',                      terms: ['brega'] },
+
+    // ----- Jazz / Blues / Soul -----
+    { tag: 'jazz',        display: 'Jazz',        terms: ['jazz','jaz'] },
+    { tag: 'blues',       display: 'Blues',       terms: ['blues','blu'] },
+    { tag: 'soul',        display: 'Soul',        terms: ['soul'] },
+    { tag: 'smooth jazz', display: 'Smooth Jazz', terms: ['smooth jazz'] },
+    { tag: 'rnb',         display: 'R&B',         terms: ['rnb','r&b','rhythm and blues'] },
+
+    // ----- Latino / Caribenho -----
+    { tag: 'reggae',    display: 'Reggae',    terms: ['reggae','regga'] },
+    { tag: 'reggaeton', display: 'Reggaeton', terms: ['reggaeton','regueton'] },
+    { tag: 'salsa',     display: 'Salsa',     terms: ['salsa'] },
+    { tag: 'bachata',   display: 'Bachata',   terms: ['bachata'] },
+    { tag: 'latin',     display: 'Latina',    terms: ['latin','latina','latino'] },
+    { tag: 'vallenato', display: 'Vallenato (Colômbia)', terms: ['vallenato'] },
+    { tag: 'cumbia',    display: 'Cumbia',    terms: ['cumbia'] },
+
+    // ----- Pop / Rock / Alternativo -----
+    { tag: 'rock',        display: 'Rock',        terms: ['rock','roc'] },
+    { tag: 'pop',         display: 'Pop',         terms: ['pop'] },
+    { tag: 'indie',       display: 'Indie',       terms: ['indie','indi'] },
+    { tag: 'alternative', display: 'Alternativo', terms: ['alternative','alternativo'] },
+    { tag: 'punk',        display: 'Punk',        terms: ['punk'] },
+    { tag: 'metal',       display: 'Metal',       terms: ['metal'] },
+    { tag: 'hard rock',   display: 'Hard Rock',   terms: ['hard rock'] },
+    { tag: 'top40',       display: 'Top 40 / Pop Charts', terms: ['top40','top 40','top'] },
+
+    // ----- Eletrônica / Dance -----
+    { tag: 'electronic', display: 'Música Eletrônica', terms: ['electronic','eletronica','eletrônica','electronica'] },
+    { tag: 'dance',      display: 'Dance',      terms: ['dance','danc'] },
+    { tag: 'house',      display: 'House',      terms: ['house'] },
+    { tag: 'techno',     display: 'Techno',     terms: ['techno'] },
+    { tag: 'trance',     display: 'Trance',     terms: ['trance'] },
+    { tag: 'edm',        display: 'EDM',        terms: ['edm','electronic dance'] },
+    { tag: 'dubstep',    display: 'Dubstep',    terms: ['dubstep'] },
+    { tag: 'disco',      display: 'Disco',      terms: ['disco'] },
+
+    // ----- Asiáticos -----
+    { tag: 'kpop', display: 'K-Pop', terms: ['kpop','k-pop','k pop'] },
+    { tag: 'jpop', display: 'J-Pop', terms: ['jpop','j-pop','j pop'] },
+    { tag: 'anime', display: 'Anime / Trilhas', terms: ['anime','otaku'] },
+
+    // ----- Clássico / Instrumental -----
+    { tag: 'classical',    display: 'Música Clássica', terms: ['classical','classica','clássica'] },
+    { tag: 'opera',        display: 'Ópera',           terms: ['opera','ópera'] },
+    { tag: 'instrumental', display: 'Instrumental',    terms: ['instrumental'] },
+    { tag: 'lounge',       display: 'Lounge',          terms: ['lounge'] },
+    { tag: 'chillout',     display: 'Chillout',        terms: ['chillout','chill out','chill'] },
+    { tag: 'ambient',      display: 'Ambient',         terms: ['ambient'] },
+
+    // ----- Décadas / Nostalgia -----
+    { tag: 'oldies',    display: 'Clássicos (Oldies)', terms: ['oldies','classicos','clássicos'] },
+    { tag: 'flashback', display: 'Flashback',          terms: ['flashback'] },
+    { tag: '60s', display: 'Anos 60', terms: ['60s','anos 60'] },
+    { tag: '70s', display: 'Anos 70', terms: ['70s','anos 70'] },
+    { tag: '80s', display: 'Anos 80', terms: ['80s','anos 80'] },
+    { tag: '90s', display: 'Anos 90', terms: ['90s','anos 90'] },
+    { tag: '2000s', display: 'Anos 2000', terms: ['2000s','anos 2000'] },
+
+    // ----- Variedades / Outros -----
+    { tag: 'country',   display: 'Country',           terms: ['country','countr'] },
+    { tag: 'hip hop',   display: 'Hip Hop',           terms: ['hip hop','hip-hop','hiphop','hip'] },
+    { tag: 'rap',       display: 'Rap',               terms: ['rap'] },
+    { tag: 'romantic',  display: 'Romântica',         terms: ['romantic','romantica','romântica'] },
+    { tag: 'kids',      display: 'Infantil',          terms: ['kids','infantil','criancas','crianças'] },
+    { tag: 'news',      display: 'Notícias/Debate',   terms: ['news','noticias','notícias','talk'] },
+    { tag: 'sports',    display: 'Esportes',          terms: ['sports','esportes','sport'] },
+    { tag: 'varied',    display: 'Variedades',        terms: ['varied','variedades','variety'] },
+];
+
+// ============================
+// THEME-COLOR DINÂMICO
+// ============================
+const THEME_COLORS = {
+  dark:  { idle: '#0a0b0f', playing: '#00b4d8', paused: '#7b2fbe' },
+  light: { idle: '#f2f6ff', playing: '#0077b6', paused: '#6a2b9e' }
+};
+
+function updateThemeColor(state = 'idle') {
+  const meta = document.getElementById('themeColor');
+  if (!meta) return;
+  const theme = document.body.getAttribute('data-theme') === 'light' ? 'light' : 'dark';
+  const color = (THEME_COLORS[theme] && THEME_COLORS[theme][state]) || THEME_COLORS[theme].idle;
+  meta.setAttribute('content', color);
+  meta.content = color;
+}
+
+// =====================
+// UTILITÁRIOS
+// =====================
 function sanitizeHTML(str) {
     if (!str) return '';
     const div = document.createElement('div');
@@ -142,433 +244,306 @@ function sanitizeHTML(str) {
     return div.innerHTML;
 }
 
-/**
- * Salva dados no localStorage com tratamento de erros
- * @param {string} key - Chave de armazenamento
- * @param {any} value - Valor a ser salvo
- */
 function secureLocalStorageSet(key, value) {
     try {
         if (Array.isArray(value)) {
             const serializableValue = value.map(item => {
-                const simpleItem = {
+                const simple = {
                     name: item.name || '',
                     url: item.url || '',
                     favicon: item.favicon || '',
                     country: item.country || '',
                     tags: item.tags || ''
                 };
-                
-                if (item.date) {
-                    simpleItem.date = item.date;
-                }
-                
-                return simpleItem;
+                if (item.date) simple.date = item.date;
+                return simple;
             });
             localStorage.setItem(key, JSON.stringify(serializableValue));
         } else {
             localStorage.setItem(key, JSON.stringify(value));
         }
     } catch (error) {
-        console.error(' Erro ao salvar no localStorage:', error);
+        console.error('Erro ao salvar no localStorage:', error);
         try {
             localStorage.clear();
             if (Array.isArray(value)) {
-                const serializableValue = value.map(item => ({
-                    name: item.name || '',
-                    url: item.url || '',
-                    favicon: item.favicon || '',
-                    country: item.country || '',
-                    tags: item.tags || ''
+                const trimmed = value.slice(0, 10).map(item => ({
+                    name: item.name || '', url: item.url || '', favicon: item.favicon || '',
+                    country: item.country || '', tags: item.tags || ''
                 }));
-                localStorage.setItem(key, JSON.stringify(serializableValue.slice(0, 10)));
+                localStorage.setItem(key, JSON.stringify(trimmed));
             }
-        } catch (e) {
-            console.error('Não foi possível limpar o localStorage:', e);
-        }
+        } catch (e) { console.error('Falha ao limpar localStorage:', e); }
     }
 }
 
-/**
- * Recupera dados do localStorage com tratamento de erros
- * @param {string} key - Chave de armazenamento
- * @param {any} defaultValue - Valor padrão caso falhe
- * @returns {any} Dados recuperados
- */
 function secureLocalStorageGet(key, defaultValue) {
     try {
         const data = localStorage.getItem(key);
-        if (!data) {
-            return defaultValue;
-        }
-        
+        if (!data) return defaultValue;
         const parsed = JSON.parse(data);
-        
         if (Array.isArray(parsed)) {
-            const sanitizedArray = parsed.map(item => {
-                if (typeof item !== 'object' || item === null) {
-                    return null;
-                }
-                
-                const sanitizedItem = sanitizeRadioData({
-                    name: item.name || '',
-                    url: item.url || '',
-                    favicon: item.favicon || '',
-                    country: item.country || '',
-                    tags: item.tags || ''
+            return parsed.map(item => {
+                if (typeof item !== 'object' || item === null) return null;
+                const sanitized = sanitizeRadioData({
+                    name: item.name || '', url: item.url || '', favicon: item.favicon || '',
+                    country: item.country || '', tags: item.tags || ''
                 });
-                
-                if (item.date) {
-                    sanitizedItem.date = item.date;
-                }
-                
-                return sanitizedItem;
+                if (item.date) sanitized.date = item.date;
+                return sanitized;
             }).filter(item => item !== null && item.url);
-            
-            return sanitizedArray;
         }
-        
         return parsed;
     } catch (error) {
-        console.error(' Erro ao recuperar do localStorage:', error);
-        try {
-            localStorage.removeItem(key);
-        } catch (e) {
-            console.error('Não foi possível remover item corrompido:', e);
-        }
+        console.error('Erro ao recuperar do localStorage:', error);
+        try { localStorage.removeItem(key); } catch (e) {}
         return defaultValue;
     }
 }
 
-/**
- * Valida se uma URL é segura
- * @param {string} url - URL a ser validada
- * @returns {boolean} True se a URL for válida e segura
- */
 function validateURL(url) {
     try {
         const urlObj = new URL(url);
-        if (!SECURITY_CONFIG.ALLOWED_PROTOCOLS.includes(urlObj.protocol)) {
-            return false;
-        }
+        if (!SECURITY_CONFIG.ALLOWED_PROTOCOLS.includes(urlObj.protocol)) return false;
         for (const pattern of SECURITY_CONFIG.SUSPICIOUS_PATTERNS) {
-            if (pattern.test(url)) {
-                return false;
-            }
+            if (pattern.test(url)) return false;
         }
         const domain = urlObj.hostname.toLowerCase();
         for (const blocked of SECURITY_CONFIG.BLOCKED_DOMAINS) {
-            if (domain.includes(blocked)) {
-                return false;
-            }
+            if (domain.includes(blocked)) return false;
         }
         return true;
-    } catch (error) {
-        return false;
-    }
+    } catch { return false; }
 }
 
-/**
- * Verifica se uma URL é segura para reprodução de áudio
- * @param {string} url - URL a ser verificada
- * @returns {boolean} True se for uma URL de áudio segura
- */
 function isSafeAudioURL(url) {
     if (!validateURL(url)) return false;
     try {
         const urlObj = new URL(url);
         const domain = urlObj.hostname.toLowerCase();
         for (const allowed of SECURITY_CONFIG.ALLOWED_AUDIO_DOMAINS) {
-            if (domain.includes(allowed)) {
-                return true;
-            }
+            if (domain.includes(allowed)) return true;
         }
-        if (domain === 'localhost' || domain === '127.0.0.1' || urlObj.protocol === 'data:') {
-            return true;
-        }
+        if (domain === 'localhost' || domain === '127.0.0.1' || urlObj.protocol === 'data:') return true;
         if (urlObj.protocol === 'http:' || urlObj.protocol === 'https:') {
             const path = urlObj.pathname.toLowerCase();
-            if (path.includes('.mp3') || path.includes('.ogg') || path.includes('.wav') || 
-                path.includes('.aac') || path.includes('.m3u') || path.includes('.pls') || 
+            if (/\.(mp3|ogg|wav|aac|m3u|pls)$/.test(path) ||
                 path.includes('/stream') || path.includes('/live') || path.includes('/radio')) {
                 return true;
             }
         }
         return false;
-    } catch (error) {
-        return false;
-    }
+    } catch { return false; }
 }
 
-/**
- * Sanitiza dados de uma rádio
- * @param {Object} radio - Dados da rádio
- * @returns {Object} Dados sanitizados
- */
 function sanitizeRadioData(radio) {
     if (!radio || typeof radio !== 'object') {
-        return {
-            name: 'Rádio Desconhecida',
-            url: '',
-            favicon: DEFAULT_ICON,
-            country: 'Desconhecido',
-            tags: 'Sem Gênero'
-        };
+        return { name: 'Rádio Desconhecida', url: '', favicon: DEFAULT_ICON, country: 'Desconhecido', tags: 'Sem Gênero' };
     }
-    
     const name = sanitizeHTML(radio.name) || 'Rádio Desconhecida';
     const url = radio.url || '';
-    
     let favicon = DEFAULT_ICON;
-    
+
     if (radio.favicon && typeof radio.favicon === 'string') {
-        const faviconStr = radio.favicon.trim();
-        
-        if (faviconStr.length > 5 && 
-            !faviconStr.includes('undefined') && 
-            !faviconStr.includes('null') &&
-            faviconStr !== 'https://' &&
-            faviconStr !== 'http://' &&
-            faviconStr !== MUSIC_ICON_SVG) {
-            
-            if (faviconStr.startsWith('//')) {
-                favicon = 'https:' + faviconStr;
-            } else if (faviconStr.startsWith('http')) {
-                favicon = faviconStr;
-            } else if (faviconStr.startsWith('/')) {
+        const f = radio.favicon.trim();
+        if (f.length > 5 && !f.includes('undefined') && !f.includes('null') &&
+            f !== 'https://' && f !== 'http://' && f !== MUSIC_ICON_SVG) {
+            if (f.startsWith('//')) favicon = 'https:' + f;
+            else if (f.startsWith('http')) favicon = f;
+            else if (f.startsWith('/')) {
                 try {
                     if (radio.url) {
-                        const urlObj = new URL(radio.url);
-                        const domain = urlObj.protocol + '//' + urlObj.hostname;
-                        favicon = domain + faviconStr;
+                        const u = new URL(radio.url);
+                        favicon = u.protocol + '//' + u.hostname + f;
                     }
-                } catch (e) {
-                    favicon = DEFAULT_ICON;
-                }
+                } catch { favicon = DEFAULT_ICON; }
             }
         }
     }
-    
     return {
-        name: name,
-        url: url,
-        favicon: favicon,
+        name,
+        url,
+        favicon,
         country: sanitizeHTML(radio.country) || 'Desconhecido',
         tags: sanitizeHTML(radio.tags) || 'Sem Gênero'
     };
 }
 
-/**
- * Gera HTML para a imagem da rádio com fallback
- * @param {Object} radioData - Dados da rádio
- * @param {string} size - Tamanho da imagem (normal, small, player)
- * @returns {string} HTML da imagem
- */
 function getRadioImageHTML(radioData, size = 'normal') {
     const sizes = {
-        'normal': { width: 90, height: 90, padding: '15px' },
-        'small': { width: 50, height: 50, padding: '8px' },
-        'player': { width: 60, height: 60, padding: '0' }
+        normal: { width: 90, height: 90, padding: '15px' },
+        small:  { width: 50, height: 50, padding: '8px' },
+        player: { width: 60, height: 60, padding: '0' }
     };
-    
-    const sizeConfig = sizes[size] || sizes.normal;
-    const isDefaultIcon = !radioData.favicon || 
-                          radioData.favicon === DEFAULT_ICON || 
-                          radioData.favicon === MUSIC_ICON_SVG ||
-                          radioData.favicon.includes('undefined') ||
-                          radioData.favicon.includes('null') ||
-                          radioData.favicon.includes('data:image/svg+xml');
-    
-    if (isDefaultIcon && size !== 'player') {
+    const cfg = sizes[size] || sizes.normal;
+    const isDefaultIcon = !radioData.favicon ||
+        radioData.favicon === DEFAULT_ICON ||
+        radioData.favicon === MUSIC_ICON_SVG ||
+        radioData.favicon.includes('undefined') ||
+        radioData.favicon.includes('null') ||
+        radioData.favicon.includes('data:image/svg+xml');
+
+    if (isDefaultIcon) {
         return `
-            <img src="${MUSIC_ICON_SVG}" 
+            <img src="${MUSIC_ICON_SVG}"
                  alt="${radioData.name} logo"
-                 class="radio-icon-default"
-                 width="${sizeConfig.width}"
-                 height="${sizeConfig.height}"
-                 style="
-                    border-radius: 50%;
-                    border: 3px solid var(--accent-primary);
-                    box-shadow: 0 0 20px color-mix(in srgb, var(--accent-primary) 35%, transparent);
-                    background: var(--accent-gradient);
-                    object-fit: contain;
-                    padding: ${sizeConfig.padding};
-                    min-width: ${sizeConfig.width}px;
-                    min-height: ${sizeConfig.height}px;
-                    display: block;
-                    flex-shrink: 0;
-                 "
-                 onerror="this.onerror=null; this.src='${MUSIC_ICON_SVG}'; this.style.background='var(--accent-gradient)'; this.style.objectFit='contain'; this.style.padding='${sizeConfig.padding}';">
-        `;
-    } else if (isDefaultIcon && size === 'player') {
-        return `
-            <img src="${MUSIC_ICON_SVG}" 
-                 alt="${radioData.name} logo"
-                 class="player-cover radio-icon-default"
-                 width="${sizeConfig.width}"
-                 height="${sizeConfig.height}"
-                 style="
-                    border-radius: 50%;
-                    border: 2px solid var(--accent-primary);
-                    box-shadow: 0 0 15px color-mix(in srgb, var(--accent-primary) 25%, transparent);
-                    background: var(--accent-gradient) !important;
-                    object-fit: cover !important;
-                    padding: 0 !important;
-                    min-width: ${sizeConfig.width}px !important;
-                    min-height: ${sizeConfig.height}px !important;
-                    display: block;
-                    flex-shrink: 0;
-                 "
-                 onerror="this.onerror=null; this.src='${MUSIC_ICON_SVG}'; this.classList.add('radio-icon-default'); this.style.background='var(--accent-gradient)'; this.style.objectFit='cover'; this.style.padding='0';">
-        `;
-    } else {
-        return `
-            <img src="${radioData.favicon}" 
-                 alt="${radioData.name} logo"
-                 class="${size === 'player' ? 'player-cover' : ''}"
-                 width="${sizeConfig.width}"
-                 height="${sizeConfig.height}"
-                 style="
-                    border-radius: 50%;
-                    border: ${size === 'player' ? '2px' : '3px'} solid var(--accent-primary);
-                    box-shadow: 0 0 ${size === 'player' ? '15px' : '20px'} color-mix(in srgb, var(--accent-primary) ${size === 'player' ? '25%' : '35%'}, transparent);
-                    background: transparent;
-                    object-fit: cover;
-                    padding: 0;
-                    min-width: ${sizeConfig.width}px;
-                    min-height: ${sizeConfig.height}px;
-                    display: block;
-                    flex-shrink: 0;
-                 "
-                 onerror="this.onerror=null; this.src='${MUSIC_ICON_SVG}'; this.classList.add('radio-icon-default'); this.style.background='var(--accent-gradient)'; this.style.objectFit='${size === 'player' ? 'cover' : 'contain'}'; this.style.padding='${size === 'player' ? '0' : sizeConfig.padding}';">
+                 class="radio-icon-default ${size === 'player' ? 'player-cover' : ''}"
+                 width="${cfg.width}" height="${cfg.height}"
+                 style="border-radius:50%;border:${size==='player'?'2px':'3px'} solid var(--accent-primary);
+                        background:var(--accent-gradient);object-fit:cover;padding:0;
+                        min-width:${cfg.width}px;min-height:${cfg.height}px;display:block;flex-shrink:0;"
+                 onerror="this.onerror=null; this.src='${MUSIC_ICON_SVG}'; this.classList.add('radio-icon-default');">
         `;
     }
+    return `
+        <img src="${radioData.favicon}"
+             alt="${radioData.name} logo"
+             class="${size === 'player' ? 'player-cover' : ''}"
+             width="${cfg.width}" height="${cfg.height}"
+             style="border-radius:50%;border:${size==='player'?'2px':'3px'} solid var(--accent-primary);
+                    object-fit:cover;padding:0;min-width:${cfg.width}px;min-height:${cfg.height}px;
+                    display:block;flex-shrink:0;"
+             onerror="this.onerror=null; this.src='${MUSIC_ICON_SVG}'; this.classList.add('radio-icon-default'); this.style.background='var(--accent-gradient)';">
+    `;
 }
 
-/**
- * Limpa o nome do gênero para exibição
- * @param {string} tagName - Nome original da tag
- * @returns {string} Nome formatado do gênero
- */
 function cleanGenreName(tagName) {
     if (!tagName) return '';
-    const specialMapping = {
-        'rockpop': 'Rock & Pop',
-        'electronic': 'Música Eletrônica',
-        'dancepop': 'Dance Pop',
-        'classical': 'Música Clássica',
-        'oldies': 'Clássicos (Oldies)',
-        'talk': 'Notícias/Debate',
-        'christian': 'Gospel/Cristã',
-        'top40': 'Top 40/Pop Charts',
+    const map = {
+        // já existentes
+        rockpop: 'Rock & Pop',
+        electronic: 'Música Eletrônica',
+        dancepop: 'Dance Pop',
+        classical: 'Música Clássica',
+        oldies: 'Clássicos (Oldies)',
+        talk: 'Notícias/Debate',
+        christian: 'Gospel / Cristã',
+        top40: 'Top 40 / Pop Charts',
         '90s': 'Anos 90',
         '80s': 'Anos 80',
         '70s': 'Anos 70',
-        'vallenato': 'Vallenato (Colômbia)'
+        '60s': 'Anos 60',
+        '2000s': 'Anos 2000',
+        vallenato: 'Vallenato (Colômbia)',
+
+        // novos
+        gospel: 'Gospel',
+        worship: 'Worship / Adoração',
+        sertanejo: 'Sertanejo',
+        'sertanejo universitario': 'Sertanejo Universitário',
+        forro: 'Forró',
+        mpb: 'MPB',
+        samba: 'Samba',
+        pagode: 'Pagode',
+        funk: 'Funk',
+        axe: 'Axé',
+        arrocha: 'Arrocha',
+        pisadinha: 'Pisadinha',
+        'bossa nova': 'Bossa Nova',
+        brega: 'Brega',
+        jazz: 'Jazz',
+        blues: 'Blues',
+        soul: 'Soul',
+        'smooth jazz': 'Smooth Jazz',
+        rnb: 'R&B',
+        reggae: 'Reggae',
+        reggaeton: 'Reggaeton',
+        salsa: 'Salsa',
+        bachata: 'Bachata',
+        latin: 'Latina',
+        cumbia: 'Cumbia',
+        rock: 'Rock',
+        pop: 'Pop',
+        indie: 'Indie',
+        alternative: 'Alternativo',
+        punk: 'Punk',
+        metal: 'Metal',
+        'hard rock': 'Hard Rock',
+        dance: 'Dance',
+        house: 'House',
+        techno: 'Techno',
+        trance: 'Trance',
+        edm: 'EDM',
+        dubstep: 'Dubstep',
+        disco: 'Disco',
+        kpop: 'K-Pop',
+        jpop: 'J-Pop',
+        anime: 'Anime / Trilhas',
+        opera: 'Ópera',
+        instrumental: 'Instrumental',
+        lounge: 'Lounge',
+        chillout: 'Chillout',
+        ambient: 'Ambient',
+        flashback: 'Flashback',
+        country: 'Country',
+        'hip hop': 'Hip Hop',
+        rap: 'Rap',
+        romantic: 'Romântica',
+        kids: 'Infantil',
+        news: 'Notícias/Debate',
+        sports: 'Esportes',
+        varied: 'Variedades'
     };
-    
-    const normalizedTagName = tagName.toLowerCase();
-    if (specialMapping[normalizedTagName]) {
-        return specialMapping[normalizedTagName];
-    }
-    
-    let cleaned = tagName.replace(/[-_]/g, ' ');
-    cleaned = cleaned.toLowerCase().split(' ').map((word) => {
-        return word.charAt(0).toUpperCase() + word.slice(1);
-    }).join(' ');
-    
-    return cleaned;
+    const norm = tagName.toLowerCase();
+    if (map[norm]) return map[norm];
+    return tagName.replace(/[-_]/g, ' ').toLowerCase()
+        .split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ');
 }
 
-/**
- * Normaliza texto removendo acentos
- * @param {string} text - Texto a ser normalizado
- * @returns {string} Texto normalizado
- */
 function normalizeText(text) {
     if (!text) return '';
     return text.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "");
 }
 
-/**
- * Atualiza contadores dos botões de favoritos e histórico
- */
 function updateButtonCounters() {
     try {
         const favCount = Array.isArray(favorites) ? favorites.length : 0;
         const histCount = Array.isArray(history) ? history.length : 0;
-        
-        // Atualizar botão de favoritos
+
         const favBtn = document.getElementById('openFavorites');
         if (favBtn) {
-            let favBadge = favBtn.querySelector('.badge');
-            
-            if (!favBadge) {
-                favBadge = document.createElement('span');
-                favBadge.className = 'badge';
-                favBadge.id = 'favoritesBadge';
-                favBtn.appendChild(favBadge);
+            let badge = favBtn.querySelector('.badge');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'badge';
+                badge.id = 'favoritesBadge';
+                favBtn.appendChild(badge);
             }
-            
-            favBadge.textContent = favCount > 99 ? '99+' : favCount.toString();
-            favBadge.setAttribute('data-count', favCount);
-            
-            if (favCount > 0) {
-                favBadge.style.display = 'flex';
-                favBadge.style.visibility = 'visible';
-                favBadge.style.opacity = '1';
-            } else {
-                favBadge.style.display = 'none';
-                favBadge.style.visibility = 'hidden';
-                favBadge.style.opacity = '0';
-            }
-            
-            favBadge.setAttribute('title', `${favCount} rádio${favCount !== 1 ? 's' : ''} favorita${favCount !== 1 ? 's' : ''}`);
+            badge.textContent = favCount > 99 ? '99+' : favCount.toString();
+            badge.setAttribute('data-count', favCount);
+            badge.style.display = favCount > 0 ? 'flex' : 'none';
         }
-        
-        // Atualizar botão de histórico
+
         const histBtn = document.getElementById('openHistory');
         if (histBtn) {
-            let histBadge = histBtn.querySelector('.badge');
-            
-            if (!histBadge) {
-                histBadge = document.createElement('span');
-                histBadge.className = 'badge';
-                histBadge.id = 'historyBadge';
-                histBtn.appendChild(histBadge);
+            let badge = histBtn.querySelector('.badge');
+            if (!badge) {
+                badge = document.createElement('span');
+                badge.className = 'badge';
+                badge.id = 'historyBadge';
+                histBtn.appendChild(badge);
             }
-            
-            histBadge.textContent = histCount > 99 ? '99+' : histCount.toString();
-            histBadge.setAttribute('data-count', histCount);
-            
-            if (histCount > 0) {
-                histBadge.style.display = 'flex';
-                histBadge.style.visibility = 'visible';
-                histBadge.style.opacity = '1';
-            } else {
-                histBadge.style.display = 'none';
-                histBadge.style.visibility = 'hidden';
-                histBadge.style.opacity = '0';
-            }
-            
-            histBadge.setAttribute('title', `${histCount} rádio${histCount !== 1 ? 's' : ''} no histórico`);
+            badge.textContent = histCount > 99 ? '99+' : histCount.toString();
+            badge.setAttribute('data-count', histCount);
+            badge.style.display = histCount > 0 ? 'flex' : 'none';
         }
-    } catch (error) {
-        console.error('Erro ao atualizar contadores:', error);
-    }
+    } catch (error) { console.error('Erro ao atualizar contadores:', error); }
 }
 
 // ==================
 // CONTROLE DE ÁUDIO
 // ==================
 
-/**
- * Configura event listeners do áudio
- */
+document.addEventListener('visibilitychange', () => {
+    isPageHidden = document.hidden;
+    if (!isPageHidden) {
+        audioErrorCount = 0;
+    }
+});
+
 function setupAudioEventListeners() {
     audioPlayer.onerror = null;
     audioPlayer.onended = null;
-    
     audioPlayer.addEventListener('error', handleAudioError);
     audioPlayer.addEventListener('ended', handleAudioEnded);
     audioPlayer.addEventListener('canplay', handleAudioCanPlay);
@@ -576,46 +551,35 @@ function setupAudioEventListeners() {
     audioPlayer.addEventListener('waiting', handleAudioWaiting);
 }
 
-/**
- * Inicia monitoramento de saúde do áudio
- */
 function startAudioHealthCheck() {
     stopAudioHealthCheck();
-    
     let lastTimeUpdate = Date.now();
     let silenceDetected = false;
-    
+
     audioPlayer.ontimeupdate = () => {
         lastTimeUpdate = Date.now();
-        
         if (silenceDetected) {
             silenceDetected = false;
-            console.log("Áudio retomado após silêncio");
             showNotification("Conexão restaurada", "success");
         }
     };
-    
-    const healthCheckInterval = setInterval(() => {
+
+    audioPlayer.healthCheckInterval = setInterval(() => {
+        if (isPageHidden) {
+            lastTimeUpdate = Date.now();
+            return;
+        }
         if (isPlaying) {
-            const timeSinceLastUpdate = Date.now() - lastTimeUpdate;
-            
-            if (timeSinceLastUpdate > 10000 && !audioPlayer.ended) {
-                if (!silenceDetected) {
-                    silenceDetected = true;
-                    console.log("Silêncio detectado no stream");
-                    showNotification("Problema na conexão, tentando reconectar...", "warning");
-                    attemptAudioRecovery();
-                }
+            const since = Date.now() - lastTimeUpdate;
+            if (since > 10000 && !audioPlayer.ended && !silenceDetected) {
+                silenceDetected = true;
+                showNotification("Problema na conexão, tentando reconectar...", "warning");
+                attemptAudioRecovery();
             }
         }
     }, 5000);
-    
-    audioPlayer.healthCheckInterval = healthCheckInterval;
 }
 
-/**
- * Para monitoramento de saúde do áudio
- */
 function stopAudioHealthCheck() {
     if (audioPlayer.healthCheckInterval) {
         clearInterval(audioPlayer.healthCheckInterval);
@@ -624,101 +588,59 @@ function stopAudioHealthCheck() {
     audioPlayer.ontimeupdate = null;
 }
 
-/**
- * Tenta recuperar o áudio em caso de falha
- */
 function attemptAudioRecovery() {
     if (!currentRadio || audioErrorCount >= MAX_AUDIO_ERRORS) {
         showNotification("Muitos erros na conexão. Tente outra rádio.", "error");
         pauseAudio();
         return;
     }
-    
-    console.log("Tentando recuperar áudio...");
     audioErrorCount++;
-    
     audioPlayer.pause();
-    
     const newAudio = new Audio();
     newAudio.src = audioPlayer.src;
     newAudio.volume = audioPlayer.volume;
-    
     audioPlayer.src = '';
-    if (audioPlayer.parentNode) {
-        audioPlayer.parentNode.removeChild(audioPlayer);
-    }
-    
+    if (audioPlayer.parentNode) audioPlayer.parentNode.removeChild(audioPlayer);
     window.audioPlayer = newAudio;
     setupAudioEventListeners();
-    
-    setTimeout(() => {
-        if (currentRadio) {
-            playAudio();
-        }
-    }, 1000);
+    setTimeout(() => { if (currentRadio) playAudio(); }, 1000);
 }
 
-/**
- * Manipula erro de áudio
- * @param {Event} error - Evento de erro
- */
 function handleAudioError(error) {
+    if (isClosingPlayer) return;
+    
+    if (isPageHidden) return;
+
     console.error("Erro no player de áudio:", error);
     audioErrorCount++;
-    
     if (audioErrorCount >= MAX_AUDIO_ERRORS) {
         showNotification("Muitos erros na conexão. Tente outra rádio.", "error");
         pauseAudio();
     } else {
         showNotification("Problema na conexão, tentando novamente...", "warning");
-        setTimeout(() => {
-            if (currentRadio && isPlaying) {
-                attemptAudioRecovery();
-            }
-        }, 2000);
+        setTimeout(() => { if (currentRadio && isPlaying) attemptAudioRecovery(); }, 2000);
     }
 }
 
-/**
- * Manipula fim natural do áudio
- */
 function handleAudioEnded() {
-    console.log("Áudio terminou naturalmente");
+    if (isClosingPlayer) return;
     if (isPlaying) {
         showNotification("Transmissão encerrada", "info");
         pauseAudio();
     }
 }
 
-/**
- * Manipula evento canplay do áudio
- */
-function handleAudioCanPlay() {
-    console.log("Áudio pronto para reprodução");
-    audioErrorCount = 0;
-}
-
-/**
- * Manipula evento stalled do áudio
- */
+function handleAudioCanPlay() { audioErrorCount = 0; }
 function handleAudioStalled() {
-    console.log("Áudio travado, tentando recuperar...");
+    if (isClosingPlayer) return;
+    if (isPageHidden) return;
     if (isPlaying) {
         showNotification("Conexão instável...", "warning");
         attemptAudioRecovery();
     }
 }
+function handleAudioWaiting() {}
 
-/**
- * Manipula evento waiting do áudio
- */
-function handleAudioWaiting() {
-    console.log("Áudio aguardando dados...");
-}
-
-/**
- * Inicia reprodução do áudio
- */
 function playAudio() {
     playerFixedEl.classList.remove('hidden');
     isUserInteraction = true;
@@ -728,24 +650,16 @@ function playAudio() {
         audioErrorCount = 0;
         playPauseBtn.innerHTML = '<i class="fas fa-pause"></i>';
         playerFixedEl.classList.add('playing');
+        updateThemeColor('playing');
         updateRadioCards();
         nowPlaying.textContent = currentRadio.name;
-        
-        // Adicionar botão de fechar se não existir
-        if (!document.getElementById('closePlayerBtn')) {
-            addPlayerCloseButton();
-        }
-        
-        // Esconder botão flutuante quando o player está visível
-        const reopenBtn = document.getElementById('reopenPlayerBtn');
-        if (reopenBtn) {
-            reopenBtn.style.display = 'none';
-        }
-        
+
+        if (!document.getElementById('closePlayerBtn')) addPlayerCloseButton();
+
         startAudioHealthCheck();
     }).catch(error => {
+        if (isClosingPlayer) return;
         console.error("Erro ao tentar tocar a rádio:", error);
-        
         if (error.name === "NotAllowedError") {
             showNotification("Clique no botão Play para iniciar a reprodução", "warning");
             isPlaying = false;
@@ -757,138 +671,69 @@ function playAudio() {
     });
 }
 
-/**
- * Pausa reprodução do áudio
- */
 function pauseAudio() {
     audioPlayer.pause();
     isPlaying = false;
     playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
     playerFixedEl.classList.remove('playing');
+    updateThemeColor('paused');
     stopAudioHealthCheck();
     updateRadioCards();
-    
-    // Atualizar botão flutuante se estiver visível
-    updateReopenPlayerButton();
-    
-    if (retryTimeout) {
-        clearTimeout(retryTimeout);
-        retryTimeout = null;
-    }
+
+    if (retryTimeout) { clearTimeout(retryTimeout); retryTimeout = null; }
 }
 
-/**
- * Alterna entre play e pause
- */
 function togglePlayPause() {
-    if (isPlaying) {
-        pauseAudio();
-    } else {
-        if (currentRadio) {
-            isUserInteraction = true;
-            playAudio();
-        } else {
-            showNotification("Selecione uma rádio para começar a ouvir.", "warning");
-        }
-    }
+    if (isPlaying) pauseAudio();
+    else if (currentRadio) { isUserInteraction = true; playAudio(); }
+    else showNotification("Selecione uma rádio para começar a ouvir.", "warning");
 }
 
-/**
- * Toca uma rádio com verificação de segurança
- * @param {string} name - Nome da rádio
- * @param {string} url - URL da rádio
- * @param {string} favicon - URL do ícone
- * @param {string} country - País da rádio
- * @param {string} tags - Tags/gêneros da rádio
- */
 function playRadio(name, url, favicon, country, tags) {
-    if (retryTimeout) {
-        clearTimeout(retryTimeout);
-        retryTimeout = null;
-    }
+    if (retryTimeout) { clearTimeout(retryTimeout); retryTimeout = null; }
     stopAudioHealthCheck();
-    
-    if (isPlaying) {
-        pauseAudio();
-    }
+    if (isPlaying) pauseAudio();
 
-    const radio = {
-        name: name,
-        url: url,
-        favicon: favicon,
-        country: country,
-        tags: tags
-    };
-
-    const sanitizedRadio = sanitizeRadioData(radio);
+    const sanitizedRadio = sanitizeRadioData({ name, url, favicon, country, tags });
     audioErrorCount = 0;
     currentRadio = sanitizedRadio;
     audioPlayer.src = url;
-
     setupAudioEventListeners();
 
-    // Remover duplicados do histórico mantendo apenas o mais recente
     const existingIndex = history.findIndex(item => item.url === url);
-    if (existingIndex !== -1) {
-        history.splice(existingIndex, 1);
-    }
-    
-    // Adicionar ao histórico
-    const historyItem = {
-        ...sanitizedRadio,
-        url: url,
-        date: new Date().toISOString()
-    };
+    if (existingIndex !== -1) history.splice(existingIndex, 1);
+
+    const historyItem = { ...sanitizedRadio, url, date: new Date().toISOString() };
     history.unshift(historyItem);
-    
-    // Limitar histórico a 100 itens
-    if (history.length > 100) {
-        history.pop();
-    }
-    
-    // Salvar no localStorage
+    if (history.length > 100) history.pop();
+
     secureLocalStorageSet('history', history);
-    
-    // Atualizar UI do histórico
     updateHistoryUI();
-    
-    // Atualizar contador de histórico
     updateButtonCounters();
 
-    nowPlaying.textContent = `Carregando: ${sanitizedRadio.name}`;
+    nowPlaying.textContent = sanitizedRadio.name;
     playerSubtitle.textContent = `${sanitizedRadio.country} • ${cleanGenreName(sanitizedRadio.tags)}`;
-    
-    // Forçar a atualização da imagem no player
+
     const playerInfo = document.querySelector('.player-info');
     if (playerInfo) {
         const oldCover = document.getElementById('playerCover');
-        if (oldCover) {
-            oldCover.remove();
-        }
-        
-        // Criar novo elemento com a imagem correta
-        const newCover = getRadioImageHTML(sanitizedRadio, 'player');
-        
-        // Extrair apenas o elemento img do HTML gerado
+        if (oldCover) oldCover.remove();
+
         const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = newCover;
+        tempDiv.innerHTML = getRadioImageHTML(sanitizedRadio, 'player');
         const imgElement = tempDiv.firstElementChild;
-        
-        // Adicionar ID e classe para referência
         imgElement.id = 'playerCover';
         imgElement.classList.add('player-cover');
-        
-        // Adicionar ao DOM
-        playerInfo.prepend(imgElement);
+
+        playerInfo.insertBefore(imgElement, playerInfo.firstChild);
     }
-    
+
     updateSecurityStatus(url);
     updateFavoriteButton();
 
     setTimeout(() => {
-        try {
-            playAudio();
-        } catch (error) {
+        try { playAudio(); }
+        catch (error) {
             console.error('Erro ao configurar áudio:', error);
             showNotification("Erro ao configurar reprodução", "error");
         }
@@ -896,37 +741,27 @@ function playRadio(name, url, favicon, country, tags) {
 }
 
 // ===================
-// FUNÇÕES PRINCIPAIS
+// FETCH DE RÁDIOS
 // ===================
-
-/**
- * Renderiza rádios a partir do cache
- * @param {Array} radios - Lista de rádios em cache
- */
 function renderRadiosFromCache(radios) {
     if (!radios || radios.length === 0) {
         radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px;'> Nenhuma rádio encontrada.</p>";
         return;
     }
-    
     const html = radios.map(r => {
-        const sanitizedRadio = sanitizeRadioData({
-            name: r.name,
-            url: r.url_resolved || r.url,
-            favicon: r.favicon,
-            country: r.country,
-            tags: r.tags
+        const sanitized = sanitizeRadioData({
+            name: r.name, url: r.url_resolved || r.url,
+            favicon: r.favicon, country: r.country, tags: r.tags
         });
-        
-        const isFavorite = favorites.some(fav => fav.url === sanitizedRadio.url);
-        const isCurrent = currentRadio && currentRadio.url === sanitizedRadio.url;
+        const isFavorite = favorites.some(fav => fav.url === sanitized.url);
+        const isCurrent  = currentRadio && currentRadio.url === sanitized.url;
 
         return `
             <div class="radio-card ${isFavorite ? 'favorite' : ''} ${isCurrent ? 'playing' : ''}"
                  onclick="playRadio('${(r.name || 'Rádio').replace(/'/g, "\\'")}', '${(r.url_resolved || r.url || '').replace(/'/g, "\\'")}', '${(r.favicon || '').replace(/'/g, "\\'")}', '${(r.country || '').replace(/'/g, "\\'")}', '${(r.tags || '').replace(/'/g, "\\'")}')">
-                ${getRadioImageHTML(sanitizedRadio, 'normal')}
-                <h3>${sanitizedRadio.name}</h3>
-                <small>${sanitizedRadio.country} - ${cleanGenreName(sanitizedRadio.tags)}</small>
+                ${getRadioImageHTML(sanitized, 'normal')}
+                <h3>${sanitized.name}</h3>
+                <small>${sanitized.country} - ${cleanGenreName(sanitized.tags)}</small>
                 <div class="progress-container">
                     <div class="progress-bar" style="width:${isCurrent && isPlaying ? '50%' : '0%'}"></div>
                 </div>
@@ -935,23 +770,15 @@ function renderRadiosFromCache(radios) {
     }).join("");
 
     radiosContainer.innerHTML = html;
-    page = 2; // Próxima página para carregar mais
+    page = 2;
     hasMoreResults = radios.length === 100;
     updateLoadMoreButton();
 }
 
-/**
- * Busca rádios da API com cache
- * @param {string} query - Termo de busca
- * @param {string} country - País para filtrar
- * @param {string} tag - Tag/gênero para filtrar
- * @param {boolean} append - Se deve adicionar aos resultados existentes
- */
 async function fetchRadios(query = "", country = "", tag = "", append = false) {
     if (loading) return;
     loading = true;
 
-    // CORREÇÃO: Não exibir "Carregando" duas vezes
     if (!append) {
         radiosContainer.innerHTML = "<div class='loading-text'><div class='loader'></div> Carregando rádios...</div>";
         page = 1;
@@ -973,9 +800,7 @@ async function fetchRadios(query = "", country = "", tag = "", append = false) {
         const radios = await res.json();
 
         if (!radios.length) {
-            if (!append) {
-                radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px;'> Nenhuma rádio encontrada.</p>";
-            }
+            if (!append) radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px;'> Nenhuma rádio encontrada.</p>";
             hasMoreResults = false;
             updateLoadMoreButton();
             loading = false;
@@ -983,34 +808,25 @@ async function fetchRadios(query = "", country = "", tag = "", append = false) {
         }
 
         hasMoreResults = radios.length === 100;
-        
-        // Cache dos resultados para carregamento mais rápido
+
         if (!append && query === "" && country === "" && tag === "") {
-            try {
-                sessionStorage.setItem('cachedRadios', JSON.stringify(radios));
-            } catch (e) {
-                // Ignorar erro de cache
-            }
+            try { sessionStorage.setItem('cachedRadios', JSON.stringify(radios)); } catch {}
         }
-        
+
         const html = radios.map(r => {
-            const sanitizedRadio = sanitizeRadioData({
-                name: r.name,
-                url: r.url_resolved,
-                favicon: r.favicon,
-                country: r.country,
-                tags: r.tags
+            const sanitized = sanitizeRadioData({
+                name: r.name, url: r.url_resolved, favicon: r.favicon,
+                country: r.country, tags: r.tags
             });
-            
-            const isFavorite = favorites.some(fav => fav.url === sanitizedRadio.url);
-            const isCurrent = currentRadio && currentRadio.url === sanitizedRadio.url;
+            const isFavorite = favorites.some(fav => fav.url === sanitized.url);
+            const isCurrent  = currentRadio && currentRadio.url === sanitized.url;
 
             return `
                 <div class="radio-card ${isFavorite ? 'favorite' : ''} ${isCurrent ? 'playing' : ''}"
                      onclick="playRadio('${(r.name || 'Rádio').replace(/'/g, "\\'")}', '${(r.url_resolved || '').replace(/'/g, "\\'")}', '${(r.favicon || '').replace(/'/g, "\\'")}', '${(r.country || '').replace(/'/g, "\\'")}', '${(r.tags || '').replace(/'/g, "\\'")}')">
-                    ${getRadioImageHTML(sanitizedRadio, 'normal')}
-                    <h3>${sanitizedRadio.name}</h3>
-                    <small>${sanitizedRadio.country} - ${cleanGenreName(sanitizedRadio.tags)}</small>
+                    ${getRadioImageHTML(sanitized, 'normal')}
+                    <h3>${sanitized.name}</h3>
+                    <small>${sanitized.country} - ${cleanGenreName(sanitized.tags)}</small>
                     <div class="progress-container">
                         <div class="progress-bar" style="width:${isCurrent && isPlaying ? '50%' : '0%'}"></div>
                     </div>
@@ -1018,33 +834,22 @@ async function fetchRadios(query = "", country = "", tag = "", append = false) {
             `;
         }).join("");
 
-        if (append) {
-            radiosContainer.insertAdjacentHTML('beforeend', html);
-        } else {
-            radiosContainer.innerHTML = html;
-        }
+        if (append) radiosContainer.insertAdjacentHTML('beforeend', html);
+        else radiosContainer.innerHTML = html;
 
         page++;
     } catch (err) {
         console.error("Erro ao buscar rádios:", err);
-        if (!append) {
-            radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px; color: var(--error-color);'> Erro ao carregar as rádios.</p>";
-        } else {
-            showNotification("Erro ao carregar mais rádios.", "error");
-        }
+        if (!append) radiosContainer.innerHTML = "<p style='text-align:center; padding: 20px; color: var(--error-color);'> Erro ao carregar as rádios.</p>";
+        else showNotification("Erro ao carregar mais rádios.", "error");
     } finally {
         loading = false;
         updateLoadMoreButton();
     }
 }
 
-/**
- * Atualiza botão "Ver mais" 
- */
 function updateLoadMoreButton() {
     const isAllTabActive = document.querySelector('.tab[data-tab="all"]')?.classList.contains('active');
-
-    // CORREÇÃO: Não mostrar botão de carregamento duplicado
     if (loading) {
         loadMoreBtn.disabled = true;
         loadMoreBtn.innerHTML = '<div class="loader"></div> Carregando...';
@@ -1060,10 +865,6 @@ function updateLoadMoreButton() {
     }
 }
 
-/**
- * Atualiza o status de segurança no player
- * @param {string} url - URL a ser verificada
- */
 function updateSecurityStatus(url) {
     const isSafe = isSafeAudioURL(url);
     if (isSafe) {
@@ -1076,12 +877,8 @@ function updateSecurityStatus(url) {
 }
 
 // ===========================
-// GERENCIAMENTO DE FAVORITOS
+// FAVORITOS
 // ===========================
-
-/**
- * Alterna rádio atual nos favoritos
- */
 function toggleFavoriteRadio() {
     if (!currentRadio) return;
     const index = favorites.findIndex(fav => fav.url === currentRadio.url);
@@ -1097,47 +894,57 @@ function toggleFavoriteRadio() {
     secureLocalStorageSet('favorites', favorites);
     updateFavoritesUI();
     updateRadioCards();
-    
-    // Atualizar contador
     updateButtonCounters();
 }
 
-/**
- * Atualiza botão de favoritos baseado no estado atual
- */
 function updateFavoriteButton() {
     if (!currentRadio) return;
-    const isFavorite = favorites.some(fav => fav.url === currentRadio.url);
-    toggleFavorite.innerHTML = isFavorite ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+    const isFav = favorites.some(fav => fav.url === currentRadio.url);
+    toggleFavorite.innerHTML = isFav ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
 }
 
-/**
- * Atualiza interface de favoritos
- */
 function updateFavoritesUI() {
+    if (!favoritesList) return;
+
     if (favorites.length === 0) {
-        favoritesList.innerHTML = "<p style='text-align:center; padding: 20px;'> Nenhuma rádio favorita ainda.</p>";
+        favoritesList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-star"></i>
+                <p>Nenhuma rádio favorita ainda.</p>
+                <small>Toque na estrela do player para adicionar.</small>
+            </div>`;
         return;
     }
+
     const header = `
-        <div style="text-align:right; margin:5px 15px;">
-            <button onclick="showConfirmationModal('clearFavorites')" style="background:var(--error-color);color:#fff;border:none;padding:6px 12px;border-radius:8px;cursor:pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                <i class='fas fa-trash'></i> Remover todas
+        <div class="list-header">
+            <span class="list-count">
+                <i class="fas fa-star"></i>
+                ${favorites.length} rádio${favorites.length !== 1 ? 's' : ''}
+            </span>
+            <button class="btn-clear-all"
+                    onclick="showConfirmationModal('clearFavorites')"
+                    title="Remover todas as rádios favoritas">
+                <i class="fas fa-trash"></i> Remover todas
             </button>
         </div>
     `;
+
     const html = favorites.map(radio => {
         const isCurrent = currentRadio && currentRadio.url === radio.url;
         const displayTags = cleanGenreName(radio.tags);
+        const safeUrl = radio.url.replace(/'/g, "\\'");
 
         return `
             <div class="radio-card favorite ${isCurrent ? 'playing' : ''}"
-                 onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${radio.url.replace(/'/g, "\\'")}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
+                 onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${safeUrl}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
                 ${getRadioImageHTML(radio, 'normal')}
                 <h3>${radio.name}</h3>
                 <small>${radio.country} - ${displayTags}</small>
-                <button onclick="event.stopPropagation(); showConfirmationModal('removeFavorite', '${radio.url.replace(/'/g, "\\'")}')" style="background:var(--error-color); color:#fff; border:none; padding:4px 8px; border-radius:6px; margin-top:6px; font-size:0.85rem; cursor:pointer; font-weight: 500;">
-                    <i class='fas fa-trash'></i> Remover
+                <button class="btn-remove"
+                        onclick="event.stopPropagation(); showConfirmationModal('removeFavorite', '${safeUrl}')"
+                        aria-label="Remover rádio dos favoritos">
+                    <i class="fas fa-trash"></i> Remover
                 </button>
                 <div class="progress-container">
                     <div class="progress-bar" style="width:${isCurrent && isPlaying ? '50%' : '0%'}"></div>
@@ -1148,10 +955,6 @@ function updateFavoritesUI() {
     favoritesList.innerHTML = header + html;
 }
 
-/**
- * Remove rádio dos favoritos
- * @param {string} url - URL da rádio a remover
- */
 function removeFavorite(url) {
     favorites = favorites.filter(fav => fav.url !== url);
     secureLocalStorageSet('favorites', favorites);
@@ -1159,718 +962,342 @@ function removeFavorite(url) {
     updateFavoriteButton();
     updateRadioCards();
     showNotification("Rádio removida dos favoritos", "success");
-    
-    // Atualizar contador
     updateButtonCounters();
 }
 
-/**
- * Limpa todos os favoritos
- */
 function clearFavoritesAction() {
     favorites = [];
     secureLocalStorageSet('favorites', favorites);
     updateFavoritesUI();
     updateFavoriteButton();
     updateRadioCards();
-    showNotification(" Todos os favoritos removidos", "success");
-    
-    // Atualizar contador
+    showNotification("Todos os favoritos removidos", "success");
     updateButtonCounters();
 }
 
 // ===========================
-// GERENCIAMENTO DE HISTÓRICO
+// HISTÓRICO
 // ===========================
-
-/**
- * Atualiza interface de histórico
- */
 function updateHistoryUI() {
+    if (!historyList) return;
+
     if (history.length === 0) {
-        historyList.innerHTML = "<p style='text-align:center; padding: 20px;'> Nenhuma rádio no histórico ainda.</p>";
+        historyList.innerHTML = `
+            <div class="empty-state">
+                <i class="fas fa-history"></i>
+                <p>Nenhuma rádio no histórico ainda.</p>
+                <small>As rádios que você ouvir aparecem aqui.</small>
+            </div>`;
         return;
     }
+
     const header = `
-        <div style="text-align:right; margin:5px 15px;">
-            <button onclick="showConfirmationModal('clearAllHistory')" style="background:var(--error-color);color:#fff;border:none;padding:6px 12px;border-radius:8px;cursor:pointer; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
-                <i class='fas fa-trash'></i> Limpar tudo
+        <div class="list-header">
+            <span class="list-count">
+                <i class="fas fa-history"></i>
+                ${history.length} rádio${history.length !== 1 ? 's' : ''}
+            </span>
+            <button class="btn-clear-all"
+                    onclick="showConfirmationModal('clearAllHistory')"
+                    title="Limpar todo o histórico">
+                <i class="fas fa-trash"></i> Limpar tudo
             </button>
         </div>
     `;
+
     const html = history.map(radio => {
         const isCurrent = currentRadio && currentRadio.url === radio.url;
         const displayTags = cleanGenreName(radio.tags);
+        const timeAgo = formatTimeAgo(new Date(radio.date));
+        const safeUrl = radio.url.replace(/'/g, "\\'");
 
         return `
             <div class="radio-card ${isCurrent ? 'playing' : ''}"
-                 onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${radio.url.replace(/'/g, "\\'")}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
+                 onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${safeUrl}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
                 ${getRadioImageHTML(radio, 'normal')}
                 <h3>${radio.name}</h3>
                 <small>${radio.country} - ${displayTags}</small>
-                <button onclick="event.stopPropagation(); showConfirmationModal('removeHistory', '${radio.url.replace(/'/g, "\\'")}')" style="background:var(--error-color); color:#fff; border:none; padding:4px 8px; border-radius:6px; margin-top:6px; font-size:0.85rem; cursor:pointer; font-weight: 500;">
-                    <i class='fas fa-trash'></i> Remover
+                <small class="time-ago">${timeAgo}</small>
+                <button class="btn-remove"
+                        onclick="event.stopPropagation(); showConfirmationModal('removeHistory', '${safeUrl}')"
+                        aria-label="Remover rádio do histórico">
+                    <i class="fas fa-trash"></i> Remover
                 </button>
                 <div class="progress-container">
                     <div class="progress-bar" style="width:${isCurrent && isPlaying ? '50%' : '0%'}"></div>
                 </div>
             </div>`;
     }).join("");
+
     historyList.innerHTML = header + html;
 }
 
-/**
- * Remove rádio do histórico
- * @param {string} url - URL da rádio a remover
- */
 function removeFromHistory(url) {
     history = history.filter(item => item.url !== url);
     secureLocalStorageSet('history', history);
     updateHistoryUI();
     updateRadioCards();
     showNotification("Rádio removida do histórico", "success");
-    
-    // Atualizar contador
     updateButtonCounters();
 }
 
-/**
- * Limpa todo o histórico
- */
 function clearAllHistoryAction() {
     history = [];
     secureLocalStorageSet('history', history);
     updateHistoryUI();
     updateRadioCards();
     showNotification("Histórico de reprodução limpo", "success");
-    
-    // Atualizar contador
     updateButtonCounters();
 }
 
-/**
- * Atualiza estado visual de todos os cards de rádio
- */
 function updateRadioCards() {
-    const radioCards = document.querySelectorAll('.radio-card');
-    radioCards.forEach(card => {
+    document.querySelectorAll('.radio-card').forEach(card => {
         const onclickAttr = card.getAttribute('onclick');
         if (!onclickAttr) return;
-
         const urlMatch = onclickAttr.match(/playRadio\('[^']*', '([^']*)'/);
         if (!urlMatch) return;
         const url = urlMatch[1];
-       
+
         const isFavorite = favorites.some(fav => fav.url === url);
         const isCurrent = currentRadio && currentRadio.url === url;
-       
-        if (isFavorite) {
-            card.classList.add('favorite');
-        } else {
-            card.classList.remove('favorite');
-        }
 
-        if (isCurrent && isPlaying) {
-            card.classList.add('playing');
-        } else {
-            card.classList.remove('playing');
-        }
-       
+        card.classList.toggle('favorite', isFavorite);
+        card.classList.toggle('playing', isCurrent && isPlaying);
+
         const progressBar = card.querySelector('.progress-bar');
-        if (progressBar) {
-            progressBar.style.width = isCurrent && isPlaying ? '50%' : '0%';
-        }
+        if (progressBar) progressBar.style.width = (isCurrent && isPlaying) ? '50%' : '0%';
     });
 }
 
-// ====================================
-// FUNCIONALIDADE PARA FECHAR O PLAYER
-// ====================================
-
-/**
- * Adiciona botão para fechar o player
- */
-function addPlayerCloseButton() {
-    if (!playerFixedEl) {
-        return;
-    }
-    
-    if (document.getElementById('closePlayerBtn')) {
-        return;
-    }
-    
-    const closeBtn = document.createElement('button');
-    closeBtn.id = 'closePlayerBtn';
-    closeBtn.className = 'player-close-btn';
-    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
-    closeBtn.setAttribute('title', 'Fechar player (o áudio continuará tocando)');
-    closeBtn.setAttribute('aria-label', 'Fechar player');
-    
-    if (!document.getElementById('playerCloseStyles')) {
-        const style = document.createElement('style');
-        style.id = 'playerCloseStyles';
-        style.textContent = `
-            .player-close-btn {
-                position: absolute;
-                top: -12px;
-                right: -12px;
-                width: 32px;
-                height: 32px;
-                border-radius: 50%;
-                background: var(--error-color);
-                color: white;
-                border: 3px solid var(--player-color);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                z-index: 1000;
-                font-size: 14px;
-                opacity: 0.9;
-                transition: all 0.3s ease;
-                box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-            }
-            
-            .player-close-btn:hover {
-                opacity: 1;
-                transform: scale(1.1);
-                background: #ff4757;
-                box-shadow: 0 3px 15px rgba(255, 71, 87, 0.4);
-            }
-            
-            .player-close-btn:active {
-                transform: scale(0.95);
-            }
-            
-            .player-fixed.hidden .player-close-btn {
-                display: none;
-            }
-            
-            @media (max-width: 768px) {
-                .player-close-btn {
-                    top: -8px;
-                    right: -8px;
-                    width: 28px;
-                    height: 28px;
-                    font-size: 12px;
-                }
-            }
-            
-            .player-fixed.playing .player-close-btn {
-                animation: pulse-border 2s infinite;
-            }
-            
-            @keyframes pulse-border {
-                0% {
-                    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0.7);
-                }
-                70% {
-                    box-shadow: 0 0 0 6px rgba(255, 71, 87, 0);
-                }
-                100% {
-                    box-shadow: 0 0 0 0 rgba(255, 71, 87, 0);
-                }
-            }
-        `;
-        
-        document.head.appendChild(style);
-    }
-    
-    closeBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        closePlayer();
-    });
-    
-    playerFixedEl.appendChild(closeBtn);
-}
-
-/**
- * Adiciona botão flutuante para reabrir o player
- */
-function addReopenPlayerButton() {
-    const existingBtn = document.getElementById('reopenPlayerBtn');
-    if (existingBtn) {
-        existingBtn.remove();
-    }
-    
-    if (!document.getElementById('reopenPlayerStyles')) {
-        const style = document.createElement('style');
-        style.id = 'reopenPlayerStyles';
-        style.textContent = `
-            .reopen-player-btn {
-                position: fixed;
-                bottom: 100px;
-                left: 50%;
-                transform: translateX(-50%);
-                width: 70px;
-                height: 70px;
-                border-radius: 50%;
-                background: var(--accent-gradient);
-                color: white;
-                border: 3px solid var(--player-color);
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-                z-index: 9999;
-                font-size: 24px;
-                opacity: 0.95;
-                transition: all 0.3s ease;
-                box-shadow: 0 6px 25px color-mix(in srgb, var(--accent-primary) 50%, transparent);
-                animation: float 3s ease-in-out infinite;
-            }
-            
-            .reopen-player-btn:hover {
-                opacity: 1;
-                transform: translateX(-50%) scale(1.05);
-                box-shadow: 0 8px 30px color-mix(in srgb, var(--accent-primary) 70%, transparent);
-            }
-            
-            .reopen-player-btn:active {
-                transform: translateX(-50%) scale(0.95);
-            }
-            
-            .reopen-player-btn.pulse {
-                animation: pulse 1.5s infinite;
-            }
-            
-            .reopen-player-btn.playing::after {
-                content: '';
-                position: absolute;
-                top: -4px;
-                right: -4px;
-                width: 16px;
-                height: 16px;
-                background: #2bde73;
-                border-radius: 50%;
-                border: 2px solid var(--player-color);
-                animation: blink 1.5s infinite;
-                box-shadow: 0 0 10px #2bde73, 0 0 20px #2bde73 inset;
-                z-index: 9999;
-            }
-            
-            .reopen-player-btn.paused::after {
-                content: '';
-                position: absolute;
-                top: -4px;
-                right: -4px;
-                width: 16px;
-                height: 16px;
-                background: #ffa500;
-                border-radius: 50%;
-                border: 2px solid var(--player-color);
-                animation: none;
-                box-shadow: 0 0 10px #ffa500, 0 0 20px #ffa500 inset;
-                z-index: 9999;
-            }
-            
-            @keyframes float {
-                0%, 100% {
-                    transform: translateX(-50%) translateY(0);
-                }
-                50% {
-                    transform: translateX(-50%) translateY(-8px);
-                }
-            }
-            
-            @keyframes pulse {
-                0% {
-                    box-shadow: 0 0 0 0 rgba(0, 216, 255, 0.7);
-                }
-                70% {
-                    box-shadow: 0 0 0 15px rgba(0, 216, 255, 0);
-                }
-                100% {
-                    box-shadow: 0 0 0 0 rgba(0, 216, 255, 0);
-                }
-            }
-            
-            @keyframes blink {
-                0%, 50% {
-                    opacity: 1;
-                }
-                51%, 100% {
-                    opacity: 0.3;
-                }
-            }
-            
-            @media (max-width: 768px) {
-                .reopen-player-btn {
-                    width: 65px;
-                    height: 65px;
-                    font-size: 22px;
-                    bottom: 90px;
-                }
-            }
-            
-            @media (orientation: landscape) and (max-height: 600px) {
-                .reopen-player-btn {
-                    width: 60px;
-                    height: 60px;
-                    font-size: 20px;
-                    bottom: 70px;
-                }
-            }
-            
-            .player-fixed:not(.hidden) ~ .reopen-player-btn,
-            body:has(.player-fixed:not(.hidden)) .reopen-player-btn,
-            .player-fixed:not(.hidden) + .reopen-player-btn {
-                display: none !important;
-            }
-            
-            .player-fixed {
-                z-index: 10000;
-            }
-            
-            .reopen-player-btn {
-                z-index: 9999;
-            }
-        `;
-        
-        document.head.appendChild(style);
-    }
-    
-    const reopenBtn = document.createElement('button');
-    reopenBtn.id = 'reopenPlayerBtn';
-    reopenBtn.className = 'reopen-player-btn';
-    reopenBtn.innerHTML = '<i class="fas fa-music"></i>';
-    
-    // Adicionar classe baseada no estado de reprodução
-    if (isPlaying) {
-        reopenBtn.classList.add('playing');
-        reopenBtn.classList.remove('paused');
-        reopenBtn.classList.add('pulse');
-        reopenBtn.setAttribute('title', 'Rádio tocando - Clique para mostrar player');
-    } else {
-        reopenBtn.classList.add('paused');
-        reopenBtn.classList.remove('playing');
-        reopenBtn.classList.remove('pulse');
-        reopenBtn.setAttribute('title', 'Rádio pausada - Clique para mostrar player');
-    }
-    
-    reopenBtn.addEventListener('click', function(e) {
-        e.stopPropagation();
-        reopenPlayer();
-    });
-    
-    document.body.appendChild(reopenBtn);
-    adjustReopenButtonPosition();
-}
-
-/**
- * Atualiza o estado visual do botão flutuante
- */
-function updateReopenPlayerButton() {
-    const reopenBtn = document.getElementById('reopenPlayerBtn');
-    if (!reopenBtn) return;
-    
-    if (isPlaying) {
-        reopenBtn.classList.add('playing');
-        reopenBtn.classList.remove('paused');
-        reopenBtn.classList.add('pulse');
-        reopenBtn.setAttribute('title', 'Rádio tocando - Clique para mostrar player');
-    } else {
-        reopenBtn.classList.add('paused');
-        reopenBtn.classList.remove('playing');
-        reopenBtn.classList.remove('pulse');
-        reopenBtn.setAttribute('title', 'Rádio pausada - Clique para mostrar player');
-    }
-}
-
-/**
- * Ajusta a posição do botão flutuante baseado na orientação
- */
-function adjustReopenButtonPosition() {
-    const reopenBtn = document.getElementById('reopenPlayerBtn');
-    if (!reopenBtn) return;
-    
-    const isLandscape = window.innerWidth > window.innerHeight;
-    const isSmallScreen = window.innerWidth < 768 || window.innerHeight < 600;
-    
-    if (isLandscape && isSmallScreen) {
-        reopenBtn.style.bottom = '60px';
-        reopenBtn.style.width = '60px';
-        reopenBtn.style.height = '60px';
-        reopenBtn.style.fontSize = '20px';
-    } else if (isSmallScreen) {
-        reopenBtn.style.bottom = '80px';
-        reopenBtn.style.width = '65px';
-        reopenBtn.style.height = '65px';
-        reopenBtn.style.fontSize = '22px';
-    } else {
-        reopenBtn.style.bottom = '100px';
-        reopenBtn.style.width = '70px';
-        reopenBtn.style.height = '70px';
-        reopenBtn.style.fontSize = '24px';
-    }
-    
-    reopenBtn.style.left = '50%';
-    reopenBtn.style.transform = 'translateX(-50%)';
-}
-
-/**
- * Fecha o player (apenas visualmente)
- */
-function closePlayer() {
-    playerFixedEl.classList.add('hidden');
-    showNotification('🎧Player minimizado. O áudio continua tocando em segundo plano.', 'info');
-    
-    // Adicionar botão flutuante com estado correto
-    addReopenPlayerButton();
-}
-
-/**
- * Reabre o player
- */
-function reopenPlayer() {
-    playerFixedEl.classList.remove('hidden');
-    
-    const reopenBtn = document.getElementById('reopenPlayerBtn');
-    if (reopenBtn) {
-        reopenBtn.remove();
-    }
-    
-    showNotification('🎧Player restaurado', 'success');
-}
-
-// =========================
-// CONTROLES DE UI E MODAIS
-// =========================
-
-// Gerenciador de Tabs
-tabs.forEach(tab => {
-    tab.addEventListener('click', () => {
-        const tabName = tab.getAttribute('data-tab');
-       
-        tabs.forEach(t => t.classList.remove('active'));
-        tabContents.forEach(c => c.classList.remove('active'));
-       
-        tab.classList.add('active');
-        document.getElementById(`tab-${tabName}`).classList.add('active');
-       
-        if (tabName === 'favorites') updateFavoritesUI();
-        if (tabName === 'history') updateHistoryUI();
-
-        updateLoadMoreButton();
-    });
-});
-
-// Event listeners para modais
-openFilters.addEventListener('click', () => {
-    filtersModal.style.display = "flex";
-    setTimeout(() => {
-        searchInput.focus();
-    }, 100);
-});
-
-closeFilters.addEventListener('click', () => filtersModal.style.display = "none");
-openFavorites.addEventListener('click', () => showFavoritesModal());
-closeFavorites.addEventListener('click', () => favoritesModal.style.display = "none");
-openHistory.addEventListener('click', () => showHistoryModal());
-closeHistory.addEventListener('click', () => historyModal.style.display = "none");
-closePageModal.addEventListener('click', () => pageModal.style.display = "none");
-
-// Fechar modais ao clicar fora
-window.addEventListener('click', (e) => {
-    if (e.target === favoritesModal) {
-        favoritesModal.style.display = "none";
-    }
-    if (e.target === historyModal) {
-        historyModal.style.display = "none";
-    }
-    if (e.target === filtersModal) {
-        filtersModal.style.display = "none";
-        genreResultsList.style.display = 'none';
-    }
-    if (e.target === pageModal) {
-        pageModal.style.display = "none";
-    }
-});
-
-// Fechar modal com ESC
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') {
-        if (filtersModal.style.display === 'flex') {
-            filtersModal.style.display = "none";
-            genreResultsList.style.display = 'none';
-        }
-        if (favoritesModal.style.display === 'flex') {
-            favoritesModal.style.display = "none";
-        }
-        if (historyModal.style.display === 'flex') {
-            historyModal.style.display = "none";
-        }
-        if (pageModal.style.display === 'flex') {
-            pageModal.style.display = "none";
-        }
-        
-        if (!playerFixedEl.classList.contains('hidden')) {
-            closePlayer();
-        }
-    }
-});
-
-/**
- * Exibe modal de favoritos
- */
-function showFavoritesModal() {
-    if (favorites.length === 0) {
-        document.getElementById('favoritesModalList').innerHTML = "<p class='modal-empty-message'><i class='fas fa-star'></i><br>Nenhuma rádio favorita ainda.</p>";
-    } else {
-        const html = favorites.map(radio => {
-            const isCurrent = currentRadio && currentRadio.url === radio.url;
-            const displayTags = cleanGenreName(radio.tags);
-
-            const imgHTML = getRadioImageHTML(radio, 'small');
-
-            return `
-                <div class="modal-radio-item" onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${radio.url.replace(/'/g, "\\'")}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
-                    ${imgHTML}
-                    <div class="modal-radio-info">
-                        <h3>${radio.name}</h3>
-                        <p>${radio.country} • ${displayTags}</p>
-                    </div>
-                    <button class="modal-play-btn" onclick="event.stopPropagation(); playRadio('${radio.name.replace(/'/g, "\\'")}', '${radio.url.replace(/'/g, "\\'")}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
-                        <i class="fas fa-${isCurrent && isPlaying ? 'pause' : 'play'}"></i>
-                    </button>
-                </div>
-            `}).join("");
-        document.getElementById('favoritesModalList').innerHTML = html;
-    }
-    favoritesModal.style.display = "flex";
-}
-
-/**
- * Exibe modal de histórico
- */
-function showHistoryModal() {
-    if (history.length === 0) {
-        document.getElementById('historyModalList').innerHTML = "<p class='modal-empty-message'><i class='fas fa-history'></i><br>Nenhuma rádio no histórico ainda.</p>";
-    } else {
-        const html = history.map(radio => {
-            const isCurrent = currentRadio && currentRadio.url === radio.url;
-            const displayTags = cleanGenreName(radio.tags);
-            const date = new Date(radio.date);
-            const timeAgo = formatTimeAgo(date);
-
-            const imgHTML = getRadioImageHTML(radio, 'small');
-
-            return `
-                <div class="modal-radio-item" onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${radio.url.replace(/'/g, "\\'")}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
-                    ${imgHTML}
-                    <div class="modal-radio-info">
-                        <h3>${radio.name}</h3>
-                        <p>${radio.country} • ${displayTags}</p>
-                        <small style="font-size: 0.7rem; opacity: 0.6;">${timeAgo}</small>
-                    </div>
-                    <button class="modal-play-btn" onclick="event.stopPropagation(); playRadio('${radio.name.replace(/'/g, "\\'")}', '${radio.url.replace(/'/g, "\\'")}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
-                        <i class="fas fa-${isCurrent && isPlaying ? 'pause' : 'play'}"></i>
-                    </button>
-                </div>
-            `}).join("");
-        document.getElementById('historyModalList').innerHTML = html;
-    }
-    historyModal.style.display = "flex";
-}
-
-// ===========================
-// GERENCIAMENTO DE FAVORITOS 
-// ===========================
-
-/**
- * Atualiza interface de favoritos
- */
-function updateFavoritesUI() {
-    if (favorites.length === 0) {
-        favoritesList.innerHTML = "<p style='text-align:center; padding: 40px; color: var(--text-secondary);'><i class='fas fa-star' style='font-size:2rem;display:block;margin-bottom:12px;opacity:0.5;'></i>Nenhuma rádio favorita ainda.</p>";
-        return;
-    }
-    
-    const html = favorites.map((radio, index) => {
-        const isCurrent = currentRadio && currentRadio.url === radio.url;
-        const displayTags = cleanGenreName(radio.tags);
-
-        return `
-            <div class="radio-card favorite ${isCurrent ? 'playing' : ''}"
-                 onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${radio.url.replace(/'/g, "\\'")}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
-                ${getRadioImageHTML(radio, 'normal')}
-                <h3>${radio.name}</h3>
-                <small>${radio.country} - ${displayTags}</small>
-                <button onclick="event.stopPropagation(); showConfirmationModal('removeFavorite', '${radio.url.replace(/'/g, "\\'")}')" 
-                        style="background:var(--error-color); color:#fff; border:none; padding:4px 8px; border-radius:6px; margin-top:6px; font-size:0.85rem; cursor:pointer; font-weight: 500;">
-                    <i class='fas fa-trash'></i> Remover
-                </button>
-                <div class="progress-container">
-                    <div class="progress-bar" style="width:${isCurrent && isPlaying ? '50%' : '0%'}"></div>
-                </div>
-            </div>`;
-    }).join("");
-
-    favoritesList.innerHTML = html;
-}
-
-/**
- * Atualiza interface de histórico
- */
-function updateHistoryUI() {
-    if (history.length === 0) {
-        historyList.innerHTML = "<p style='text-align:center; padding: 40px; color: var(--text-secondary);'><i class='fas fa-history' style='font-size:2rem;display:block;margin-bottom:12px;opacity:0.5;'></i>Nenhuma rádio no histórico ainda.</p>";
-        return;
-    }
-    
-    const html = history.map(radio => {
-        const isCurrent = currentRadio && currentRadio.url === radio.url;
-        const displayTags = cleanGenreName(radio.tags);
-        const date = new Date(radio.date);
-        const timeAgo = formatTimeAgo(date);
-
-        return `
-            <div class="radio-card ${isCurrent ? 'playing' : ''}"
-                 onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${radio.url.replace(/'/g, "\\'")}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
-                ${getRadioImageHTML(radio, 'normal')}
-                <h3>${radio.name}</h3>
-                <small>${radio.country} - ${displayTags}</small>
-                <small style="font-size: 0.65rem; opacity: 0.5; margin-top: 2px;">${timeAgo}</small>
-                <button onclick="event.stopPropagation(); showConfirmationModal('removeHistory', '${radio.url.replace(/'/g, "\\'")}')" 
-                        style="background:var(--error-color); color:#fff; border:none; padding:4px 8px; border-radius:6px; margin-top:6px; font-size:0.85rem; cursor:pointer; font-weight: 500;">
-                    <i class='fas fa-trash'></i> Remover
-                </button>
-                <div class="progress-container">
-                    <div class="progress-bar" style="width:${isCurrent && isPlaying ? '50%' : '0%'}"></div>
-                </div>
-            </div>`;
-    }).join("");
-    historyList.innerHTML = html;
-}
-
-/**
- * Formata tempo relativo para exibição
- * @param {Date} date - Data a ser formatada
- * @returns {string} Tempo relativo formatado
- */
 function formatTimeAgo(date) {
     const now = new Date();
     const diffMs = now - date;
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
     const diffDays = Math.floor(diffMs / 86400000);
-    
+
     if (diffMins < 1) return 'Agora mesmo';
     if (diffMins < 60) return `Há ${diffMins} min${diffMins > 1 ? 's' : ''}`;
     if (diffHours < 24) return `Há ${diffHours} hora${diffHours > 1 ? 's' : ''}`;
     if (diffDays < 7) return `Há ${diffDays} dia${diffDays > 1 ? 's' : ''}`;
-    
     return date.toLocaleDateString('pt-BR');
 }
 
+// ====================================
+// PLAYER — FECHAR (para áudio e fecha)
+// ====================================
+function addPlayerCloseButton() {
+    if (!playerFixedEl) return;
+    if (document.getElementById('closePlayerBtn')) return;
+
+    const closeBtn = document.createElement('button');
+    closeBtn.id = 'closePlayerBtn';
+    closeBtn.className = 'player-close-btn';
+    closeBtn.innerHTML = '<i class="fas fa-times"></i>';
+    closeBtn.setAttribute('title', 'Parar e fechar player');
+    closeBtn.setAttribute('aria-label', 'Parar e fechar player');
+
+    closeBtn.addEventListener('click', function(e) {
+        e.stopPropagation();
+        closePlayer();
+    });
+
+    playerFixedEl.appendChild(closeBtn);
+}
+
+function closePlayer() {
+    // Ativa flag ANTES de mexer no áudio, para silenciar eventos de erro
+    isClosingPlayer = true;
+
+    // Remove listeners para evitar disparo de onerror/onstalled/onended
+    audioPlayer.removeEventListener('error', handleAudioError);
+    audioPlayer.removeEventListener('ended', handleAudioEnded);
+    audioPlayer.removeEventListener('canplay', handleAudioCanPlay);
+    audioPlayer.removeEventListener('stalled', handleAudioStalled);
+    audioPlayer.removeEventListener('waiting', handleAudioWaiting);
+
+    // Para e limpa o áudio
+    try {
+        audioPlayer.pause();
+        audioPlayer.removeAttribute('src');
+        audioPlayer.load(); // força reset interno
+    } catch (e) { /* silencioso */ }
+
+    stopAudioHealthCheck();
+
+    if (retryTimeout) {
+        clearTimeout(retryTimeout);
+        retryTimeout = null;
+    }
+
+    isPlaying = false;
+    audioErrorCount = 0;
+    currentRadio = null;
+
+    // Reseta UI do player
+    playPauseBtn.innerHTML = '<i class="fas fa-play"></i>';
+    playerFixedEl.classList.remove('playing');
+    nowPlaying.textContent = 'Selecione uma rádio...';
+    playerSubtitle.textContent = 'Grid Rádio';
+
+    // Restaura a capa padrão
+    const oldCover = document.getElementById('playerCover');
+    if (oldCover) {
+        oldCover.src = DEFAULT_ICON;
+        oldCover.classList.add('player-cover');
+    }
+
+    // Esconde o player
+    playerFixedEl.classList.add('hidden');
+
+    // Reseta status de segurança
+    securityStatusEl.innerHTML = '';
+    securityStatusEl.className = 'security-status';
+
+    // Reseta botão de favorito
+    toggleFavorite.innerHTML = '<i class="far fa-star"></i>';
+
+    updateThemeColor('idle');
+    updateRadioCards();
+
+    showNotification('O player foi fechado', 'info');
+
+    // Libera a flag no próximo tick
+    setTimeout(() => { isClosingPlayer = false; }, 0);
+}
+
+// =========================
+// TABS
+// =========================
+tabs.forEach(tab => {
+    tab.addEventListener('click', () => {
+        const tabName = tab.getAttribute('data-tab');
+
+        tabs.forEach(t => t.classList.remove('active'));
+        tabContents.forEach(c => c.classList.remove('active'));
+
+        tab.classList.add('active');
+        document.getElementById(`tab-${tabName}`).classList.add('active');
+
+        if (tabName === 'favorites') updateFavoritesUI();
+        if (tabName === 'history')   updateHistoryUI();
+
+        updateLoadMoreButton();
+    });
+});
+
+// =========================
+// MODAIS — ABRIR/FECHAR
+// =========================
+if (openFilters) openFilters.addEventListener('click', () => {
+    filtersModal.style.display = "flex";
+    setTimeout(() => {
+        const modalInput = document.getElementById('searchInputModal');
+        if (modalInput) modalInput.focus();
+    }, 100);
+});
+
+if (closeFilters) closeFilters.addEventListener('click', () => filtersModal.style.display = "none");
+if (openFavorites) openFavorites.addEventListener('click', () => showFavoritesModal());
+if (closeFavorites) closeFavorites.addEventListener('click', () => favoritesModal.style.display = "none");
+if (openHistory) openHistory.addEventListener('click', () => showHistoryModal());
+if (closeHistory) closeHistory.addEventListener('click', () => historyModal.style.display = "none");
+if (closePageModal) closePageModal.addEventListener('click', () => pageModal.style.display = "none");
+
+// Fechar ao clicar fora
+window.addEventListener('click', (e) => {
+    if (e.target === favoritesModal) favoritesModal.style.display = "none";
+    if (e.target === historyModal)   historyModal.style.display = "none";
+    if (e.target === filtersModal) {
+        filtersModal.style.display = "none";
+        if (genreResultsList) genreResultsList.style.display = 'none';
+    }
+    if (e.target === pageModal) pageModal.style.display = "none";
+});
+
+// ESC
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') {
+        if (filtersModal.style.display === 'flex') {
+            filtersModal.style.display = "none";
+            if (genreResultsList) genreResultsList.style.display = 'none';
+        }
+        if (favoritesModal.style.display === 'flex') favoritesModal.style.display = "none";
+        if (historyModal.style.display   === 'flex') historyModal.style.display   = "none";
+        if (pageModal.style.display      === 'flex') pageModal.style.display      = "none";
+
+        if (!playerFixedEl.classList.contains('hidden')) closePlayer();
+    }
+});
+
+// =========================
+// MODAL FAVORITOS / HISTÓRICO
+// =========================
+function showFavoritesModal() {
+    const list = document.getElementById('favoritesModalList');
+    if (favorites.length === 0) {
+        list.innerHTML = "<p class='modal-empty-message'><i class='fas fa-star'></i><br>Nenhuma rádio favorita ainda.</p>";
+    } else {
+        list.innerHTML = favorites.map(radio => {
+            const isCurrent = currentRadio && currentRadio.url === radio.url;
+            const displayTags = cleanGenreName(radio.tags);
+            const imgHTML = getRadioImageHTML(radio, 'small');
+            const safeUrl = radio.url.replace(/'/g, "\\'");
+
+            return `
+                <div class="modal-radio-item" onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${safeUrl}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
+                    ${imgHTML}
+                    <div class="modal-radio-info">
+                        <h3>${radio.name}</h3>
+                        <p>${radio.country} • ${displayTags}</p>
+                    </div>
+                    <button class="modal-play-btn" onclick="event.stopPropagation(); playRadio('${radio.name.replace(/'/g, "\\'")}', '${safeUrl}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
+                        <i class="fas fa-${isCurrent && isPlaying ? 'pause' : 'play'}"></i>
+                    </button>
+                </div>
+            `;
+        }).join("");
+    }
+    favoritesModal.style.display = "flex";
+}
+
+function showHistoryModal() {
+    const list = document.getElementById('historyModalList');
+    if (history.length === 0) {
+        list.innerHTML = "<p class='modal-empty-message'><i class='fas fa-history'></i><br>Nenhuma rádio no histórico ainda.</p>";
+    } else {
+        list.innerHTML = history.map(radio => {
+            const isCurrent = currentRadio && currentRadio.url === radio.url;
+            const displayTags = cleanGenreName(radio.tags);
+            const timeAgo = formatTimeAgo(new Date(radio.date));
+            const imgHTML = getRadioImageHTML(radio, 'small');
+            const safeUrl = radio.url.replace(/'/g, "\\'");
+
+            return `
+                <div class="modal-radio-item" onclick="playRadio('${radio.name.replace(/'/g, "\\'")}', '${safeUrl}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
+                    ${imgHTML}
+                    <div class="modal-radio-info">
+                        <h3>${radio.name}</h3>
+                        <p>${radio.country} • ${displayTags}</p>
+                        <small style="font-size: 0.7rem; opacity: 0.6;">${timeAgo}</small>
+                    </div>
+                    <button class="modal-play-btn" onclick="event.stopPropagation(); playRadio('${radio.name.replace(/'/g, "\\'")}', '${safeUrl}', '${radio.favicon ? radio.favicon.replace(/'/g, "\\'") : ''}', '${radio.country ? radio.country.replace(/'/g, "\\'") : ''}', '${radio.tags ? radio.tags.replace(/'/g, "\\'") : ''}')">
+                        <i class="fas fa-${isCurrent && isPlaying ? 'pause' : 'play'}"></i>
+                    </button>
+                </div>
+            `;
+        }).join("");
+    }
+    historyModal.style.display = "flex";
+}
+
 // =====================
-// CONTEÚDO DAS PÁGINAS 
+// PÁGINAS ESTÁTICAS
 // =====================
 const pageContents = {
     privacy: `
         <div class="page-content">
             <h2><i class="fas fa-user-shield"></i> Política de Privacidade</h2>
-            
             <h3>1. Dados Coletados</h3>
             <p>O Grid Rádio Online não coleta dados pessoais identificáveis. Utilizamos apenas o <strong>localStorage</strong> do seu navegador para salvar:</p>
             <ul>
@@ -1880,34 +1307,25 @@ const pageContents = {
                 <li>Preferências de Volume</li>
             </ul>
             <p>Estes dados ficam armazenados exclusivamente no seu dispositivo e nunca são enviados para nossos servidores.</p>
-            
             <h3>2. Fontes de Rádio</h3>
             <p>Usamos a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a> para buscar listas de estações.</p>
-            
             <h3>3. Segurança</h3>
-            <p>Implementamos validações básicas de URL e sanitização de HTML para mitigar riscos de segurança, mas você é responsável por verificar a segurança das estações que decide ouvir. Usamos HTTPS e validamos fontes externas para proteger suas informações contra acesso não autorizado.</p>
-            
+            <p>Implementamos validações básicas de URL e sanitização de HTML para mitigar riscos de segurança, mas você é responsável por verificar a segurança das estações que decide ouvir.</p>
             <h3>4. Contato</h3>
-            <p>Para questões sobre privacidade, entre em contato: <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link email-link">juliogonzales.dev@proton.me</a></p>
+            <p>Para questões sobre privacidade: <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link email-link">juliogonzales.dev@proton.me</a></p>
         </div>
     `,
-    
     terms: `
         <div class="page-content">
             <h2><i class="fas fa-file-signature"></i> Termos de Uso</h2>
-            
             <h3>1. Aceitação dos Termos</h3>
             <p>Ao usar o Grid Rádio Online, você concorda com estes termos de uso.</p>
-            
             <h3>2. Serviço</h3>
             <p>O Grid Rádio Online é um agregador de estações de rádio online. Não hospedamos nenhum conteúdo de áudio.</p>
-            
             <h3>3. Uso Aceitável</h3>
             <p>Você concorda em usar o serviço apenas para fins legais e de acordo com todas as leis aplicáveis.</p>
-            
             <h3>4. Direitos Autorais</h3>
-            <p>Todo o conteúdo de áudio transmitido pertence às respectivas estações de rádio. Respeite os direitos autorais.</p>
-            
+            <p>Todo o conteúdo de áudio transmitido pertence às respectivas estações de rádio.</p>
             <h3>5. Limitação de Responsabilidade</h3>
             <p>Não nos responsabilizamos por:</p>
             <ul>
@@ -1915,298 +1333,149 @@ const pageContents = {
                 <li>Conteúdo das estações de rádio</li>
                 <li>Problemas técnicos nas transmissões</li>
             </ul>
-            
             <h3>6. Modificações</h3>
             <p>Reservamo-nos o direito de modificar estes termos a qualquer momento.</p>
         </div>
     `,
-    
     dmca: `
         <div class="page-content">
             <h2><i class="fas fa-gavel"></i> Política DMCA</h2>
-            
             <div class="educational-notice">
-                <p>
-                    <strong><i class="fas fa-graduation-cap"></i> Nota:</strong> 
-                    Este projeto tem caráter educacional e utiliza a API pública do Radio Browser para fins de aprendizado em desenvolvimento web.
-                </p>
+                <p><strong><i class="fas fa-graduation-cap"></i> Nota:</strong>
+                Este projeto tem caráter educacional e utiliza a API pública do Radio Browser.</p>
             </div>
-            
-            <h3>Notificação de Infração de Direitos Autorais</h3>
-            <p>O Grid Rádio Online respeita os direitos de propriedade intelectual. Se você acredita que seu trabalho foi copiado de forma que constitui violação de direitos autorais, envie uma notificação para:</p>
-            
+            <h3>Notificação de Infração</h3>
+            <p>Se você acredita que seu trabalho foi copiado de forma que constitui violação de direitos autorais, envie uma notificação para:</p>
             <p><strong>Email:</strong> <a href="mailto:juliogonzales.dev@proton.me" class="site-link gradient-link email-link">juliogonzales.dev@proton.me</a></p>
-            
             <h3>Informações Requeridas</h3>
-            <p>Sua notificação deve incluir:</p>
             <ul>
                 <li>Assinatura do proprietário dos direitos autorais</li>
                 <li>Identificação do trabalho protegido</li>
-                <li>Identificação do material alegadamente infringente</li>
+                <li>Identificação do material infringente</li>
                 <li>Suas informações de contato</li>
                 <li>Declaração de boa fé</li>
             </ul>
-            
-            <h3>Ação</h3>
-            <p>Upon receipt of a valid DMCA notice, we will promptly remove or disable access to the allegedly infringing content.</p>
-            
             <div class="footer-note">
                 <p><strong>Projeto educacional</strong> • Desenvolvido para fins de aprendizado</p>
             </div>
         </div>
     `,
-    
     about: `
         <div class="page-content">
             <h2><i class="fas fa-circle-info"></i> Sobre o Grid Rádio Online</h2>
-            
-            <p>O Grid Rádio Online é um projeto de caráter educacional de código aberto, criado com o objetivo de oferecer uma interface simples e moderna para acessar rádios de todo o mundo, utilizando a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a>.</p>
-            
+            <p>O Grid Rádio Online é um projeto educacional de código aberto, criado para oferecer uma interface simples e moderna para acessar rádios de todo o mundo, usando a API pública do <a href="http://www.radio-browser.info/" target="_blank" class="site-link gradient-link">radio-browser.info</a>.</p>
             <p>Este projeto foca em:</p>
             <ul>
                 <li><strong>Desempenho:</strong> Carregamento rápido e eficiente.</li>
                 <li><strong>Design Moderno:</strong> Interface amigável e responsiva.</li>
                 <li><strong>Privacidade:</strong> Não coleta dados pessoais.</li>
             </ul>
-            
             <p>Código fonte disponível no <a href="https://github.com/Julioheyner" target="_blank" class="site-link gradient-link"><i class="fab fa-github"></i> GitHub</a>.</p>
-            
             <div class="socials">
-                <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank" class="social-icon">
-                    <i class="fab fa-github"></i>
-                </a>
-                <a href="https://www.linkedin.com/in/julio-gonzales-31a723379" title="LinkedIn" rel="noopener noreferrer" target="_blank" class="social-icon">
-                    <i class="fab fa-linkedin"></i>
-                </a>
-                <a href="mailto:juliogonzales.dev@proton.me" title="Email" class="social-icon">
-                    <i class="fas fa-envelope"></i>
-                </a>
+                <a href="https://github.com/Julioheyner" title="GitHub" rel="noopener noreferrer" target="_blank" class="social-icon"><i class="fab fa-github"></i></a>
+                <a href="https://www.linkedin.com/in/julio-gonzales-31a723379" title="LinkedIn" rel="noopener noreferrer" target="_blank" class="social-icon"><i class="fab fa-linkedin"></i></a>
+                <a href="mailto:juliogonzales.dev@proton.me" title="Email" class="social-icon"><i class="fas fa-envelope"></i></a>
             </div>
         </div>
     `
 };
 
+function showPage(pageName) {
+    pageContent.innerHTML = pageContents[pageName] || '<p style="padding: 20px;">Página não encontrada.</p>';
+    fixEmailLinksIn(pageContent);
+    pageModal.style.display = "flex";
+}
+
 // ====================================================
-// FUNÇÕES DE REMOÇÃO (COM MODAL)
+// MODAL DE CONFIRMAÇÃO
 // ====================================================
 const confirmationModal = document.createElement('div');
 confirmationModal.id = 'confirmationModal';
 confirmationModal.className = 'modal';
 confirmationModal.innerHTML = `
-    <div class="modal-content" style="font-size: 0.85rem;max-width: 300px;">
-        <h2 id="confirmTitle"><i class="fas fa-question-circle"></i> Confirmar</h2>
-        <p id="confirmMessage" style="margin: 20px 0;"></p>
-        
-        <div style="display: flex; flex-direction: column; gap: 12px;">
-            <button id="confirmYes" style="
-                width: 100%;
-                padding: 14px;
-                background: linear-gradient(135deg, #ff3366 0%, #ff2e63 100%);
-                color: white;
-                border: none;
-                border-radius: 10px;
-                font-weight: 600;
-                font-size: 0.95rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                box-shadow: 0 4px 15px rgba(255, 46, 99, 0.3);
-                position: relative;
-                overflow: hidden;
-                letter-spacing: 0.5px;
-            ">
-                <span style="position: relative; z-index: 2">
-                    <i class="fas fa-trash-alt" style="margin-right: 8px;"></i>Sim, Remover
-                </span>
-                <div style="
-                    position: absolute;
-                    top: 0;
-                    left: -100%;
-                    width: 100%;
-                    height: 100%;
-                    background: linear-gradient(90deg, 
-                        transparent, 
-                        rgba(255, 255, 255, 0.3), 
-                        transparent);
-                    transition: left 0.6s ease;
-                "></div>
+    <div class="modal-content" style="font-size:0.85rem;max-width:320px;">
+        <h2 id="confirmTitle" style="display:flex;align-items:center;gap:10px;margin:0 0 16px;color:var(--accent-primary);font-size:1.15rem;">
+            <i class="fas fa-question-circle"></i> Confirmar
+        </h2>
+        <p id="confirmMessage" style="margin:0 0 22px;color:var(--text-secondary);line-height:1.5;"></p>
+        <div style="display:flex;flex-direction:column;gap:10px;">
+            <button id="confirmYes" style="width:100%;padding:13px;background:linear-gradient(135deg,#ff3366,#ff2e63);color:#fff;border:none;border-radius:10px;font-weight:700;font-size:0.92rem;cursor:pointer;box-shadow:0 4px 15px rgba(255,46,99,0.3);transition:transform .2s,box-shadow .2s;font-family:var(--font-body);">
+                <i class="fas fa-trash-alt" style="margin-right:8px;"></i>Sim, remover
             </button>
-            
-            <button id="confirmNo" style="
-                width: 100%;
-                padding: 14px;
-                background: var(--player-color);
-                color: var(--text-color);
-                border: 2px solid rgba(0, 216, 255, 0.4);
-                border-radius: 10px;
-                font-weight: 600;
-                font-size: 0.95rem;
-                cursor: pointer;
-                transition: all 0.3s ease;
-                letter-spacing: 0.5px;
-                backdrop-filter: blur(5px);
-            ">
-                <i class="fas fa-times" style="margin-right: 8px;"></i>Não, Cancelar
+            <button id="confirmNo" style="width:100%;padding:13px;background:var(--player-color);color:var(--text-color);border:1.5px solid var(--glass-border);border-radius:10px;font-weight:700;font-size:0.92rem;cursor:pointer;transition:transform .2s,border-color .2s;font-family:var(--font-body);">
+                <i class="fas fa-times" style="margin-right:8px;"></i>Cancelar
             </button>
         </div>
     </div>
 `;
-
-// Adicionar estilos de hover via JavaScript
-document.addEventListener('DOMContentLoaded', function() {
-    const confirmYes = document.getElementById('confirmYes');
-    const confirmNo = document.getElementById('confirmNo');
-    
-    if (confirmYes) {
-        confirmYes.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 6px 20px rgba(255, 46, 99, 0.4)';
-        });
-        
-        confirmYes.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.boxShadow = '0 4px 15px rgba(255, 46, 99, 0.3)';
-        });
-        
-        confirmYes.addEventListener('mousedown', function() {
-            this.style.transform = 'translateY(1px)';
-            this.style.boxShadow = '0 2px 10px rgba(255, 46, 99, 0.2)';
-        });
-        
-        confirmYes.addEventListener('mouseup', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.boxShadow = '0 6px 20px rgba(255, 46, 99, 0.4)';
-        });
-        
-        // Efeito de brilho ao passar o mouse
-        confirmYes.addEventListener('mouseenter', function() {
-            const shine = this.querySelector('div');
-            shine.style.left = '100%';
-        });
-        
-        confirmYes.addEventListener('mouseleave', function() {
-            const shine = this.querySelector('div');
-            shine.style.left = '-100%';
-        });
-    }
-    
-    if (confirmNo) {
-        confirmNo.addEventListener('mouseenter', function() {
-            this.style.transform = 'translateY(-2px)';
-            this.style.background = 'rgba(26, 39, 70, 0.9)';
-            this.style.borderColor = 'rgba(0, 216, 255, 0.7)';
-            this.style.boxShadow = '0 4px 15px rgba(0, 216, 255, 0.2)';
-        });
-        
-        confirmNo.addEventListener('mouseleave', function() {
-            this.style.transform = 'translateY(0)';
-            this.style.background = 'var(--player-color)';
-            this.style.borderColor = 'rgba(0, 216, 255, 0.4)';
-            this.style.boxShadow = 'none';
-        });
-        
-        confirmNo.addEventListener('mousedown', function() {
-            this.style.transform = 'translateY(1px)';
-        });
-        
-        confirmNo.addEventListener('mouseup', function() {
-            this.style.transform = 'translateY(-2px)';
-        });
-    }
-});
 document.body.appendChild(confirmationModal);
 
-const confirmTitle = document.getElementById('confirmTitle');
+const confirmTitle   = document.getElementById('confirmTitle');
 const confirmMessage = document.getElementById('confirmMessage');
-const confirmYes = document.getElementById('confirmYes');
-const confirmNo = document.getElementById('confirmNo');
+const confirmYes     = document.getElementById('confirmYes');
+const confirmNo      = document.getElementById('confirmNo');
+
 confirmNo.onclick = () => confirmationModal.style.display = 'none';
 
-/**
- * Exibe modal de confirmação para ações destrutivas
- * @param {string} action - Ação a ser confirmada
- * @param {string} url - URL do item a ser removido (opcional)
- */
+confirmationModal.addEventListener('click', (e) => {
+    if (e.target === confirmationModal) confirmationModal.style.display = 'none';
+});
+
 function showConfirmationModal(action, url = null) {
     confirmationModal.style.display = 'flex';
 
     if (action === 'clearFavorites') {
-        confirmTitle.innerHTML = '<i class="fas fa-star" style="font-size: 1.1rem;"></i> <span style="font-size: 1.1rem; font-weight: 800">Remover Favoritos</span>';
-        confirmMessage.textContent = "Deseja remover todas as rádios favoritas?";
-        confirmYes.onclick = () => {
-            clearFavoritesAction();
-            confirmationModal.style.display = 'none';
-        };
+        confirmTitle.innerHTML   = '<i class="fas fa-star"></i> Remover Favoritos';
+        confirmMessage.textContent = "Deseja remover TODAS as rádios favoritas?";
+        confirmYes.onclick = () => { clearFavoritesAction(); confirmationModal.style.display = 'none'; };
+
     } else if (action === 'clearAllHistory') {
-        confirmTitle.innerHTML = '<i class="fas fa-history"></i> Limpar Histórico';
-        confirmMessage.textContent = "Deseja remover todo o histórico de reprodução?";
-        confirmYes.onclick = () => {
-            clearAllHistoryAction();
-            confirmationModal.style.display = 'none';
-        };
+        confirmTitle.innerHTML   = '<i class="fas fa-history"></i> Limpar Histórico';
+        confirmMessage.textContent = "Deseja remover TODO o histórico de reprodução?";
+        confirmYes.onclick = () => { clearAllHistoryAction(); confirmationModal.style.display = 'none'; };
+
     } else if (action === 'removeFavorite' && url) {
-        confirmTitle.innerHTML = '<i class="fas fa-star" style="font-size: 1.1rem;"></i> <span style="font-size: 1.1rem; font-weight: 800">Remover Rádio</span>';
+        confirmTitle.innerHTML   = '<i class="fas fa-star"></i> Remover Rádio';
         confirmMessage.textContent = "Deseja remover esta rádio dos favoritos?";
-        confirmYes.onclick = () => {
-            removeFavorite(url);
-            confirmationModal.style.display = 'none';
-        };
+        confirmYes.onclick = () => { removeFavorite(url); confirmationModal.style.display = 'none'; };
+
     } else if (action === 'removeHistory' && url) {
-        confirmTitle.innerHTML = '<i class="fas fa-history"></i> Remover Rádio';
+        confirmTitle.innerHTML   = '<i class="fas fa-history"></i> Remover Rádio';
         confirmMessage.textContent = "Deseja remover esta rádio do histórico?";
-        confirmYes.onclick = () => {
-            removeFromHistory(url);
-            confirmationModal.style.display = 'none';
-        };
+        confirmYes.onclick = () => { removeFromHistory(url); confirmationModal.style.display = 'none'; };
     }
 }
 
 // ====================================================
-// CONTROLES DO PLAYER E EVENT LISTENERS
+// CONTROLES DO PLAYER E BUSCA
 // ====================================================
 toggleFavorite.addEventListener('click', toggleFavoriteRadio);
 playPauseBtn.addEventListener('click', togglePlayPause);
 loadMoreBtn.addEventListener('click', () => fetchRadios(currentQuery, currentCountry, currentTag, true));
 
-// Pesquisa
 searchBtn.addEventListener('click', () => {
-    currentQuery = searchInput.value;
+    currentQuery   = searchInput.value;
     currentCountry = countrySelect.value;
-    currentTag = genreSelect.value;
-   
+    currentTag     = genreSelect.value;
+
     fetchRadios(currentQuery, currentCountry, currentTag);
     filtersModal.style.display = "none";
-    genreResultsList.style.display = 'none';
+    if (genreResultsList) genreResultsList.style.display = 'none';
 });
 
-// Função para buscar com Enter
+// Enter na busca principal
 searchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        searchBtn.click();
-    }
+    if (e.key === 'Enter') { e.preventDefault(); searchBtn.click(); }
 });
 
+// Enter na busca por gênero
 genreSearchInput.addEventListener('keypress', (e) => {
-    if (e.key === 'Enter') {
-        e.preventDefault();
-        searchBtn.click();
-    }
+    if (e.key === 'Enter') { e.preventDefault(); searchBtn.click(); }
 });
 
-/**
- * Exibe página de conteúdo no modal
- * @param {string} pageName - Nome da página a ser exibida
- */
-function showPage(pageName) {
-    pageContent.innerHTML = pageContents[pageName] || '<p style="padding: 20px;">Página não encontrada.</p>';
-    pageModal.style.display = "flex";
-}
-
-/**
- * Mostra notificação na tela
- * @param {string} message - Mensagem a ser exibida
- * @param {string} type - Tipo da notificação (success, warning, error, info)
- */
+// ====================================================
+// NOTIFICAÇÃO
+// ====================================================
 function showNotification(message, type = 'info') {
     const icons = {
         success: 'fa-check-circle',
@@ -2215,97 +1484,123 @@ function showNotification(message, type = 'info') {
         info:    'fa-info-circle'
     };
     const icon = icons[type] || 'fa-info-circle';
-    
     notification.innerHTML = `<i class="fas ${icon}"></i> <span>${sanitizeHTML(message)}</span>`;
     notification.className = `notification ${type} show`;
-    
-    setTimeout(() => {
-        notification.classList.remove('show');
-    }, 3000);
+    setTimeout(() => notification.classList.remove('show'), 3000);
 }
 
 // ========================
 // CARREGAMENTO DE FILTROS
 // ========================
-
-/**
- * Carrega países e gêneros para os filtros
- */
 async function loadFilters() {
     try {
         const [countries, tags] = await Promise.all([
             fetch(`${API_BASE}/countries`).then(r => r.json()),
-            fetch(`${API_BASE}/tags`).then(r => r.json())
+            // LIMITE ALTO: garante que tags como "gospel" e "christian" venham.
+            fetch(`${API_BASE}/tags?limit=5000&hidebroken=true&order=stationcount&reverse=true`)
+                .then(r => r.json())
         ]);
 
-        // Carregar países
-        countries.sort((a, b) => a.name.localeCompare(b.name)).forEach(c => {
-            const opt = document.createElement("option");
-            opt.value = sanitizeHTML(c.name);
-            opt.textContent = sanitizeHTML(c.name);
-            countrySelect.appendChild(opt);
-        });
+        // ----- Países -----
+        countries
+            .sort((a, b) => a.name.localeCompare(b.name))
+            .forEach(c => {
+                const opt = document.createElement("option");
+                opt.value = sanitizeHTML(c.name);
+                opt.textContent = sanitizeHTML(c.name);
+                countrySelect.appendChild(opt);
+            });
 
-        // Armazenar tags para busca rápida
+        // ----- Gêneros (API + curados) -----
+        // 1. Monta o array a partir da API, já com "terms" iniciais
         allGenreTags = tags.map(t => ({
             tag: t.name,
-            display: cleanGenreName(t.name)
+            display: cleanGenreName(t.name),
+            terms: [t.name]
         }));
-       
-        // Adicionar Vallenato se não estiver na lista
-        const vallenatoTag = 'vallenato';
-        if (!allGenreTags.some(t => t.tag.toLowerCase() === vallenatoTag)) {
-            allGenreTags.push({ tag: vallenatoTag, display: 'Vallenato (Colômbia)' });
-        }
-       
-        allGenreTags.sort((a, b) => a.display.localeCompare(b.display));
 
-        genreSelect.innerHTML = '<option value="">🎶Todos os gêneros</option>';
-       
+        // Índice por tag (minúscula) para mesclar com a lista curada
+        const indexByTag = new Map(
+            allGenreTags.map(g => [g.tag.toLowerCase(), g])
+        );
+
+        // 2. Insere / enriquece com os gêneros curados
+        CURATED_GENRES.forEach(cg => {
+            const key = cg.tag.toLowerCase();
+            const existing = indexByTag.get(key);
+
+            if (existing) {
+                // Já existe — apenas mescla os sinônimos
+                const merged = new Set([
+                    ...(existing.terms || []),
+                    ...cg.terms,
+                    cg.display
+                ]);
+                existing.terms = [...merged];
+            } else {
+                // Não existe — adiciona à lista
+                const entry = {
+                    tag: cg.tag,
+                    display: cg.display,
+                    terms: [...new Set([...cg.terms, cg.display])]
+                };
+                allGenreTags.push(entry);
+                indexByTag.set(key, entry);
+            }
+        });
+
+        // 3. Ordena alfabeticamente pelo rótulo em pt-BR
+        allGenreTags.sort((a, b) =>
+            a.display.localeCompare(b.display, 'pt-BR', { sensitivity: 'base' })
+        );
+
+        // 4. Preenche o <select> de gêneros
+        genreSelect.innerHTML = '<option value="">Todos os gêneros</option>';
         allGenreTags.forEach(g => {
             const opt = document.createElement("option");
             opt.textContent = g.display;
             opt.value = g.tag;
             genreSelect.appendChild(opt);
         });
+
+        console.log(`[Grid Rádio] ${allGenreTags.length} gêneros carregados (incluindo curados).`);
     } catch (error) {
         console.error('Erro ao carregar filtros:', error);
         showNotification("Erro ao carregar filtros. Tente novamente mais tarde.", "error");
     }
 }
 
-// ==================================
-// LÓGICA DE BUSCA RÁPIDA DE GÊNEROS
-// ==================================
-const genreSearchContainer = document.querySelector('#genreSearchContainer');
-
+// ============================
+// BUSCA RÁPIDA DE GÊNEROS
+// ============================
 genreSearchInput.addEventListener('input', filterGenreResults);
 
-/**
- * Filtra resultados de gêneros baseado na busca
- */
 function filterGenreResults() {
     const query = normalizeText(genreSearchInput.value).trim();
     genreResultsList.innerHTML = '';
-   
-    if (query.length < 3) {
+
+    // Mínimo agora é 2 caracteres 
+    if (query.length < 2) {
         genreResultsList.style.display = 'none';
         return;
     }
-   
-    const filtered = allGenreTags.filter(genre => {
-        return normalizeText(genre.display).includes(query) || normalizeText(genre.tag).includes(query);
+
+    const filtered = allGenreTags.filter(g => {
+        if (normalizeText(g.display).includes(query)) return true;
+        if (normalizeText(g.tag).includes(query)) return true;
+        if (Array.isArray(g.terms)) {
+            return g.terms.some(term => normalizeText(term).includes(query));
+        }
+        return false;
     });
 
     if (filtered.length > 0) {
-        filtered.forEach(genre => {
+        filtered.forEach(g => {
             const item = document.createElement('button');
             item.className = 'genre-item';
-            item.textContent = genre.display;
-            item.setAttribute('data-tag', genre.tag);
-           
-            item.addEventListener('click', () => selectGenre(item, genre.tag, genre.display));
-           
+            item.textContent = g.display;
+            item.setAttribute('data-tag', g.tag);
+            item.addEventListener('click', () => selectGenre(item, g.tag, g.display));
             genreResultsList.appendChild(item);
         });
         genreResultsList.style.display = 'block';
@@ -2314,12 +1609,6 @@ function filterGenreResults() {
     }
 }
 
-/**
- * Seleciona um gênero da lista de resultados
- * @param {HTMLElement} item - Elemento HTML do gênero
- * @param {string} tag - Tag do gênero
- * @param {string} display - Nome de exibição do gênero
- */
 function selectGenre(item, tag, display) {
     genreSearchInput.value = display;
     genreSelect.value = tag;
@@ -2329,130 +1618,71 @@ function selectGenre(item, tag, display) {
 }
 
 // ======================
-// GERENCIAMENTO DE TEMA
+// TEMA
 // ======================
 themeToggle.addEventListener("click", () => {
     const isLight = document.body.getAttribute("data-theme") === "light";
     const newTheme = isLight ? "dark" : "light";
-    
     document.body.setAttribute("data-theme", newTheme);
-    
+
     const icon = themeToggle.querySelector('i');
-    if (newTheme === "light") {
-        icon.className = "fas fa-sun";
-    } else {
-        icon.className = "fas fa-moon";
-    }
-    
+    icon.className = newTheme === "light" ? "fas fa-sun" : "fas fa-moon";
+
     secureLocalStorageSet("theme", newTheme);
+    updateThemeColor(isPlaying ? 'playing' : (currentRadio ? 'paused' : 'idle'));
 });
 
-// Volume do áudio
 audioPlayer.addEventListener('volumechange', () => {
     secureLocalStorageSet('volume', audioPlayer.volume);
 });
 
 // =====================
-// INICIALIZAÇÃO SEGURA 
+// INICIALIZAÇÃO
 // =====================
 document.addEventListener("DOMContentLoaded", () => {
-    /**
-     * Limpa dados corrompidos do localStorage
-     */
     function cleanCorruptedData() {
-        const keys = ['favorites', 'history'];
-        keys.forEach(key => {
+        ['favorites', 'history'].forEach(key => {
             try {
                 const data = localStorage.getItem(key);
-                if (data) {
-                    JSON.parse(data);
-                }
-            } catch (error) {
-                localStorage.removeItem(key);
-            }
+                if (data) JSON.parse(data);
+            } catch { localStorage.removeItem(key); }
         });
     }
-    
     cleanCorruptedData();
-    
-    // Carregar dados
+
     favorites = secureLocalStorageGet('favorites', []);
-    history = secureLocalStorageGet('history', []);
-    
-    console.log(' Dados carregados:', {
-        favoritesCount: favorites.length,
-        historyCount: history.length
-    });
-    
+    history   = secureLocalStorageGet('history', []);
+
     const savedTheme = secureLocalStorageGet("theme", "dark");
     document.body.setAttribute("data-theme", savedTheme);
     themeToggle.innerHTML = savedTheme === "light" ? '<i class="fas fa-sun"></i>' : '<i class="fas fa-moon"></i>';
-   
-    audioPlayer.volume = secureLocalStorageGet("volume", 0.1);
-    
-    setupAudioEventListeners();
+    updateThemeColor('idle');
 
+    audioPlayer.volume = secureLocalStorageGet("volume", 0.1);
+    setupAudioEventListeners();
     loadFilters();
-    
-    // Carregar rádios apenas uma vez com cache
+
     const cachedRadios = sessionStorage.getItem('cachedRadios');
     if (cachedRadios) {
         try {
             const parsed = JSON.parse(cachedRadios);
-            if (parsed && parsed.length > 0) {
-                // Usar dados do cache
-                renderRadiosFromCache(parsed);
-                console.log('Rádios carregadas do cache');
-            } else {
-                fetchRadios();
-            }
-        } catch (e) {
-            fetchRadios();
-        }
+            if (parsed && parsed.length > 0) renderRadiosFromCache(parsed);
+            else fetchRadios();
+        } catch { fetchRadios(); }
     } else {
         fetchRadios();
     }
-    
+
     updateFavoritesUI();
     updateHistoryUI();
-    
-    // Atualizar contadores no carregamento
     updateButtonCounters();
-    
-    // Verificar novamente após um pequeno delay para garantir
-    setTimeout(() => {
-        updateButtonCounters();
-        console.log('Contadores atualizados após inicialização');
-    }, 500);
-    
-    setTimeout(() => {
-        addPlayerCloseButton();
-    }, 1000);
-    
-    // Atalho de teclado Ctrl+Alt+P para alternar player
-    document.addEventListener('keydown', function(e) {
-        if (e.ctrlKey && e.altKey && e.key === 'p') {
-            e.preventDefault();
-            
-            if (playerFixedEl.classList.contains('hidden')) {
-                reopenPlayer();
-            } else {
-                closePlayer();
-            }
-        }
-    });
-    
-    window.addEventListener('resize', function() {
-        adjustReopenButtonPosition();
-    });
-    
-    window.addEventListener('orientationchange', function() {
-        setTimeout(adjustReopenButtonPosition, 100);
-    });
+
+    setTimeout(() => updateButtonCounters(), 500);
+    setTimeout(() => addPlayerCloseButton(), 1000);
 });
 
 // =====================
-// PROTEÇÕES ADICIONAIS
+// PROTEÇÕES
 // =====================
 if (window.audioPlayerInstance) {
     window.audioPlayerInstance.pause();
@@ -2461,56 +1691,27 @@ if (window.audioPlayerInstance) {
 window.audioPlayerInstance = audioPlayer;
 
 window.addEventListener('beforeunload', () => {
+    
+    isClosingPlayer = true;
     stopAudioHealthCheck();
-    if (retryTimeout) {
-        clearTimeout(retryTimeout);
-    }
+    if (retryTimeout) clearTimeout(retryTimeout);
     audioPlayer.pause();
     audioPlayer.src = '';
     
-    const reopenBtn = document.getElementById('reopenPlayerBtn');
-    if (reopenBtn) {
-        reopenBtn.remove();
-    }
+    setTimeout(() => { isClosingPlayer = false; }, 500);
 });
 
 setTimeout(() => {
-    const scripts = document.querySelectorAll('script');
-    scripts.forEach(script => {
+    document.querySelectorAll('script').forEach(script => {
         if (!script.src && (script.innerHTML.includes('eval') || script.innerHTML.includes('Function'))) {
             script.remove();
         }
     });
 }, 1000);
 
-// =======================================
-// FUNÇÕES DE DEBUG (para uso no console)
-// =======================================
-
-/**
- * Função para debug dos contadores (para testar no console)
- */
-window.debugCounters = function() {
-    console.log(' Debug contadores:', {
-        favorites: favorites,
-        history: history,
-        favCount: favorites.length,
-        histCount: history.length,
-        localStorageFavorites: localStorage.getItem('favorites'),
-        localStorageHistory: localStorage.getItem('history')
-    });
-    updateButtonCounters();
-};
-
-/**
- * Força atualização dos contadores
- */
-function forceUpdateCounters() {
-    console.log('Forçando atualização dos contadores...');
-    updateButtonCounters();
-}
-
-// Modal de BOTÃO de Compartilhamento
+// ============================================
+// MODAL DE COMPARTILHAMENTO
+// ============================================
 const shareModal = document.createElement('div');
 shareModal.id = 'shareModal';
 shareModal.innerHTML = `
@@ -2563,43 +1764,34 @@ shareModal.innerHTML = `
   </div>
 `;
 
-// Adiciona o modal ao body
 document.body.appendChild(shareModal);
 
-// Elementos do modal
 const shareBtn = document.getElementById('shareBtn');
 const closeShareModal = document.getElementById('closeShareModal');
 const copyShareUrlBtn = document.getElementById('copyShareUrl');
 const shareUrlInput = document.getElementById('shareUrl');
 const shareOptions = document.querySelectorAll('.share-option');
 
-// Abrir modal de compartilhamento
 shareBtn.addEventListener('click', (e) => {
     e.preventDefault();
     shareModal.classList.add('active');
-    
-    // Atualiza o URL no input (caso tenha mudado)
     shareUrlInput.value = window.location.href;
 });
 
-// Fechar modal de compartilhamento
 closeShareModal.addEventListener('click', () => {
     shareModal.classList.remove('active');
 });
 
-// Fechar modal ao clicar fora
 shareModal.addEventListener('click', (e) => {
     if (e.target === shareModal) {
         shareModal.classList.remove('active');
     }
 });
 
-// Copiar URL para área de transferência
 copyShareUrlBtn.addEventListener('click', async () => {
     try {
         await navigator.clipboard.writeText(shareUrlInput.value);
         
-        // Mostrar tooltip
         const tooltip = copyShareUrlBtn.querySelector('.tooltiptext');
         tooltip.textContent = 'Link copiado!';
         tooltip.style.visibility = 'visible';
@@ -2613,7 +1805,6 @@ copyShareUrlBtn.addEventListener('click', async () => {
     } catch (err) {
         console.error('Erro ao copiar: ', err);
         
-        // Fallback para navegadores antigos
         shareUrlInput.select();
         document.execCommand('copy');
         
@@ -2629,7 +1820,6 @@ copyShareUrlBtn.addEventListener('click', async () => {
     }
 });
 
-// Compartilhar nas redes sociais
 shareOptions.forEach(option => {
     option.addEventListener('click', () => {
         const platform = option.dataset.share;
@@ -2658,22 +1848,16 @@ shareOptions.forEach(option => {
                 break;
                 
             case 'link':
-                // Já tratado pelo botão de copiar
                 return;
         }
         
-        // Abrir janela de compartilhamento
         window.open(shareUrl, '_blank', 'width=600,height=400');
-        
-        // Fechar modal
         shareModal.classList.remove('active');
     });
 });
 
-// Web Share API (para dispositivos móveis)
 if (navigator.share) {
     shareBtn.addEventListener('click', async (e) => {
-        // Verifica se é um dispositivo móvel
         if (/Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
             e.preventDefault();
             
@@ -2686,10 +1870,8 @@ if (navigator.share) {
                 
                 console.log('Conteúdo compartilhado com sucesso');
             } catch (err) {
-                // Usuário cancelou o compartilhamento ou ocorreu um erro
                 if (err.name !== 'AbortError') {
                     console.error('Erro ao compartilhar:', err);
-                    // Abre o modal normal se a Web Share API falhar
                     shareModal.classList.add('active');
                 }
             }
@@ -2697,11 +1879,9 @@ if (navigator.share) {
     });
 }
 
-// Tecla ESC para fechar modal
 document.addEventListener('keydown', (e) => {
     if (e.key === 'Escape' && shareModal.classList.contains('active')) {
         shareModal.classList.remove('active');
     }
 });
-
 
