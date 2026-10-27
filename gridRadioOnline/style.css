@@ -802,6 +802,11 @@ header {
     text-overflow: ellipsis;
 }
 
+ .hero-credits i {
+    color: var(--accent-primary);
+    font-size: 0.7rem;
+}
+
 .image-credits a {
     color: #fff;
     text-decoration: none;
