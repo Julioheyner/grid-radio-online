@@ -802,7 +802,7 @@ header {
     text-overflow: ellipsis;
 }
 
- .hero-credits i {
+ .image-credits i {
     color: var(--accent-primary);
     font-size: 0.7rem;
 }
