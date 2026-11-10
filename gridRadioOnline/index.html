@@ -8,7 +8,7 @@
   <meta name="theme-color" media="(prefers-color-scheme: light)" content="#f2f6ff">
   <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#0a0b0f">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
@@ -50,26 +50,6 @@
     </button>
   </div>
 </header>
-
-<!-- 
-     TAB BAR — sticky abaixo do header
- -->
-<nav class="tab-bar" aria-label="Navegação principal">
-  <div class="tabs" role="tablist">
-    <button class="tab active" data-tab="all" role="tab" aria-selected="true">
-      <i class="fas fa-globe-americas"></i>
-      <span>Todas</span>
-    </button>
-    <button class="tab" data-tab="favorites" role="tab" aria-selected="false">
-      <i class="fas fa-star"></i>
-      <span>Favoritas</span>
-    </button>
-    <button class="tab" data-tab="history" role="tab" aria-selected="false">
-      <i class="fas fa-history"></i>
-      <span>Histórico</span>
-    </button>
-  </div>
-</nav>
 
 <div class="security-warning" id="securityWarning" role="alert">
   <i class="fas fa-shield-alt"></i> Verificando segurança da rádio...
@@ -157,6 +137,7 @@
     <div class="security-status" id="securityStatus"></div>
   </div>
 </div>
+
 <!-- ---------------
      MODAL DE FILTROS
   -------- -->
@@ -280,6 +261,28 @@
     </div>
   </div>
 </footer>
+
+<!-- =============================================
+     TAB BAR — agora como BARRA DE NAVEGAÇÃO INFERIOR
+     (fixa no rodapé da tela, estilo app mobile)
+     ============================================= -->
+<!-- TAB BAR — último filho do body, fora de qualquer wrapper -->
+<nav class="tab-bar" aria-label="Navegação principal">
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-tab="all" role="tab" aria-selected="true">
+      <i class="fas fa-globe-americas"></i>
+      <span>Todas</span>
+    </button>
+    <button class="tab" data-tab="favorites" role="tab" aria-selected="false">
+      <i class="fas fa-star"></i>
+      <span>Favoritas</span>
+    </button>
+    <button class="tab" data-tab="history" role="tab" aria-selected="false">
+      <i class="fas fa-history"></i>
+      <span>Histórico</span>
+    </button>
+  </div>
+</nav>
 
 <script src="script.js"></script>
 </body>
